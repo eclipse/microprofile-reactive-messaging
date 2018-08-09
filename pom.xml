@@ -17,13 +17,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.eclipse.microprofile.reactive</groupId>
-    <artifactId>microprofile-reactive-parent</artifactId>
+    <groupId>org.eclipse.microprofile.reactive.messaging</groupId>
+    <artifactId>microprofile-reactive-message-parent</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <name>MicroProfile Reactive</name>
-    <description>Eclipse MicroProfile Reactive Project :: Parent POM</description>
+    <name>MicroProfile Reactive Messaging</name>
+    <description>Eclipse MicroProfile Reactive Messaging :: Parent POM</description>
 
     <url>http://microprofile.io</url>
 
@@ -32,6 +32,8 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
 
+        <microprofile.reactive.streams.operators.version>1.0-M1</microprofile.reactive.streams.operators.version>
+        
         <checkstyle.version>3.0.0</checkstyle.version>
         <checkstyle.methodNameFormat>^_?[a-z][a-zA-Z0-9]*$</checkstyle.methodNameFormat>
         <!-- whether autorelease maven central staging repositories - default true to allow review and manually release repositories -->
@@ -74,9 +76,9 @@
     </developers>
 
     <scm>
-        <connection>scm:git:https://github.com/eclipse/microprofile-reactive.git</connection>
-        <developerConnection>scm:git:git@github.com:eclipse/microprofile-reactive.git</developerConnection>
-        <url>https://github.com/eclipse/microprofile-reactive</url>
+        <connection>scm:git:https://github.com/eclipse/microprofile-reactive-messaging.git</connection>
+        <developerConnection>scm:git:git@github.com:eclipse/microprofile-reactive-messaging.git</developerConnection>
+        <url>https://github.com/eclipse/microprofile-reactive-messaging</url>
         <tag>HEAD</tag>
     </scm>
 
@@ -95,8 +97,9 @@
     </distributionManagement>
 
     <modules>
-        <module>streams</module>
-        <module>messaging</module>
+        <module>api</module>
+        <module>tck</module>
+        <module>spec</module>
     </modules>
 
     <pluginRepositories>
@@ -111,6 +114,44 @@
             <url>https://repo.eclipse.org/content/groups/microprofile/</url>
         </pluginRepository>
     </pluginRepositories>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.eclipse.microprofile.reactive.streams</groupId>
+                <artifactId>microprofile-reactive-streams-operators</artifactId>
+                <version>${microprofile.reactive.streams.operators.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.osgi</groupId>
+                <artifactId>org.osgi.annotation.versioning</artifactId>
+                <version>1.0.0</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.testng</groupId>
+                <artifactId>testng</artifactId>
+                <version>6.11</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.enterprise</groupId>
+                <artifactId>cdi-api</artifactId>
+                <version>2.0</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.json.bind</groupId>
+                <artifactId>javax.json.bind-api</artifactId>
+                <version>1.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.arquillian</groupId>
+                <artifactId>arquillian-bom</artifactId>
+                <version>1.4.0.Final</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <build>
         <pluginManagement>
@@ -159,6 +200,11 @@
             </plugins>
         </pluginManagement>
         <plugins>
+            <plugin>
+                <groupId>org.eclipse.microprofile.maven</groupId>
+                <artifactId>microprofile-maven-build-extension</artifactId>
+                <extensions>true</extensions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
