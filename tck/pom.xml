@@ -27,7 +27,6 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <groupId>org.eclipse.microprofile.reactive.messaging</groupId>
     <artifactId>microprofile-reactive-messaging-tck</artifactId>
     <name>MicroProfile Reactive Messaging TCK</name>
     <description>MicroProfile Reactive Messaging :: TCK</description>

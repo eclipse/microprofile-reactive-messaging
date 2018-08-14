@@ -18,7 +18,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.eclipse.microprofile.reactive.messaging</groupId>
-    <artifactId>microprofile-reactive-message-parent</artifactId>
+    <artifactId>microprofile-reactive-messaging-parent</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
@@ -33,7 +33,7 @@
         <maven.compiler.target>1.8</maven.compiler.target>
 
         <microprofile.reactive.streams.operators.version>1.0-M1</microprofile.reactive.streams.operators.version>
-        
+
         <checkstyle.version>3.0.0</checkstyle.version>
         <checkstyle.methodNameFormat>^_?[a-z][a-zA-Z0-9]*$</checkstyle.methodNameFormat>
         <!-- whether autorelease maven central staging repositories - default true to allow review and manually release repositories -->
@@ -203,6 +203,7 @@
             <plugin>
                 <groupId>org.eclipse.microprofile.maven</groupId>
                 <artifactId>microprofile-maven-build-extension</artifactId>
+                <version>1.0</version>
                 <extensions>true</extensions>
             </plugin>
             <plugin>
