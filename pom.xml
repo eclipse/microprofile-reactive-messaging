@@ -18,7 +18,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.eclipse.microprofile.reactive.messaging</groupId>
-    <artifactId>microprofile-reactive-message-parent</artifactId>
+    <artifactId>microprofile-reactive-messaging-parent</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
