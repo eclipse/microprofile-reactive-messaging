@@ -81,12 +81,12 @@ import java.lang.annotation.Target;
 public @interface Incoming {
 
     /**
-     * The name of the consumed stream.
+     * The value of the consumed stream.
      * <p>
      * If not set, it is assumed some other messaging provider specific mechanism will be used to identify which
      * messages this subscriber will receive.
      */
-    String name() default "";
+    String value() default "";
 
     /**
      * The messaging provider.

@@ -36,8 +36,8 @@
  * <pre>
  *   &#64;ApplicationScoped
  *   public class EmailPublisher {
- *     &#64;Incoming(name = "notifications")
- *     &#64;Outgoing(name = "emails")
+ *     &#64;Incoming("notifications")
+ *     &#64;Outgoing("emails")
  *     public ProcessorBuilder&lt;Message&lt;Notification&gt;, Message&lt;Email&gt;&gt; publishEmails() {
  *       return ReactiveStreams.&lt;Message&lt;Notification&gt;&gt;builder()
  *         .filter(msg -&gt; msg.getPayload().isEmailable())

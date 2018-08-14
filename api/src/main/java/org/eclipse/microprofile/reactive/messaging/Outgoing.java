@@ -70,7 +70,7 @@ public @interface Outgoing {
      * If not set, it is assumed some other messaging provider specific mechanism will be used to identify the
      * destination that this publisher will send to.
      */
-    String name() default "";
+    String value() default "";
 
     /**
      * The messaging provider.
