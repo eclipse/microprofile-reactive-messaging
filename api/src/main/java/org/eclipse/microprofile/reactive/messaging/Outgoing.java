@@ -25,7 +25,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Used to signify a publisher of outgoming messages.
+ * Used to signify a publisher of outgoing messages.
  * <p>
  * Methods annotated with this annotation must have one of the following shapes:
  * <p>
@@ -65,12 +65,12 @@ import java.lang.annotation.Target;
 public @interface Outgoing {
 
     /**
-     * The topic to publish to.
+     * The name of the stream to publish to.
      * <p>
      * If not set, it is assumed some other messaging provider specific mechanism will be used to identify the
      * destination that this publisher will send to.
      */
-    String topic() default "";
+    String name() default "";
 
     /**
      * The messaging provider.

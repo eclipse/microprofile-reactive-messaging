@@ -101,7 +101,7 @@ public class CompletionStageIncomingMethodVerification extends Arquillian {
         @Inject
         private TckMessagingManager manager;
 
-        @Incoming(topic = VOID_METHOD)
+        @Incoming(name = VOID_METHOD)
         public CompletionStage<Void> handleVoidMethod(MockPayload payload) {
             manager.getReceiver(VOID_METHOD).receiveMessage(payload);
             return CompletableFuture.completedFuture(null);
@@ -113,7 +113,7 @@ public class CompletionStageIncomingMethodVerification extends Arquillian {
             return futures;
         }
 
-        @Incoming(topic = NON_PARALLEL)
+        @Incoming(name = NON_PARALLEL)
         public CompletionStage<Void> handleNonParallel(MockPayload payload) {
             manager.getReceiver(NON_PARALLEL).receiveMessage(payload);
             CompletableFuture<Void> future = new CompletableFuture<>();
@@ -121,7 +121,7 @@ public class CompletionStageIncomingMethodVerification extends Arquillian {
             return future;
         }
 
-        @Incoming(topic = NON_VOID_METHOD)
+        @Incoming(name = NON_VOID_METHOD)
         public CompletionStage<String> handleNonVoidMethod(MockPayload payload) {
             manager.getReceiver(NON_VOID_METHOD).receiveMessage(payload);
             return CompletableFuture.completedFuture("hello");
@@ -133,7 +133,7 @@ public class CompletionStageIncomingMethodVerification extends Arquillian {
             return syncFailed;
         }
 
-        @Incoming(topic = SYNC_FAILING)
+        @Incoming(name = SYNC_FAILING)
         public CompletionStage<Void> handleSyncFailing(MockPayload payload) {
             if (payload.getField1().equals("fail") && !syncFailed.getAndSet(true)) {
                 manager.getReceiver(SYNC_FAILING).receiveMessage(payload);
@@ -151,7 +151,7 @@ public class CompletionStageIncomingMethodVerification extends Arquillian {
             return asyncFailed;
         }
 
-        @Incoming(topic = ASYNC_FAILING)
+        @Incoming(name = ASYNC_FAILING)
         public CompletionStage<Void> handleAsyncFailing(MockPayload payload) {
             if (payload.getField1().equals("fail") && !asyncFailed.getAndSet(true)) {
                 manager.getReceiver(ASYNC_FAILING).receiveMessage(payload);
@@ -171,7 +171,7 @@ public class CompletionStageIncomingMethodVerification extends Arquillian {
             return wrappedFailed;
         }
 
-        @Incoming(topic = WRAPPED_MESSAGE)
+        @Incoming(name = WRAPPED_MESSAGE)
         public CompletionStage<Void> handleWrapped(Message<MockPayload> msg) {
             if (msg.getPayload().getField1().equals("acknowledged") || wrappedFailed.get()) {
                 manager.<MockPayload>getReceiver(WRAPPED_MESSAGE).receiveWrappedMessage(msg);
@@ -199,7 +199,7 @@ public class CompletionStageIncomingMethodVerification extends Arquillian {
             return outgoingWrappedFailed;
         }
 
-        @Incoming(topic = OUTGOING_WRAPPED)
+        @Incoming(name = OUTGOING_WRAPPED)
         public CompletionStage<Message<Void>> handleOutgoingWrapped(MockPayload msg) {
             if (msg.getField1().equals("fail") && !outgoingWrappedFailed.getAndSet(true)) {
                 manager.getReceiver(OUTGOING_WRAPPED).receiveMessage(msg);
@@ -220,7 +220,7 @@ public class CompletionStageIncomingMethodVerification extends Arquillian {
             return incomingOutgoingWrappedFailed;
         }
 
-        @Incoming(topic = INCOMING_OUTGOING_WRAPPED)
+        @Incoming(name = INCOMING_OUTGOING_WRAPPED)
         public CompletionStage<Message<Void>> handleIncomingOutgoingWrapped(Message<MockPayload> msg) {
             if (msg.getPayload().getField1().equals("acknowledged") || incomingOutgoingWrappedFailed.get()) {
                 manager.<MockPayload>getReceiver(INCOMING_OUTGOING_WRAPPED).receiveWrappedMessage(msg);

@@ -81,12 +81,12 @@ import java.lang.annotation.Target;
 public @interface Incoming {
 
     /**
-     * The topic to subscribe to.
+     * The name of the consumed stream.
      * <p>
      * If not set, it is assumed some other messaging provider specific mechanism will be used to identify which
      * messages this subscriber will receive.
      */
-    String topic() default "";
+    String name() default "";
 
     /**
      * The messaging provider.
