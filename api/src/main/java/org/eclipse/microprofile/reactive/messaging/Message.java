@@ -28,6 +28,7 @@ import java.util.function.Supplier;
  * <p>
  * Messaging providers may provide their own sub classes of this type, in order to allow messaging provider specific
  * information to be passed to and from applications.
+ * </p>
  *
  * @param <T> The type of the message payload.
  */
@@ -37,6 +38,7 @@ public interface Message<T> {
      * Create a message with the given payload.
      *
      * @param payload The payload.
+     * @param <T>     The type of payload
      * @return A message with the given payload, and a no-op ack function.
      */
     static <T> Message<T> of(T payload) {
@@ -48,6 +50,7 @@ public interface Message<T> {
      *
      * @param payload The payload.
      * @param ack     The ack function, this will be invoked when the returned messages {@link #ack()} method is invoked.
+     * @param <T>     the type of payload
      * @return A message with the given payload and ack function.
      */
     static <T> Message<T> of(T payload, Supplier<CompletionStage<Void>> ack) {
@@ -65,12 +68,15 @@ public interface Message<T> {
     }
 
     /**
-     * The payload for this message.
+     * @return The payload for this message.
      */
     T getPayload();
 
     /**
      * Acknowledge this message.
+     *
+     * @return a completion stage completed when the message is acknowledged. If the acknowledgement fails, the
+     * completion stage propagates the failure.
      */
     default CompletionStage<Void> ack() {
         return CompletableFuture.completedFuture(null);
