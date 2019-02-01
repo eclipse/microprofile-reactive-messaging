@@ -1,0 +1,68 @@
+//
+// Copyright (c) 2018 Contributors to the Eclipse Foundation
+//
+// See the NOTICE file(s) distributed with this work for additional
+// information regarding copyright ownership.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+= MicroProfile Reactive Messaging TCK
+
+This project contains the TCK for Reactive Messaging
+
+
+== Checking an implementation against the TCK
+
+In your implementation, create a new module depending on the TCK artifact:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.eclipse.microprofile.reactive.messaging</groupId>
+    <artifactId>microprofile-reactive-messaging-core-tck</artifactId>
+    <version>${microprofile-reactive-messaging.version}</version>
+</dependency>
+----
+
+This project will likely also depends on your implementation.
+
+As the tests are implemented in the TCK artifacts, you need to configure your test running to scan the tests included
+in this artifacts. With Maven it's done using the following plugin configuration:
+
+[source,xml]
+----
+<build>
+  <plugins>
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-surefire-plugin</artifactId>
+      <version>2.22.1</version>
+      <configuration>
+        <dependenciesToScan>org.eclipse.microprofile.reactive.messaging:microprofile-reactive-messaging-core-tck</dependenciesToScan>
+      </configuration>
+    </plugin>
+  </plugins>
+</build>
+----
+
+Finally, because the tests are going to package the "checked" application against your extension, you need to implement
+the `org.eclipse.microprofile.reactive.messaging.tck.ArchiveExtender` SPI that lets you add the classes required by your
+implementation into the tested application.
+
+The SPI must be implemented in your project and declare in the
+`META-INF/services/org.eclipse.microprofile.reactive.messaging.tck.ArchiveExtender` file.
+
+
+
+
+
