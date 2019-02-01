@@ -31,7 +31,6 @@
     <properties>
         <bnd.baseline.include.distribution.management>false</bnd.baseline.include.distribution.management>
     </properties>
-    <groupId>org.eclipse.microprofile.reactive.messaging</groupId>
     <artifactId>microprofile-reactive-messaging-api</artifactId>
     <name>MicroProfile Reactive Messaging API</name>
     <description>MicroProfile Reactive Messaging :: API</description>
@@ -41,8 +40,8 @@
             <artifactId>org.osgi.annotation.versioning</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.microprofile.reactive.streams</groupId>
-            <artifactId>microprofile-reactive-streams-operators</artifactId>
+            <groupId>org.eclipse.microprofile.reactive-streams-operators</groupId>
+            <artifactId>microprofile-reactive-streams-operators-api</artifactId>
         </dependency>
     </dependencies>
 
