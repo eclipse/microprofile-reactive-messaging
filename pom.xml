@@ -26,6 +26,7 @@
     <description>Eclipse MicroProfile Reactive Messaging :: Parent POM</description>
 
     <url>http://microprofile.io</url>
+    <inceptionYear>2018</inceptionYear>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -228,6 +229,31 @@
                     <logViolationsToConsole>true</logViolationsToConsole>
                     <configLocation>${project.basedir}/mp_checkstyle_rules.xml</configLocation>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>com.mycila</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>3.0</version>
+                <configuration>
+                    <aggregate>true</aggregate>
+                    <header>src/license/license.txt</header>
+                    <properties>
+                        <year>2019</year>
+                        <owner>Eclipse MicroProfile</owner>
+                    </properties>
+                    <mapping>
+                        <asciidoc>DOUBLESLASH_STYLE</asciidoc>
+                    </mapping>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>format</goal>
+                        </goals>
+                        <phase>process-sources</phase>
+                    </execution>
+                </executions>
             </plugin>
 
             <plugin>
