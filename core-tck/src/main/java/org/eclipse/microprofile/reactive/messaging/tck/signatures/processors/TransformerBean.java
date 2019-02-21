@@ -34,6 +34,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 
 @ApplicationScoped
 public class TransformerBean {
@@ -150,6 +151,7 @@ public class TransformerBean {
   }
 
   void verify() {
+    await().until(() -> collector.size() == 4);
     assertThat(collector).hasSize(4).allSatisfy((k, v) -> assertThat(v).containsExactlyElementsOf(EXPECTED));
     assertThat(counters.get("publisher-message")).hasValue(1);
     assertThat(counters.get("publisher-payload")).hasValue(1);

@@ -27,6 +27,7 @@ import org.junit.Test;
 import javax.inject.Inject;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 
 public class DependantScopeTest extends TckBase {
 
@@ -41,6 +42,7 @@ public class DependantScopeTest extends TckBase {
 
     @Test
     public void verify() {
+        await().until(() -> DependantBeans.getStaticList().size() == 1);
         assertThat(bean.getList()).isEmpty();
         assertThat(DependantBeans.getStaticList()).hasSize(1);
         assertThat(DependantBeans.getStaticList().get(0)).isGreaterThan(1);

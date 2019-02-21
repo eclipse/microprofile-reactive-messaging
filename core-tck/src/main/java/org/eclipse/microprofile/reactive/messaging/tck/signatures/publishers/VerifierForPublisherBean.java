@@ -32,6 +32,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 
 @ApplicationScoped
 public class VerifierForPublisherBean {
@@ -128,6 +129,7 @@ public class VerifierForPublisherBean {
     }
 
     void verify() {
+        await().until(() -> collector.size() == 10);
         assertThat(collector).hasSize(10).allSatisfy((k, v) -> assertThat(v).containsExactlyElementsOf(EXPECTED));
         Map<String, AtomicInteger> counters = PublisherBean.getCounters();
         assertThat(counters.get("publisher-message")).hasValue(1);

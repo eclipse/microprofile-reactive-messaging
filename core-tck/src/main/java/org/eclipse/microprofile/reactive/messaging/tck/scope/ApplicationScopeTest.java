@@ -27,6 +27,7 @@ import org.junit.Test;
 import javax.inject.Inject;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 
 public class ApplicationScopeTest extends TckBase {
 
@@ -41,6 +42,7 @@ public class ApplicationScopeTest extends TckBase {
 
   @Test
   public void verify() {
+    await().until(() -> bean.getList().size() == 1);
     assertThat(bean.getList()).containsExactly(1);
     assertThat(ApplicationBeans.getStaticList()).containsExactly(1);
   }

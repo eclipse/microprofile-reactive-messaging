@@ -31,6 +31,7 @@ import javax.inject.Inject;
 import java.util.ServiceLoader;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 
 @RunWith(Arquillian.class)
 public class SimpleIncomingTest {
@@ -50,7 +51,8 @@ public class SimpleIncomingTest {
 
   @Test
   public void testReceptionWithValues() {
-    assertThat(simple.getValues()).containsExactlyElementsOf(StringSource.VALUES);
+      await().until(() -> simple.getValues().size() == StringSource.VALUES.size());
+      assertThat(simple.getValues()).containsExactlyElementsOf(StringSource.VALUES);
   }
 
 

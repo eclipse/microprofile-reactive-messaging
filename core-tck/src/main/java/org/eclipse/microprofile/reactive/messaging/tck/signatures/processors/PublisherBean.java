@@ -33,6 +33,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 
 @ApplicationScoped
 public class PublisherBean {
@@ -139,6 +140,7 @@ public class PublisherBean {
     }
 
     void verify() {
+        await().until(() -> collector.size() == 4);
         assertThat(collector).hasSize(4).allSatisfy((k, v) -> assertThat(v).containsExactlyElementsOf(EXPECTED));
     }
 

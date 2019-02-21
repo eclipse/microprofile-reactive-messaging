@@ -31,6 +31,7 @@ import javax.inject.Inject;
 import java.util.ServiceLoader;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 
 @RunWith(Arquillian.class)
 public class ProcessorChainTest {
@@ -50,6 +51,7 @@ public class ProcessorChainTest {
 
     @Test
     public void test() {
+        await().until(() -> bean.list().size() == 4);
         assertThat(bean.list()).containsExactly("HELLO", "MICROPROFILE", "REACTIVE", "MESSAGING");
     }
 }
