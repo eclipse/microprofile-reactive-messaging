@@ -29,6 +29,7 @@ MicroProfile Reactive Messaging does not contain an implementation itself but on
 The following implementations are available:
 
 * https://github.com/lightbend/microprofile-reactive-messaging[Lightbend Alpakka]
+* https://www.smallrye.io/smallrye-reactive-messaging[SmallRye Reactive Messaging]
 
 == Building
 
