@@ -134,7 +134,7 @@ Messages are either acknowledged explicitly, or implicitly by the implementation
 
 Messages may be wrapped in a `Message`, which can be used to supply metadata, and also allows messages to be acknowledged. The contract for acknowledging messages is anything that accepts a `Message` is required to acknowledge it. So, if the application receives an incoming message wrapped in `Message`, it is responsible for invoking `Message.ack()`, and if the application produces an outgoing message wrapped in `Message`, then the spec implementation is responsible for invoking `Message.ack()`.
 
- For example, the following application code is incorrect, since it accepts a message wrapped in `Message`, but does not acknowledge the messages:
+For example, the following application code is incorrect, since it accepts a message wrapped in `Message`, but does not acknowledge the messages:
 
 [source, java]
 ----
