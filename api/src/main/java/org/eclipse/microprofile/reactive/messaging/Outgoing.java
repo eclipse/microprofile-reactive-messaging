@@ -18,6 +18,10 @@
  */
 package org.eclipse.microprofile.reactive.messaging;
 
+
+import org.eclipse.microprofile.reactive.streams.operators.ProcessorBuilder;
+import org.eclipse.microprofile.reactive.streams.operators.PublisherBuilder;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -29,12 +33,8 @@ import java.lang.annotation.Target;
  * Methods annotated with this annotation must have one of the following shapes:
  * </p>
  * <ul>
- * <li>Take zero parameters, and return a {@link org.eclipse.microprofile.reactive.streams.operators.PublisherBuilder}.
- * </li>
- * <li>Take zero parameters, and return a {@link org.reactivestreams.Publisher}.</li>
- * <li>Take zero parameters, and return a {@link org.eclipse.microprofile.reactive.streams.operators.ProcessorBuilder}.
- * </li>
- * <li>Take zero parameters, and return a {@link org.reactivestreams.Processor}.</li>
+ * <li>Take zero parameters, and return a {@link PublisherBuilder}, or a {@link org.reactivestreams.Publisher}.</li>
+ * <li>Take zero parameters, and return a {@link ProcessorBuilder} or a {@link org.reactivestreams.Processor}.</li>
  * <li>Accept a single parameter, and return a {@link java.util.concurrent.CompletionStage}.</li>
  * <li>Accept a single parameter, and return any type.</li>
  * </ul>
@@ -76,30 +76,7 @@ public @interface Outgoing {
      * destination that this publisher will send to.
      * </p>
      *
-     * @return the name of the stream
+     * @return the name of the stream, must not be blank.
      */
-    String value() default "";
-
-    /**
-     * The messaging provider.
-     * <p>
-     * If not set, then the container may provide a container specific mechanism for selecting a default messaging
-     * provider.
-     * </p>
-     * <p>
-     * Note that not all messaging providers are compatible with all containers, it is up to each container to
-     * decide which messaging providers it will accept, to define the messaging provider classes to pass here, and
-     * to potentially offer a container specific extension point for plugging in new containers.
-     * </p>
-     * <p>
-     * If the container does not support the selected messaging provider, it must raise a deployment exception before
-     * the container is initialized.
-     * </p>
-     * <p>
-     * The use of this property is inherently non portable.
-     * </p>
-     *
-     * @return the messaging provider
-     */
-    Class<? extends MessagingProvider> provider() default MessagingProvider.class;
+    String value();
 }

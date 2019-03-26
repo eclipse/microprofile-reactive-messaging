@@ -31,9 +31,6 @@ package org.eclipse.microprofile.reactive.messaging;
  * {@code org.example.container.ReactiveMessagingProvider}, and another container also supports the same technology,
  * it won't necessarily use the same class, and from the containers point of view, the two different classes
  * representing the same technology are for two different technologies.
- *
- * @see Incoming#provider()
- * @see Outgoing#provider()
  */
 public interface MessagingProvider {
 }
