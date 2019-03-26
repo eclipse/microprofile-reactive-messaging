@@ -59,6 +59,10 @@ Note that the class is just a marker class, it provides no actual functionality.
 
 An application developer may specify a specific messaging provider using the `provider` property on the `@Incoming` and `@Outging` annotations.
 
+==== Message stream operation
+
+Message stream operation occurs according to the principles of reactive programming. The back pressure mechanism of reactive streams means that a publisher will not send data to a subscriber unless there are outstanding subscriber requests. This implies that data flow along the stream is initiated by the first request for data received by the publisher. For methods that are annotated with `@Incoming` and `@Outgoing` this data flow control is handled automatically by the underlying system which will call the `@Incoming` and `@Outgoing` methods as appropriate. Although `@Incoming` and `@Outgoing` methods remain callable from Java code, calling them directly will not affect the reactive streams they are associated with. For example, calling an `@Outgoing` annotated method from user code will not post a message on a message queue and calling an `@Incoming` method cannot be used to read a message. Enabling this would bypass the automatic back pressure mechanism that is one of the benefits of the specification. The `@Incoming` and `@Outgoing` method annotations are used to declaratively define the stream when is then run by the particular implementation of MicroProfile Reactive Messaging without the user's code needing to handle concerns such as subscriptions or flow control of the stream. 
+
 ==== Message stream shapes
 
 The signature of message stream methods can have a number of different distinct types, offering differing levels of power and simplicity to application developers. Different shapes are supported depending on whether the method is a publisher, subscriber or processor, for example, a publishing stream supports returning MicroProfile Reactive Streams `PublisherBuilder`, but not `SubscriberBuilder`, the inverse is true for a subscribing stream.
