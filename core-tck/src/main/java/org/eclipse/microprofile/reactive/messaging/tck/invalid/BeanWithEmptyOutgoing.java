@@ -23,7 +23,7 @@ import org.eclipse.microprofile.reactive.messaging.Outgoing;
 
 public class BeanWithEmptyOutgoing {
 
-    @Outgoing
+    @Outgoing("")
     public String producer() {
         return "hello";
     }
