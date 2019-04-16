@@ -278,7 +278,7 @@
                         <goals>
                             <goal>format</goal>
                         </goals>
-                        <phase>process-sources</phase>
+                        <phase>verify</phase>
                     </execution>
                 </executions>
             </plugin>
