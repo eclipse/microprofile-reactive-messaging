@@ -114,7 +114,7 @@ The `org.eclipse.microprofile.reactive.messaging.Outgoing` annotation is used on
 
 [source,java]
 ----
-@Outgoing("my-channel")                                    // <1>
+@Outgoing("my-channel")                                        // <1>
 public Message<String> produce() {                             // <2>
   return Message.of("hello");                                  // <3>
 }
@@ -170,11 +170,16 @@ The user can associate a channel with this connector using:
 ----
 mp.messaging.incoming.my-kafka-topic.type=...Kafka  # <1>
 ----
-1. the value is the fully qualified name of the `MessagingProvider` class associated with the connector
+1. the value is the fully qualified name of the `MessagingProvider` class associated with the connector.
 
 The configuration format is detailed later in this document.
 
+The Reactive Messaging implementation is responsible to find the connector implementation associated with the given `MessagingProvider` in the user configuration.
+If the connector cannot be found, the deployment must be failed.
+
 The Reactive Messaging specification provides a SPI to implement connectors.
+
+=== Design
 
 ==== Message stream operation
 
@@ -188,7 +193,13 @@ For example, calling an `@Outgoing` annotated method from user code will not pos
 Enabling this would bypass the automatic back pressure mechanism that is one of the benefits of the specification.
 The `@Incoming` and `@Outgoing` method annotations are used to declaratively define the stream which is then run by the implementation of MicroProfile Reactive Messaging without the user's code needing to handle concerns such as subscriptions or flow control within the stream.
 
-==== Message stream shapes
+==== Supported Bean scope
+
+
+==== Method signatures
+
+This section lists the method signatures that implementation must support.
+
 
 The signature of message stream methods can have a number of different distinct types, offering differing levels of power and simplicity to application developers. Different shapes are supported depending on whether the method is a publisher, subscriber or processor, for example, a publishing stream supports returning MicroProfile Reactive Streams `PublisherBuilder`, but not `SubscriberBuilder`, the inverse is true for a subscribing stream.
 
