@@ -40,7 +40,7 @@ The role of the MicroProfile Reactive Messaging specification is to deliver a wa
 https://www.reactivemanifesto.org/[Reactive Systems] provide an architecture style to deliver _responsive_ systems. 
 By infusing asynchronous messaging passing at the core of the system, applications enforcing the reactive system's characteristics are inherently elastic and resilient.
 
-// TODO Picture
+image::reactive-system.png[Reactive System Characteristics, 400, 400]
 
 Microservices part of a reactive systems interacts using _messages_.
 The location and temporal decoupling, promoted by this interaction mechanism, exhibits numerous benefits such as:
