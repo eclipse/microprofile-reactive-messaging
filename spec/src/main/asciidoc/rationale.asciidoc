@@ -1,0 +1,80 @@
+//
+// Copyright (c) 2018-2019 Contributors to the Eclipse Foundation
+//
+// See the NOTICE file(s) distributed with this work for additional
+// information regarding copyright ownership.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// You may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
+[[reactivemessagingrationale]]
+== Rationale
+
+State-of-the-art systems must be able to adapt themselves to emerging needs and requirements, such as market change and user expectations but also fluctuating load and inevitable failures.
+Leading-edge applications are capable of dynamic and adaptive capabilities aiming to provide _responsive_ system.
+While microservices aim to offer this agility, HTTP-based connecting tissue tends to fail to provide the required runtime adaptations, especially when facing failures.
+
+Asynchronous communication allows temporal decoupling of services in a microservice based architecture. 
+This temporal decoupling implies that communication is allowed to occur regardless of when the parties involved in the communication are running, whether they are loaded or overloaded, and whether they are successfully processing messages or failing.
+
+In contrast, synchronous communication couples services together, binding their uptime, failure, and handling of the load to each other. 
+In a chain of synchronous interactions, the entire conversation can only be successful if all parties in the chain are responsive - if they are all running, processing messages successfully, and not overloaded. 
+If just one party has a problem, all effectively exhibit the same problem.
+Therefore, systems of microservices relying on HTTP tend to be _fragile_, and failures limit their availability.
+Indeed, in a microservice-based architecture, temporal coupling results in a fragile system, with resilience and scaling properties that are worse than a monolith, hence, it is essential for microservice based architectures to embrace asynchronous communication as much as possible. 
+
+The role of the MicroProfile Reactive Messaging specification is to deliver a way to build systems of microservices promoting both location transparency and temporal decoupling, enforcing asynchronous communication between the different parts of the system.
+
+=== Reactive Systems
+
+https://www.reactivemanifesto.org/[Reactive Systems] provide an architecture style to deliver _responsive_ systems. 
+By infusing asynchronous messaging passing at the core of the system, applications enforcing the reactive system's characteristics are inherently elastic and resilient.
+
+// TODO Picture
+
+Microservices part of a reactive systems interacts using _messages_.
+The location and temporal decoupling, promoted by this interaction mechanism, exhibits numerous benefits such as:
+
+* Better failure management as the temporal decoupling would avoid message-loss and avoid cascading failures.
+* Improved elasticity as under fluctuating load the system can decide to scale up and down some of the microservices.
+* The ability to introduce new feature quickly as every component receives and publishes messages.
+
+The MicroProfile Reactive Messaging specification aims to deliver applications embracing the characteristics of reactive systems.
+
+=== On JMS and Message Driven Beans
+
+Java EE offers JMS and Message Driven Beans for handling asynchronous communication; however, there are some problems with these specifications:
+
+* Both are designed for a technology landscape where messaging was a heavyweight process used on the edge of the system to hand control of a transaction from system to another; consequently, there is a lot of boilerplate associated with using these technologies.
+* It is assumed their design that consistency is handled using distributed transactions. 
+However, modern message brokers, popular in microservice deployments, such as Apache Kafka, Amazon Kinesis and Azure Event Hubs, do not support XA transactions, rather, message acknowledgment is handled using offsets with at least once delivery guarantees.
+* They do not have support for asynchronous IO; it is assumed that message processing is done on a single thread, however, many modern specifications are moving to asynchronous IO.
+
+Hence a lighter weight, reactive solution to messaging is desirable for MicroProfile to ensure microservices written using MicroProfile are able to meet the demands required by the architecture.
+
+=== Use cases
+
+MicroProfile Reactive Messaging aims to provide a way to implement _event-driven_ microservices using MicroProfile. 
+The key characteristics of the specification make it versatile and perfectly suited to build different types of architecture and applications.
+
+First, asynchronous interactions with different services and resources can be implemented using Reactive Messaging. 
+Typically, asynchronous database drivers can be used in conjunction with Reactive Messaging to read and write into a data store in a non-blocking and asynchronous manner.
+
+When building microservices, the CQRS and event-sourcing patterns provide an answer to the data sharing between microservices. 
+Reactive Messaging can also be used as the foundation to CQRS and Event-Sourcing mechanism, as these patterns embrace message-passing as core communication pattern.
+
+IOT applications, dealing with events from various devices, and data streaming applications can also be implemented using Reactive Messaging. 
+The application receives events or messages, process them, transform them, and may forward them to another microservices.
+It allows for more fluid architecture for building data-centric applications.
+
+// TODO Pictures for each use case would be nice.

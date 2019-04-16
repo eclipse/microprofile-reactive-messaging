@@ -22,21 +22,6 @@
 
 This specification defines an API for declaring messaging handlers using Reactive Streams.
 
-=== Rationale
-
-Asynchronous communication allows temporal decoupling of services in a microservice based architecture. The implication of this temporal decoupling is that communication is allowed to occur regardless of when the parties involved in the communication are running, whether they are loaded or overloaded, and whether they are successfully processing messages or failing.
-
-In contrast, synchronous communication couples services together, binding their uptime, failure and handling of load to each other. In a chain of synchronous communication, the entire conversation will only be successful if all parties in the chain are responsive - if they are all running, processing messages successfully, and not overloaded. If just one party has a problem, all will effectively exhibit the same problem.
-
-In a microservice based architecture, temporal coupling results in a fragile system, with resilience and scaling properties that are worse than a monolith, hence, it is important for microservice based architectures to embrace asynchronous communication as much as possible. MicroProfile currently does not offer support for asynchronous messaging, only synchronous messaging using JAX-RS and MicroProfile REST client are supported.
-
-Java EE offers JMS and Message Driven Beans for handling asynchronous communication, however, there are some problems with these specifications:
-
-* Both are designed for a technology landscape where messaging was a heavy weight process used on the edge of system to hand control of a transaction from system to another, consequently there is a lot of boilerplate associated with using these technologies.
-* It is assumed their design that consistency is handled using distributed transactions. However, modern message brokers, popular in microservice deployments, such as Apache Kafka, Amazon Kinesis and Azure Event Hubs, do not support XA transactions, rather, message acknowledgement is handled using offsets with at least once delivery guarantees.
-* They do not have support for asynchronous IO, it is assumed that message processing is done on a single thread, however many modern specs are moving to asynchronous IO.
-
-Hence a lighter weight, reactive solution to messaging is desirable for MicroProfile to ensure microservices written using MicroProfile are able to meet the demands required by the architecture.
 
 === Design
 

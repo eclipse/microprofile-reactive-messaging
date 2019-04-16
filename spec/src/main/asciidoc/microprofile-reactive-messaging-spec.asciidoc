@@ -37,4 +37,5 @@ include::license-alv2.asciidoc[]
 
 == MicroProfile Reactive Messaging
 
+include::rationale.asciidoc[]
 include::architecture.asciidoc[]
