@@ -20,14 +20,131 @@
 [[reactivemessagingarchitecture]]
 == Architecture
 
-This specification defines an API for declaring messaging handlers using Reactive Streams.
+The Reactive Messaging specification defines a development model for declaring CDI _beans_ producing, consuming and processing messages. 
+The communication between these components uses Reactive Streams. 
 
+This specification relies on https://github.com/eclipse/microprofile-reactive-streams-operators[Eclipse MicroProfile Reactive Streams Operators] and http://cdi-spec.org/[CDI].
 
-=== Design
+=== Concepts
 
-Applications declare message subscribers, publishers and processors by annotating methods on CDI beans with `@Incoming` and `@Outgoing` annotations. A method with an `@Incoming` annotation is a message subscriber, it consumes messages from a messaging provider. A method with an `@Outgoing` annotation is a message publisher, it emits messages to a messaging provider. A method with both an `@Incoming` and an `@Outgoing` annotation is a message processor, it consumes messages from one messaging provider, does some transformation to them, and emits messages to another, potentially different, messaging provider.
+This section describes the different concepts introduced by the Reactive Messaging specification
 
-==== Messaging providers
+==== Overall architecture
+
+An application using Reactive Messaging is composed by CDI beans consuming, producing and processing _messages_.
+These messages can be _internal_ messages and be received/forwared from/to different brokers.
+
+image::overall.png[Overall architecture]
+
+Application's beans contain methods annotated with `@Incoming` and `@Outgoing` annotations. 
+A method with an `@Incoming` annotation consumes messages. 
+A method with an `@Outgoing` annotation produces messages, it emits messages to a destination.
+A method with both an `@Incoming` and an `@Outgoing` annotation is a message processor, it consumes messages from a destination, does some transformation to them, and emits messages to destination.
+
+==== Destination
+
+A _destination_ is a name indicating from expected messages are consumed or to where messages are sent.
+There are two type of destinations:
+
+* Internal destination are local to the application. 
+It allows implementing multi-step processing.
+* Destinations can be _connected_ to remote broker or various message transport layer such as Apache Kafka or to an AMQP broker.
+These destinations are managed by _connectors_.
+
+==== Message
+
+At the core of the Reactive Messaging specification is the concept of _message_. 
+A _message_  is an enveloppe wrapping a _payload_. 
+A message is sent to a specific destination and, when received and processed successfuly, _acknowledged_.
+
+Reactive Messaging application components are addressable recipients await the arrival of messages and react to them, otherwise lying dormant. 
+
+Message are represented by the `org.eclipse.microprofile.reactive.messaging.Message` class. 
+This interface is kept minimal on purpose aiming _connectors_ to provide their own with additional metadata.
+For instance, a `KafkaMessage` would provide access to the _topic_ and _partition_.
+
+The `org.eclipse.microprofile.reactive.messaging.Message#getPayload` method retrieves the wrapped payload. 
+The `org.eclipse.microprofile.reactive.messaging.Message#ack` method acknowledges the message.
+Note that the `ack` method is asynchronous as acknowledgement is generally an asynchronous process.
+
+_Plain_ messages are created using:
+
+* `org.eclipse.microprofile.reactive.messaging.Message#of(T)` - wraps the given payload, no acknowledgement
+* `org.eclipse.microprofile.reactive.messaging.Message#of(T, java.util.function.Supplier<java.util.concurrent.CompletionStage<java.lang.Void>>)` - wraps the given payload and provides the acknowlegment logic
+
+==== Message consumption with @Incoming
+
+The `org.eclipse.microprofile.reactive.messaging.Incoming` annotation is used on a method from a CDI bean to indicate that the method consumes messages from the specified destination:
+
+[source,java]
+----
+@Incoming("my-destination")                                            // <1>
+public CompletionStage<Void> consume(Message<String> message) {        // <2>
+  return message.ack();
+}
+----
+1. `my-destination` is the destination
+2. the method is called for every message sent to the `my-destination` destination
+
+Reactive Messaging support various form of method signatures.
+This is detailed in the next section.
+
+Remember that Reactive Messaging interactions are made using Reactive Streams.
+A method annotated with `@Incoming` is a Reactive Streams _subscriber_ and so consumes messages according to the request it makes.
+Note that the handling of the Reactive Streams protocol is managed by the Reactive Messaging implementation.
+
+From the user perspective, whether the incoming messages come from a co-located beans or a remote message broker is transparent.
+However, the user may decide to consume a specific subclass of `Message` if he is aware of this characteristic:
+
+[source,java]
+----
+@Incoming("my-kafka-topic")               
+public CompletionStage<Void> consume(KafkaMessage<String> message) {    // <1>
+  return message.ack();
+}
+----
+1. Explicit consumption of a `KafkaMessage`
+
+==== Message production with @Outgoing
+
+The `org.eclipse.microprofile.reactive.messaging.Outgoing` annotation is used on a method from a CDI bean to indicate that the method produces messages to a specified destination:
+
+[source,java]
+----
+@Outgoing("my-destination")                                    // <1>
+public Message<String> produce() {                             // <2>
+  return Message.of("hello");                                  // <3>
+}
+----
+1. `my-destination` is the targeted destination
+2. the method is called for every consumer _request_
+3. you can create a _plain_ `org.eclipse.microprofile.reactive.messaging.Message` using `org.eclipse.microprofile.reactive.messaging.Message#of(T)`
+
+Reactive Messaging support various form of method signatures.
+This is detailed in the next section.
+
+A method annotated with `@Outgoing` is a Reactive Streams _publisher_ and so publishes messages according to the request it receives.
+
+===== Method consuming and producing
+
+A method can combine the `@Incoming` and `@Outgoing` annotation and acts as a Reactive Streams processor:
+
+[source,java]
+----
+@Incoming("my-incoming-destination")                            // <1>
+@Outgoing("my-outgoing-destination")                            // <2>
+public Message<String> process(Message<String> message) { 
+  return Message.of(message.getPayload().toUpperCase());
+}
+----
+1. The incoming destination
+2. The outgoing destination
+
+==== Connectors and Messaging Provider
+
+The application can receives and forward messages from various message broker or transport layer.
+For instance, an application can be connected to a Kafka cluster, an AMQP broker or an MQTT server.
+
 
 A messaging provider is an abstract concept provided by this spec, it typically will correspond to a messaging transport, such as Apache Kafka, Amazon Kinesis, RabbitMQ or Apache ActiveMQ. It is up an implementation as to which and how many transports it will support. Implementations may provide a default messaging transport, and that default may be configurable, all this is left up to the implementation to decide on the mechanism for providing that. Implementations may also provide an SPI for plugging in custom messaging providers, the definition of that SPI is up to the implementation, and beyond the scope of this specification. A future iteration of this spec may provide such an SPI, for example based on the Java EE Connector Architecture, but currently this is out of scope.
 
