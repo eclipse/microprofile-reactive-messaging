@@ -31,27 +31,27 @@ This section describes the different concepts introduced by the Reactive Messagi
 
 ==== Overall architecture
 
-An application using Reactive Messaging is composed by CDI beans consuming, producing and processing _messages_.
+An application using Reactive Messaging is composed of CDI beans consuming, producing and processing _messages_.
 
-These messages can be _internal_ messages and be received/forwared from/to different brokers.
+These messages can be wholly _internal_ to the application or can be sent and received via different message brokers.
 
 image::overall.png[Overall architecture]
 
 Application's beans contain methods annotated with `@Incoming` and `@Outgoing` annotations. 
 A method with an `@Incoming` annotation consumes messages from a _channel_. 
-A method with an `@Outgoing` annotation produces messages, it emits messages to a _channel_.
-A method with both an `@Incoming` and an `@Outgoing` annotation is a message processor, it consumes messages from a _channel_, does some transformation to them, and emits messages to another_channel_.
+A method with an `@Outgoing` annotation publishes messages to a _channel_.
+A method with both an `@Incoming` and an `@Outgoing` annotation is a message processor, it consumes messages from a _channel_, does some transformation to them, and publishes messages to another_channel_.
 
 ==== Channel
 
-A _channel_ is a name indicating from expected messages are consumed or to where messages are sent.
+A _channel_ is a name indicating which source or destination of messages is used.
 Channels are opaque `Strings`.
 
-There are two type of channel:
+There are two types of channel:
 
 * Internal channels are local to the application. 
-It allows implementing multi-step processing where several _beans_ from the same application form a chain of processing.
-* Channels can be _connected_ to remote brokers or various message transport layer such as Apache Kafka or to an AMQP broker.
+They allows implementing multi-step processing where several _beans_ from the same application form a chain of processing.
+* Channels can be _connected_ to remote brokers or various message transport layers such as Apache Kafka or to an AMQP broker.
 These channels are managed by _connectors_.
 
 ==== Message
@@ -60,10 +60,10 @@ At the core of the Reactive Messaging specification is the concept of _message_.
 A _message_  is an enveloppe wrapping a _payload_. 
 A message is sent to a specific channel and, when received and processed successfuly, _acknowledged_.
 
-Reactive Messaging application components are addressable recipients await the arrival of messages on a channel and react to them, otherwise lying dormant. 
+Reactive Messaging application components are addressable recipients which await the arrival of messages on a channel and react to them, otherwise lying dormant. 
 
-Message are represented by the `org.eclipse.microprofile.reactive.messaging.Message` class. 
-This interface is kept minimal on purpose aiming _connectors_ to provide their own with additional metadata.
+Messages are represented by the `org.eclipse.microprofile.reactive.messaging.Message` class. 
+This interface is intentionally kept minimal. The aim is that _connectors_ will provide their own implementations with additional metadata that is relevant to that connector.
 For instance, a `KafkaMessage` would provide access to the _topic_ and _partition_.
 
 The `org.eclipse.microprofile.reactive.messaging.Message#getPayload` method retrieves the wrapped payload. 
@@ -89,14 +89,14 @@ public CompletionStage<Void> consume(Message<String> message) {        // <2>
 1. `my-channel` is the channel
 2. the method is called for every message sent to the `my-channel` channel
 
-Reactive Messaging support various form of method signatures.
+Reactive Messaging support various forms of method signatures.
 This is detailed in the next section.
 
-Remember that Reactive Messaging interactions are made using Reactive Streams.
-A method annotated with `@Incoming` is a Reactive Streams _subscriber_ and so consumes messages according to the request it makes.
-Note that the handling of the Reactive Streams protocol is managed by the Reactive Messaging implementation.
+Remember that Reactive Messaging interactions are assembled from Reactive Streams.
+A method annotated with `@Incoming` is a Reactive Streams _subscriber_ and so consumes messages that fit with the message signature and its annotations.
+Note that the handling of the Reactive Streams protocol, such as subscriptions and back pressure, is managed by the Reactive Messaging implementation.
 
-From the user perspective, whether the incoming messages come from a co-located beans or a remote message broker is transparent.
+From the user perspective, whether the incoming messages come from co-located beans or a remote message broker is transparent.
 However, the user may decide to consume a specific subclass of `Message` if the user is aware of this characteristic:
 
 [source,java]
@@ -110,12 +110,12 @@ public CompletionStage<Void> consume(KafkaMessage<String> message) {    // <1>
 
 ==== Message production with @Outgoing
 
-The `org.eclipse.microprofile.reactive.messaging.Outgoing` annotation is used on a method from a CDI bean to indicate that the method produces messages to a specified channel:
+The `org.eclipse.microprofile.reactive.messaging.Outgoing` annotation is used to annotate a method from a CDI bean to indicate that the method publishes messages to a specified channel:
 
 [source,java]
 ----
 @Outgoing("my-channel")                                        // <1>
-public Message<String> produce() {                             // <2>
+public Message<String> publish() {                             // <2>
   return Message.of("hello");                                  // <3>
 }
 ----
@@ -207,7 +207,7 @@ Implementations must validate that the stream shape matches the `@Outgoing` and 
 
 ===== Simple method streams
 
-The simplest shape that an application may use is a simple method. This is a method that accepts an incoming message, and possibly produces an outgoing message:
+The simplest shape that an application may use is a simple method. This is a method that accepts an incoming message, and possibly publishes an outgoing message:
 
 [source, java]
 ----
@@ -272,7 +272,7 @@ Messages are either acknowledged explicitly, or implicitly by the implementation
 
 ===== Explicit acknowledgement
 
-Messages may be wrapped in a `Message`, which can be used to supply metadata, and also allows messages to be acknowledged. The contract for acknowledging messages is anything that accepts a `Message` is required to acknowledge it. So, if the application receives an incoming message wrapped in `Message`, it is responsible for invoking `Message.ack()`, and if the application produces an outgoing message wrapped in `Message`, then the spec implementation is responsible for invoking `Message.ack()`.
+Messages may be wrapped in a `Message`, which can be used to supply metadata, and also allows messages to be acknowledged. The contract for acknowledging messages is anything that accepts a `Message` is required to acknowledge it. So, if the application receives an incoming message wrapped in `Message`, it is responsible for invoking `Message.ack()`, and if the application publish an outgoing message wrapped in `Message`, then the spec implementation is responsible for invoking `Message.ack()`.
 
 For example, the following application code is incorrect, since it accepts a message wrapped in `Message`, but does not acknowledge the messages:
 
@@ -323,7 +323,7 @@ Incoming messages may be implicitly acknowledged if the incoming message is not 
 
 If the method returns a subscriber, then the message should be acknowledged before being sent to the subscriber.
 
-If the method returns a processor, then it is assumed that there is a 1:1 relationship between incoming and outgoing messages, and the implementation should acknowledge incoming messages as corresponding outgoing messages are emitted.
+If the method returns a processor, then it is assumed that there is a 1:1 relationship between incoming and outgoing messages, and the implementation should acknowledge incoming messages as corresponding outgoing messages are published.
 
 ==== Custom message types
 
