@@ -89,7 +89,7 @@ public CompletionStage<Void> consume(Message<String> message) {        // <2>
 1. `my-channel` is the channel
 2. the method is called for every message sent to the `my-channel` channel
 
-Reactive Messaging support various forms of method signatures.
+Reactive Messaging supports various forms of method signatures.
 This is detailed in the next section.
 
 Remember that Reactive Messaging interactions are assembled from Reactive Streams.
@@ -123,14 +123,14 @@ public Message<String> publish() {                             // <2>
 2. the method is called for every consumer _request_
 3. you can create a _plain_ `org.eclipse.microprofile.reactive.messaging.Message` using `org.eclipse.microprofile.reactive.messaging.Message#of(T)`
 
-Reactive Messaging support various form of method signatures.
+Reactive Messaging supports various forms of method signatures.
 This is detailed in the next section.
 
-A method annotated with `@Outgoing` is a Reactive Streams _publisher_ and so publishes messages according to the request it receives.
+A method annotated with `@Outgoing` is a Reactive Streams _publisher_ and so publishes messages according to the requests it receives.
 
 ===== Method consuming and producing
 
-A method can combine the `@Incoming` and `@Outgoing` annotation and acts as a Reactive Streams processor:
+A method can combine the `@Incoming` and `@Outgoing` annotation and will then act as a Reactive Streams processor:
 
 [source,java]
 ----
@@ -145,13 +145,13 @@ public Message<String> process(Message<String> message) {
 
 ==== Connectors and Messaging Providers
 
-The application can receive and forward messages from various message broker or transport layer.
+The application can receive and forward messages from various message brokers or transport layers.
 For instance, an application can be connected to a Kafka cluster, an AMQP broker or an MQTT server.
 
-Reactive Messaging _Connectors_ are extension managing the communication with a specific transport technology.
-They are responsible for mapping specific _channel_ to remote sink or source of messages.
+Reactive Messaging _Connectors_ are extensions managing the communication with a specific transport technology.
+They are responsible for mapping a specific _channel_ to remote sink or source of messages.
 This mapping is configured in the application configuration.
-Note that implementation may provide various way to configure the mapping, but the support of MicroProfile Config is mandatory.
+Note that an implementation may provide various ways to configure the mapping, but support for MicroProfile Config as a configuration source is mandatory.
 
 Connectors are associated with a `org.eclipse.microprofile.reactive.messaging.MessagingProvider` class corresponding to a messaging transport, such as Apache Kafka, Amazon Kinesis, RabbitMQ or Apache ActiveMQ.
 For instance, an hypthetic Kafka connector would be associated with the following class:
@@ -174,8 +174,8 @@ mp.messaging.incoming.my-kafka-topic.type=...Kafka  # <1>
 
 The configuration format is detailed later in this document.
 
-The Reactive Messaging implementation is responsible to find the connector implementation associated with the given `MessagingProvider` in the user configuration.
-If the connector cannot be found, the deployment must be failed.
+The Reactive Messaging implementation is responsible for finding the connector implementation associated with the given `MessagingProvider` in the user configuration.
+If the connector cannot be found, the deployment of the application must be failed.
 
 The Reactive Messaging specification provides a SPI to implement connectors.
 

@@ -21,16 +21,16 @@
 == Rationale
 
 State-of-the-art systems must be able to adapt themselves to emerging needs and requirements, such as market change and user expectations but also fluctuating load and inevitable failures.
-Leading-edge applications are capable of dynamic and adaptive capabilities aiming to provide _responsive_ system.
+Leading-edge applications are capable of dynamic and adaptive capabilities aiming to provide _responsive_ systems.
 While microservices aim to offer this agility, HTTP-based connecting tissue tends to fail to provide the required runtime adaptations, especially when facing failures.
 
 Asynchronous communication allows temporal decoupling of services in a microservice based architecture. 
-This temporal decoupling implies that communication is allowed to occur regardless of when the parties involved in the communication are running, whether they are loaded or overloaded, and whether they are successfully processing messages or failing.
+This temporal decoupling is necessary if communication is to be enabled to occur regardless of when the parties involved in the communication are running, whether they are loaded or overloaded, and whether they are successfully processing messages or failing.
 
 In contrast, synchronous communication couples services together, binding their uptime, failure, and handling of the load to each other. 
 In a chain of synchronous interactions, the entire conversation can only be successful if all parties in the chain are responsive - if they are all running, processing messages successfully, and not overloaded. 
 If just one party has a problem, all effectively exhibit the same problem.
-Therefore, systems of microservices relying on HTTP tend to be _fragile_, and failures limit their availability.
+Therefore, systems of microservices relying on synchronous HTTP or relying on synchronous protocols tend to be _fragile_, and failures limit their availability.
 Indeed, in a microservice-based architecture, temporal coupling results in a fragile system, with resilience and scaling properties that are worse than a monolith, hence, it is essential for microservice based architectures to embrace asynchronous communication as much as possible. 
 
 The role of the MicroProfile Reactive Messaging specification is to deliver a way to build systems of microservices promoting both location transparency and temporal decoupling, enforcing asynchronous communication between the different parts of the system.
@@ -38,16 +38,16 @@ The role of the MicroProfile Reactive Messaging specification is to deliver a wa
 === Reactive Systems
 
 https://www.reactivemanifesto.org/[Reactive Systems] provide an architecture style to deliver _responsive_ systems. 
-By infusing asynchronous messaging passing at the core of the system, applications enforcing the reactive system's characteristics are inherently elastic and resilient.
+By infusing asynchronous messaging passing at the core of the system, applications enforcing the reactive system's characteristics are inherently resilient and become more elastic by scaling up and down the number of message consumers.
 
 image::reactive-system.png[Reactive System Characteristics, 400, 400]
 
-Microservices part of a reactive systems interacts using _messages_.
-The location and temporal decoupling, promoted by this interaction mechanism, exhibits numerous benefits such as:
+Microservices as part of reactive systems interact using _messages_.
+The location and temporal decoupling, promoted by this interaction mechanism, enable numerous benefits such as:
 
-* Better failure management as the temporal decoupling would avoid message-loss and avoid cascading failures.
+* Better failure handling as the temporal decoupling enables message brokers to resend or reroute messages in the case of remote service failures.
 * Improved elasticity as under fluctuating load the system can decide to scale up and down some of the microservices.
-* The ability to introduce new feature quickly as every component receives and publishes messages.
+* The ability to introduce new features more easily as components are more loosely coupled by receiving and publishing messages.
 
 The MicroProfile Reactive Messaging specification aims to deliver applications embracing the characteristics of reactive systems.
 
@@ -57,15 +57,15 @@ Java EE offers JMS and Message Driven Beans for handling asynchronous communicat
 
 * Both are designed for a technology landscape where messaging was a heavyweight process used on the edge of the system to hand control of a transaction from system to another; consequently, there is a lot of boilerplate associated with using these technologies.
 * It is assumed their design that consistency is handled using distributed transactions. 
-However, modern message brokers, popular in microservice deployments, such as Apache Kafka, Amazon Kinesis and Azure Event Hubs, do not support XA transactions, rather, message acknowledgment is handled using offsets with at least once delivery guarantees.
+However, many message brokers, popular in microservice deployments, such as Apache Kafka, Amazon Kinesis and Azure Event Hubs, do not support XA transactions, rather, message acknowledgment is handled using offsets with at least once delivery guarantees.
 * They do not have support for asynchronous IO; it is assumed that message processing is done on a single thread, however, many modern specifications are moving to asynchronous IO.
 
 Hence a lighter weight, reactive solution to messaging is desirable for MicroProfile to ensure microservices written using MicroProfile are able to meet the demands required by the architecture.
 
 === Use cases
 
-MicroProfile Reactive Messaging aims to provide a way to implement _event-driven_ microservices using MicroProfile. 
-The key characteristics of the specification make it versatile and perfectly suited to build different types of architecture and applications.
+MicroProfile Reactive Messaging aims to provide a way to connect event-driven microservices.
+The key characteristics of the specification make it versatile and suitable for building different types of architecture and applications.
 
 First, asynchronous interactions with different services and resources can be implemented using Reactive Messaging. 
 Typically, asynchronous database drivers can be used in conjunction with Reactive Messaging to read and write into a data store in a non-blocking and asynchronous manner.
