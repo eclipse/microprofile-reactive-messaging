@@ -653,17 +653,347 @@ public PublisherBuilder<IncomingMessage, OutgoingMessage> processMessages() {
 
 ==== Message acknowledgement
 
+Acknowledgement is an important part of message processing.
 Messages are either acknowledged explicitly, or implicitly by the implementation.
 
-===== Explicit acknowledgement
+Acknowledgement is controlled by the `org.eclipse.microprofile.reactive.messaging.Acknowledgment` annotation. 
+The annotation allows configuring the acknowledgement strategy among:
 
-Messages may be wrapped in a `Message`, which can be used to supply metadata, and also allows messages to be acknowledged. The contract for acknowledging messages is anything that accepts a `Message` is required to acknowledge it. So, if the application receives an incoming message wrapped in `Message`, it is responsible for invoking `Message.ack()`, and if the application publish an outgoing message wrapped in `Message`, then the spec implementation is responsible for invoking `Message.ack()`.
+* `NONE` - no acknowledgment is performed
+* `MANUAL` - the user is responsible for the acknowledgement, so the Reactive Messaging implementation does not apply implicit acknowledgement
+* `PRE_PROCESSING` - the Reactive Messaging implementation acknowledges the message before the annotated method or processing is executed
+* `POST_PROCESSING` - the Reactive Messaging implementation acknowledges the message once:
+
+  1. the method or processing completes if the method does not emit data
+  2. when the emitted data is acknowledged
+
+Each method signatures has different defaults and accept a different set of strategy.
+If the `Acknowledgment` annotation is not set, the default policy is applied.
+
+The following table indicates the defaults and supported acknowledgement for each supported signature:
+
+[cols="2a,1,1",options="header"]
+|===
+|Signature
+|Default Acknoledgement Strategy
+|Supported Strategies
+
+|
+[source, java]
+----
+@Outgoing("name") 
+Publisher<Message<O>> method()
+----
+| None
+| 
+
+|
+[source, java]
+----
+@Outgoing("channel") 
+Publisher<O> method()
+----
+| None
+| 
+
+|
+[source, java]
+----
+@Outgoing("channel") 
+PublisherBuilder<Message<O>> method()
+----
+| None
+| 
+
+|
+[source, java]
+----
+@Outgoing("channel") 
+PublisherBuilder<O> method()
+----
+| None
+| 
+
+|
+[source, java]
+----
+@Outgoing("channel") 
+Message<O> method()
+----
+| None
+| 
+
+|
+[source, java]
+----
+@Outgoing("channel")
+O method()
+----
+| None
+| 
+
+|
+[source, java]
+----
+@Outgoing("channel")
+CompletionStage<Message<O>> method()
+----
+| None
+| 
+
+|
+[source, java]
+----
+@Outgoing("channel") 
+CompletionStage<O> method()
+----
+| None
+| none
+
+|
+[source,java]
+----
+@Incoming("channel")
+Subscriber<Message<I>> method()
+----
+| Post-Processing	
+| None, Pre-Processing, Post-Processing, Manual
+
+|
+[source,java]
+----
+@Incoming("channel")
+Subscriber<I> method()
+----
+| Post-Processing	
+| None, Pre-Processing, Post-Processing
+
+|
+[source,java]
+----
+@Incoming("channel") 
+SubscriberBuilder<Message<I>> method()
+----
+| Post-Processing	
+| None, Pre-Processing, Post-Processing, Manual
+
+
+|
+[source,java]
+----
+@Incoming("channel")
+SubscriberBuilder<I> method()
+----
+| Post-Processing	
+| None, Pre-Processing, Post-Processing
+
+|
+[source,java]
+----
+@Incoming("channel")
+void method(I payload)
+----
+| Post-Processing	
+| None, Pre-Processing, Post-Processing
+
+|
+[source,java]
+----
+@Incoming("channel")
+CompletionStage<?> method(Message<I> msg)
+----
+| Post-Processing	
+| None, Pre-Processing, Post-Processing, Manual
+
+|
+[source,java]
+----
+@Incoming("channel") 
+CompletionStage<?> method(I payload)
+----
+| Post-Processing	
+| None, Pre-Processing, Post-Processing
+
+| 
+[source,java]
+----
+@Incoming("in")
+@Outgoing("out")
+Processor<Message<I>, Message<O>> method()
+----
+| Pre-Processing
+| None, Pre-Processing, Manual
+Post-Processing can be optionaly supported by implementations, however it requires a 1:1 mapping between the incoming message and the outgoing message.
+
+| 
+[source,java]
+----
+@Incoming("in")
+@Outgoing("out") 
+Processor<I, O> method();
+----
+| Pre-Processing
+| None, Pre-Processing
+Post-Processing can be optionaly supported by implementations, however it requires a 1:1 mapping between the incoming message and the outgoing message.
+
+|
+[source,java]
+----
+@Incoming("in")
+@Outgoing("out") 
+ProcessorBuilder<Message<I>, Message<O>> method();
+----
+| Pre-Processing
+| None, Pre-Processing, Manual
+Post-Processing can be optionaly supported by implementations, however it requires a 1:1 mapping between the incoming message and the outgoing message.
+
+|
+[source,java]
+----
+@Incoming("in")
+@Outgoing("out") 
+ProcessorBuilder<I, O> method();
+----
+| Pre-Processing
+| None, Pre-Processing
+Post-Processing can be optionaly supported by implementations, however it requires a 1:1 mapping between the incoming message and the outgoing message.
+
+|
+[source,java]
+----
+@Incoming("in")
+@Outgoing("out") 
+Publisher<Message<O>> method(Message<I> msg)
+----
+| Pre-Processing
+| None, Manual, Pre-Processing
+
+|
+[source,java]
+----
+@Incoming("in")
+@Outgoing("out") 
+Publisher<O> method(I payload)
+----
+| Pre-Processing
+| None, Pre-Processing
+
+|
+[source,java]
+----
+@Incoming("in")
+@Outgoing("out") 
+PublisherBuilder<Message<O>> method(Message<I> msg)
+----
+| Pre-Processing
+| None, Manual, Pre-Processing
+
+|
+[source,java]
+----
+@Incoming("in")
+@Outgoing("out") 
+PublisherBuilder<O> method(I payload)
+----
+| Pre-Processing
+| None, Pre-Processing
+
+
+|
+[source,java]
+----
+@Incoming("in")
+@Outgoing("out") 
+Message<O> method(Message<I> msg)
+----
+| Post-Processing
+| None, Manual, Pre-Processing, Post-Processing
+
+|
+[source,java]
+----
+@Incoming("in")
+@Outgoing("out") 
+O method(I payload)
+----
+| Post-Processing
+| None, Pre-Processing, Post-Processing
+
+|
+[source,java]
+----
+@Incoming("in")
+@Outgoing("out") 
+CompletionStage<Message<O>> 
+method(Message<I> msg)
+----
+| Post-Processing
+| None, Manual, Pre-Processing, Post-Processing
+
+|
+[source,java]
+----
+@Incoming("in")
+@Outgoing("out") 
+CompletionStage<O> method(I payload)
+----
+| Post-Processing
+| None, Pre-Processing, Post-Processing
+
+|
+[source,java]
+----
+@Incoming("in")
+@Outgoing("out") 
+Publisher<Message<O>> method(Publisher<Message<I>> pub)
+----
+| Pre-Processing
+| None, Manual, Pre-Processing
+
+|
+[source,java]
+----
+@Incoming("in")
+@Outgoing("out") 
+PublisherBuilder<Message<O>> method(PublisherBuilder<Message<I>> pub)
+----
+| Pre-Processing
+| None, Manual, Pre-Processing
+
+|
+[source,java]
+----
+@Incoming("in")
+@Outgoing("out") 
+Publisher<O> method(Publisher<I> pub)
+----
+| Pre-Processing
+| None, Pre-Processing
+
+|
+[source,java]
+----
+@Incoming("in")
+@Outgoing("out") 
+PublisherBuilder<O> method(PublisherBuilder<I> pub)
+----
+| Pre-Processing
+| None, Pre-Processing
+
+Invalid acknowledgement policies must be detected and a `DeploymentException` raised when the application starts.
+
+===== Acknowledgement Examples
+
+Transiting data may be wrapped in a `Message`, which can be used to supply metadata, and also allows messages to be acknowledged. 
+The contract for acknowledging messages is anything that accepts a `Message` is required to acknowledge it. 
+So, if the application receives an incoming message wrapped in `Message`, it is responsible for invoking `Message.ack()`, and if the application publish an outgoing message wrapped in `Message`, then the spec implementation is responsible for invoking `Message.ack()`.
 
 For example, the following application code is incorrect, since it accepts a message wrapped in `Message`, but does not acknowledge the messages:
 
 [source, java]
 ----
 @Incoming
+@Acknowledgment(MANUAL)
 public void processMessage(Message<IncomingMessage> msg) {
   System.out.println("Got message " + msg.getPayload());
 }
@@ -674,6 +1004,7 @@ Here is a correct implementation:
 [source, java]
 ----
 @Incoming
+@Acknowledgment(MANUAL)
 public CompletionStage<Void> processMessage(Message<IncomingMessage> msg) {
   System.out.println("Got message " + msg.getPayload());
   return msg.ack();
@@ -702,14 +1033,9 @@ public Message<OutgoingMessage> processMessage(Message<IncomingMessage> msg) {
 }
 ----
 
-===== Implicit acknowledgement
+The implementation is reponsible to enforce the acknowledgement strategy defined by the user when the `@Acknowledgement` policy is used. 
+If the annotation is not used, the default policy must be enforced.
 
-Incoming messages may be implicitly acknowledged if the incoming message is not wrapped in `Message`. When it is acknowledged depends on the shape of the method. For simple method streams, the message should be acknowledged after the return value of the method is redeemed - for synchronous methods, this is when the method returns, for asynchronous methods, this is when the returned `CompletionStage` is redeemed.
+// ==== Custom message types
 
-If the method returns a subscriber, then the message should be acknowledged before being sent to the subscriber.
-
-If the method returns a processor, then it is assumed that there is a 1:1 relationship between incoming and outgoing messages, and the implementation should acknowledge incoming messages as corresponding outgoing messages are published.
-
-==== Custom message types
-
-Implementations may provide custom subtypes of `Message` as an end user API, for the purpose of providing additional metadata associated with the messaging provider. If an application declares that it consumes or produces a subtype of the `Message` wrapper, the implementation should validate that the messaging provider supports that message wrapper type, and raise a deployment exception if it doesn't.
+// Implementations may provide custom subtypes of `Message` as an end user API, for the purpose of providing additional metadata associated with the messaging provider. If an application declares that it consumes or produces a subtype of the `Message` wrapper, the implementation should validate that the messaging provider supports that message wrapper type, and raise a deployment exception if it doesn't.
