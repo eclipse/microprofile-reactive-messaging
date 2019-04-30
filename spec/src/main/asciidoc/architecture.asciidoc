@@ -193,47 +193,441 @@ For example, calling an `@Outgoing` annotated method from user code will not pos
 Enabling this would bypass the automatic back pressure mechanism that is one of the benefits of the specification.
 The `@Incoming` and `@Outgoing` method annotations are used to declaratively define the stream which is then run by the implementation of MicroProfile Reactive Messaging without the user's code needing to handle concerns such as subscriptions or flow control within the stream.
 
-==== Supported Bean scope
+==== Supported CDI scopes
 
+Implementations of the Reactive Messaging specification must support at least the following CDI scopes:
 
-==== Method signatures
+* `@ApplicationScoped` beans
+* `@Dependent` beans
 
-This section lists the method signatures that implementation must support.
+The following code gives an example of a bean annotated with `@ApplicationScoped`:
 
+[source,java]
+----
+@ApplicationScoped
+public class ApplicationScopeBeans {
+
+  @Outgoing("source")
+  public Publisher<Integer> source() {
+    return ReactiveStreams.of(id).buildRs();
+  }
+
+  @Incoming("source")
+  @Outgoing("output")
+  public int process(int i) {
+    return i + 1;
+  }
+
+  @Incoming("output")
+  public void sink(int v) {
+    System.out.println(v);
+  }
+}
+----
+
+Implementations can provide support for other scopes. 
+However the behavior is not defined.
+
+==== Supported method signatures
 
 The signature of message stream methods can have a number of different distinct types, offering differing levels of power and simplicity to application developers. Different shapes are supported depending on whether the method is a publisher, subscriber or processor, for example, a publishing stream supports returning MicroProfile Reactive Streams `PublisherBuilder`, but not `SubscriberBuilder`, the inverse is true for a subscribing stream.
 
+This section lists the methods signatures that must be supported by the Reactive Messaging implementation.
 Implementations must validate that the stream shape matches the `@Outgoing` and `@Incoming` annotations, if they don't, a CDI definition exception should be raised to the CDI container during initialization.
 
-===== Simple method streams
+It's important to remember that users must not call these methods directly. 
+They are invoked by the Reactive Messaging implementation following the Reactive Streams protocol.
+
+Also the method must be implemented as a non-blocking fashion.
+For blocking transformations, asynchronous variants can be used.
+
+INFO: _assembly_ time is when the Reactive Messaging implementation initializes itself and creates the different bean instances and connects them together.
+INFO: In the following lists, `Message` can be an implementation of the `Message` interface.
+
+===== Methods producing data
+
+[cols="2a,1,1",options="header"]
+|===
+|Signature
+|Behavior
+|Invocation
+
+|
+[source, java]
+----
+@Outgoing("name") 
+Publisher<Message<O>> method()
+----
+| Returns a stream of `Message` associated with the channel `name`. 
+| Method called once at assembly time.
+
+|
+[source, java]
+----
+@Outgoing("channel") 
+Publisher<O> method()
+----
+| Returns a stream of _payload_ associated with the channel `channel`. Produced payloads are mapped to `Message<O>` by the Reactive Messaging implementation.
+| Method called once at assembly time.
+
+|
+[source, java]
+----
+@Outgoing("channel") 
+PublisherBuilder<Message<O>> method()
+----
+| Returns a stream of `Message` associated with the channel `channel`. 
+| Method called once at assembly time.
+
+|
+[source, java]
+----
+@Outgoing("channel") 
+PublisherBuilder<O> method()
+----
+| Returns a stream of _payload_ associated with the channel `channel`. Produced payloads are mapped to `Message<O>` by the Reactive Messaging implementation.
+| Method called once at subscription time.
+
+|
+[source, java]
+----
+@Outgoing("channel") 
+Message<O> method()
+----
+| Produces a infinite streams of `Message` associated with the channel `channel`. 
+|	This method is called for each _request_ made by the subscriber.
+
+|
+[source, java]
+----
+@Outgoing("channel")
+O method()
+----
+| Produces an infinite streams of _payload_ associated with the channel `channel`. Produced payloads are mapped to `Message<O>` by the Reactive Messaging implementation.
+|	This method is called for each _request_ made by the subscriber.
+
+|
+[source, java]
+----
+@Outgoing("channel")
+CompletionStage<Message<O>> method()
+----
+| Produces a infinite streams of `Message` associated with the channel `channel`. The result is a `CompletionStage`. The method cannot be called until the `CompletionStage` returned previously is completed.
+|	This method is called for each _request_ made by the subscriber.
+
+|
+[source, java]
+----
+@Outgoing("channel") 
+CompletionStage<O> method()
+----
+| Produces a infinite streams of _payload_ associated with the channel `channel`. Produced payloads are mapped to `Message<O>` by the Reactive Messaging implementation. The result is a `CompletionStage`. The method cannot be called until the `CompletionStage` returned previously is completed.
+|	This method is called for each _request_ made by the subscriber.
+
+|===
+
+
+===== Methods consuming data
+
+[cols="2a,1,1",options="header"]
+|===
+|Signature
+|Behavior
+|Invocation
+
+|
+[source,java]
+----
+@Incoming("channel")
+Subscriber<Message<I>> method()
+----
+| Returns a `Subscriber` that receives the `Message` objects transiting on the channel `channel`.
+| The method is called only once to retrieve the `Subscriber` object at assembly time.
+ This subscriber is connected to the matching channel.
+
+|
+[source,java]
+----
+@Incoming("channel")
+Subscriber<I> method()
+----
+| Returns a `Subscriber` that receives the _payload_ objects transiting on the channel `channel`.
+The payload is automatically extracted from the inflight messages using `Message.getPayload()`.
+| The method is called only once to retrieve the `Subscriber` object at assembly time.
+ This subscriber is connected to the matching channel.
+
+|
+[source,java]
+----
+@Incoming("channel") 
+SubscriberBuilder<Message<I>> method()
+----
+| Returns a `SubscriberBuilder` that receives the `Message` objects transiting on the channel `channel`.
+| The method is called only once to retrieve the `Subscriber` object at assembly time. 
+The created `subscriber` is connected to the matching channel.
+
+|
+[source,java]
+----
+@Incoming("channel")
+SubscriberBuilder<I> method()
+----
+| Returns a `SubscriberBuilder` that receives the `Message` objects transiting on the channel `channel`.
+The payload is automatically extracted from the inflight messages using `Message.getPayload()`.
+| The method is called only once to retrieve the `Subscriber` object at assembly time.
+The created `subscriber` is connected to the matching channel.
+
+|
+[source,java]
+----
+@Incoming("channel")
+void method(I payload)
+----
+| Consumes the _payload_.
+The method can return `void` or any object or `null`. 
+The returned value is ignored. 
+| This method is called for every `Message<I>` instances transiting on the channel `channel`. 
+The payload is automatically extracted from the inflight messages using `Message.getPayload()`.
+The user method is never called concurrently and so must return before being called with the next payload.
+
+|
+[source,java]
+----
+@Incoming("channel")
+CompletionStage<?> method(Message<I> msg)
+----
+| Consumes the `Message` 
+| This method is called for every `Message<I>` instances transiting on the channel `channel`. 
+The user method is never called concurrently and so the returned `CompletionStage` must be completed before being calling the method with the next `Message`.
+Note that `@Incoming("channel") void method(Message<I> msg)` is not allowed as message acknowledgement is asynchronous.
+
+|
+[source,java]
+----
+@Incoming("channel") 
+CompletionStage<?> method(I payload)
+----
+| Consumes the _payload_ asynchronously
+| This method is called for every `Message<I>` instances transiting on the channel `channel`. 
+The payload is automatically extracted from the inflight messages using `Message.getPayload()`.
+The user method is never called concurrently and so the returned `CompletionStage` must be completed before being calling the method with the next `Message`.
+
+|===
+	
+===== Methods processing data
+
+[cols="2a,1,1",options="header"]
+|===
+|Signature
+|Behavior
+|Invocation
+
+| 
+[source,java]
+----
+@Incoming("in")
+@Outgoing("out")
+Processor<Message<I>, Message<O>> method()
+----
+| Returns a Reactive Streams processor consuming incoming `Message` instances and produces `Message` instances.
+| This method is called once; at assembly time.
+
+| 
+[source,java]
+----
+@Incoming("in")
+@Outgoing("out") 
+Processor<I, O> method();
+----
+| Returns a Reactive Streams processor consuming incoming _payload_ instances and produces _payload_ instances.
+| This method is called once; at assembly time.
+
+|
+[source,java]
+----
+@Incoming("in")
+@Outgoing("out") 
+ProcessorBuilder<Message<I>, Message<O>> method();
+----
+| Returns a `ProcessorBuilder` consuming incoming `Message` instances and produces `Message` instances.
+| This method is called once; at assembly time.
+
+|
+[source,java]
+----
+@Incoming("in")
+@Outgoing("out") 
+ProcessorBuilder<I, O> method();
+----
+| Returns a Reactive Streams processor that consuming incoming _payload_ instances and produces _payload_ instances.
+| This method is called once; at assembly time.
+
+|
+[source,java]
+----
+@Incoming("in")
+@Outgoing("out") 
+Publisher<Message<O>> method(Message<I> msg)
+----
+| Returns a Reactive Streams `Publisher` for each incoming `Message`.
+The returned `Publisher` can be empty or emits multiple `Message` instances.
+If the returned `Publisher` emits several elements, these elements are _flatten_ in the outgoing stream as a concatenation of elements.
+| This method is called for every incoming message. Never concurrently, so the stream returned previously must complete before having the method invoked with the next incoming `Message`.
+
+|
+[source,java]
+----
+@Incoming("in")
+@Outgoing("out") 
+Publisher<O> method(I payload)
+----
+| Returns a Reactive Streams `Publisher` for each incoming _payload_.
+The returned `Publisher` can be empty or emits multiple _payload_ instances.
+If the returned `Publisher` emits several elements, these elements are _flatten_ in the outgoing stream as a concatenation of elements.
+The Reactive Messaging implementation must create new `Message` instances for each emitted _payloads_ as well as extracing the payload for each incoming `Message`.
+| This method is called for every incoming message. Never concurrently, so the stream returned previously must complete before having the method invoked with the next incoming `Message`.
+
+|
+[source,java]
+----
+@Incoming("in")
+@Outgoing("out") 
+PublisherBuilder<Message<O>> method(Message<I> msg)
+----
+| Returns a `PublisherBuilder` for each incoming `Message`.
+The returned `PublisherBuilder` can be empty or emits multiple `Message` instances.
+If the returned `PublisherBuilder` emits several elements, these elements are _flatten_ in the outgoing stream as a concatenation of elements.
+| This method is called for every incoming message. Never concurrently, so the stream returned previously must complete before having the method invoked with the next incoming `Message`.
+
+|
+[source,java]
+----
+@Incoming("in")
+@Outgoing("out") 
+PublisherBuilder<O> method(I payload)
+----
+| Returns a `PublisherBuilder` for each incoming _payload_.
+The returned `PublisherBuilder` can be empty or emits multiple _payload_ instances.
+If the returned `PublisherBuilder` emits several elements, these elements are _flatten_ in the outgoing stream as a concatenation of elements.
+The Reactive Messaging implementation must create new `Message` instances for each emitted _payloads_ as well as extracing the payload for each incoming `Message`.
+| This method is called for every incoming message. Never concurrently, so the stream returned previously must complete before having the method invoked with the next incoming `Message`.
+
+
+|
+[source,java]
+----
+@Incoming("in")
+@Outgoing("out") 
+Message<O> method(Message<I> msg)
+----
+| Returns a `Message` for each incoming `Message`.
+| This method is called for every incoming message. Never concurrently, so the previous call must have returned before calling it with the next incoming `Message`.
+
+|
+[source,java]
+----
+@Incoming("in")
+@Outgoing("out") 
+O method(I payload)
+----
+| Returns a _payload_ for each incoming _payload.
+The Reactive Messaging implementation is responsible for unwrapping the _payload_ from the incoming `Message` and creating a `Message` from the returned _payload_.
+| This method is called for every incoming message. Never concurrently, so the previous call must have returned before calling it with the next incoming _payload_.
+
+|
+[source,java]
+----
+@Incoming("in")
+@Outgoing("out") 
+CompletionStage<Message<O>> 
+method(Message<I> msg)
+----
+| Produces a `Message` for each incoming `Message`. This method returns a `CompletionStage` that can redeem the `Message` instance asynchronously. The returned `CompletionStage` must not be completed with `null`.
+| This method is called for every incoming message. Never concurrently, so the previous call must have returned and produced a `Message` before calling it with the next incoming `Message`.
+
+|
+[source,java]
+----
+@Incoming("in")
+@Outgoing("out") 
+CompletionStage<O> method(I payload)
+----
+| Produces a _payload_ for each incoming _payload_. This method returns a `CompletionStage` that can redeem the _payload_ instance asynchronously. The returned `CompletionStage` must not be completed with `null`.
+| This method is called for every incoming _payload_. Never concurrently, so the previous call must have returned and produced a _payload_ before calling it with the next _payload_.
+
+|
+[source,java]
+----
+@Incoming("in")
+@Outgoing("out") 
+Publisher<Message<O>> method(Publisher<Message<I>> pub)
+----
+| Transforms the incoming `Publisher` of `Message`. This method is used to manipulate streams and apply stream transformations.
+| This method is called once, at _assembly_ time.
+
+|
+[source,java]
+----
+@Incoming("in")
+@Outgoing("out") 
+PublisherBuilder<Message<O>> method(PublisherBuilder<Message<I>> pub)
+----
+| Transforms the incoming `PublisherBuilder` of `Message`. This method is used to manipulate streams and apply stream transformations.
+| This method is called once, at _assembly_ time.
+
+|
+[source,java]
+----
+@Incoming("in")
+@Outgoing("out") 
+Publisher<O> method(Publisher<I> pub)
+----
+| Transforms the incoming `Publisher` of _payload_. This method is used to manipulate streams and apply stream transformations.
+| This method is called once, at _assembly_ time.
+
+|
+[source,java]
+----
+@Incoming("in")
+@Outgoing("out") 
+PublisherBuilder<O> method(PublisherBuilder<I> pub)
+----
+| Transforms the incoming `PublisherBuilder` of _payload_. This method is used to manipulate streams and apply stream transformations.
+| This method is called once, at _assembly_ time.
+
+|===
+
+===== Examples of simple method streams
 
 The simplest shape that an application may use is a simple method. This is a method that accepts an incoming message, and possibly publishes an outgoing message:
 
 [source, java]
 ----
-@Incoming
-@Outgoing
+@Incoming("in")
+@Outgoing("out")
 public OutgoingMessage processMessage(IncomingMessage msg) {
   return convert(msg);
 }
 ----
 
-In the above example, the stream is both a publishing and subscribing stream, with a 1:1 mapping of incoming to outgoing messages. Asynchronous processing may also be used, by returning a `CompletionStage`:
+In the above example, the stream is both a publishing and subscribing stream, with a 1:1 mapping of incoming to outgoing messages. 
+Asynchronous processing may also be used, by returning a `CompletionStage`:
 
 [source, java]
 ----
-@Incoming
-@Outgoing
+@Incoming("in")
+@Outgoing("out")
 public CompletionStage<OutgoingMessage> processMessage(IncomingMessage msg) {
   return asyncConvert(msg);
 }
 ----
 
-Simple methods are only supported for `@Incoming` annotated methods, if there is only an `@Outgoing` annotation on the method, this is a definition error. If the method is not `@Outgoing` annotated, then the returned value is ignored - however, note that for asynchronous methods, the returned `CompletionStage` is still important for determining when message processing has completed successfully, for the purposes of message acknowledgement. When there is no `@Outgoing` annotation, `void` may also be returned.
+If the method is not `@Outgoing` annotated, then the returned value is ignored - however, note that for asynchronous methods, the returned `CompletionStage` is still important for determining when message processing has completed successfully, for the purposes of message acknowledgement. 
+When there is no `@Outgoing` annotation, `void` may also be returned.
 
-===== Reactive streams
+===== Examples of methods using Reactive Streams or MicroProfile Reactive Streams Operators types
 
-For more power, developers may use Reactive Streams shapes. Reactive Streams shaped methods accept no parameters, and return one of the following:
+For more power, developers may use Reactive Streams instances. Reactive Streams shaped methods accept no parameters, and return one of the following:
 
 * `org.eclipse.microprofile.reactive.streams.PublisherBuilder`
 * `org.eclipse.microprofile.reactive.streams.SubscriberBuilder`
@@ -242,17 +636,8 @@ For more power, developers may use Reactive Streams shapes. Reactive Streams sha
 * `org.reactivestreams.Subscriber`
 * `org.reactivestreams.Processor`
 
-Implementations may optionally support other shapes, such as JDK9 Flow publishers, subscribers and processors, or other representations of Reactive Streams. Application developers are recommended to use the MicroProfile Reactive Streams builders in order to allow for the highest level of portability.
-
-Here is a table of compatibility for processors, subscribers and publishers with `@Incoming` and `@Outgoing` annotations:
-
-[cols="s,,", options="header"]
-|======================================
-|           |Incoming     |Outgoing
-|Publisher  |Incompatible |Required
-|Subscriber |Required     |Incompatible
-|Processor  |Required     |Optional
-|======================================
+Implementations may optionally support other types, such as JDK9 Flow publishers, subscribers and processors, or other representations of Reactive Streams. 
+Application developers are recommended to use the MicroProfile Reactive Streams Operators _builders_ in order to allow for the highest level of portability.
 
 For example, here's a message processor:
 
