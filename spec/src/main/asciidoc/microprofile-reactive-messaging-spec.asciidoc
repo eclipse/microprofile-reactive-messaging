@@ -18,8 +18,8 @@
 //
 
 = MicroProfile Reactive Messaging Specification
-:authors: James Roper
-:email: james@lightbend.com
+:authors: James Roper, Clement Escoffier, Gordon Hutchison
+:email: james@lightbend.com, clement.escoffier@redhat.com, gordon_hutchison@uk.ibm.com
 :version-label!:
 :sectanchors:
 :doctype: book
@@ -37,4 +37,5 @@ include::license-alv2.asciidoc[]
 
 == MicroProfile Reactive Messaging
 
+include::rationale.asciidoc[]
 include::architecture.asciidoc[]
