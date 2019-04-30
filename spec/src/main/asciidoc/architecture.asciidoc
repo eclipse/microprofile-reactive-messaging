@@ -748,7 +748,7 @@ CompletionStage<Message<O>> method()
 CompletionStage<O> method()
 ----
 | None
-| none
+| 
 
 |
 [source,java]
@@ -979,6 +979,8 @@ PublisherBuilder<O> method(PublisherBuilder<I> pub)
 ----
 | Pre-Processing
 | None, Pre-Processing
+
+|===
 
 Invalid acknowledgement policies must be detected and a `DeploymentException` raised when the application starts.
 
