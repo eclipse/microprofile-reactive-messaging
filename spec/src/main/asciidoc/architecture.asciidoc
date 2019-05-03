@@ -238,10 +238,11 @@ Implementations must validate that the stream shape matches the `@Outgoing` and 
 It's important to remember that users must not call these methods directly. 
 They are invoked by the Reactive Messaging implementation following the Reactive Streams protocol.
 
-Also the method must be implemented as a non-blocking fashion.
+Also the method must be implemented in a non-blocking fashion.
 For blocking transformations, asynchronous variants can be used.
 
 INFO: _assembly_ time is when the Reactive Messaging implementation initializes itself and creates the different bean instances and connects them together.
+
 INFO: In the following lists, `Message` can be an implementation of the `Message` interface.
 
 ===== Methods producing data
@@ -267,7 +268,7 @@ Publisher<Message<O>> method()
 @Outgoing("channel") 
 Publisher<O> method()
 ----
-| Returns a stream of _payload_ associated with the channel `channel`. Produced payloads are mapped to `Message<O>` by the Reactive Messaging implementation.
+| Returns a stream of _payload_ of type `O` associated with the channel `channel`. Produced payloads are mapped to `Message<O>` by the Reactive Messaging implementation.
 | Method called once at assembly time.
 
 |
