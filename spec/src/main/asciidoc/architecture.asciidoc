@@ -295,7 +295,7 @@ PublisherBuilder<O> method()
 @Outgoing("channel") 
 Message<O> method()
 ----
-| Produces a infinite streams of `Message` associated with the channel `channel`. 
+| Produces an infinite stream of `Message` associated with the channel `channel`. 
 |	This method is called for each _request_ made by the subscriber.
 
 |
@@ -304,7 +304,7 @@ Message<O> method()
 @Outgoing("channel")
 O method()
 ----
-| Produces an infinite streams of _payload_ associated with the channel `channel`. Produced payloads are mapped to `Message<O>` by the Reactive Messaging implementation.
+| Produces an infinite stream of _payload_ associated with the channel `channel`. Produced payloads are mapped to `Message<O>` by the Reactive Messaging implementation.
 |	This method is called for each _request_ made by the subscriber.
 
 |
@@ -313,7 +313,7 @@ O method()
 @Outgoing("channel")
 CompletionStage<Message<O>> method()
 ----
-| Produces a infinite streams of `Message` associated with the channel `channel`. The result is a `CompletionStage`. The method cannot be called until the `CompletionStage` returned previously is completed.
+| Produces an infinite stream of `Message` associated with the channel `channel`. The result is a `CompletionStage`. The method should not be called by the reactive messaging implementation until the `CompletionStage` returned previously is completed.
 |	This method is called for each _request_ made by the subscriber.
 
 |
@@ -322,7 +322,7 @@ CompletionStage<Message<O>> method()
 @Outgoing("channel") 
 CompletionStage<O> method()
 ----
-| Produces a infinite streams of _payload_ associated with the channel `channel`. Produced payloads are mapped to `Message<O>` by the Reactive Messaging implementation. The result is a `CompletionStage`. The method cannot be called until the `CompletionStage` returned previously is completed.
+| Produces an infinite stream of _payload_ associated with the channel `channel`. Produced payloads are mapped to `Message<O>` by the Reactive Messaging implementation. The result is a `CompletionStage`. The method should not be called by the reactive messaging implementation until the `CompletionStage` returned previously is completed.
 |	This method is called for each _request_ made by the subscriber.
 
 |===
@@ -364,8 +364,7 @@ The payload is automatically extracted from the inflight messages using `Message
 SubscriberBuilder<Message<I>> method()
 ----
 | Returns a `SubscriberBuilder` that receives the `Message` objects transiting on the channel `channel`.
-| The method is called only once to retrieve the `Subscriber` object at assembly time. 
-The created `subscriber` is connected to the matching channel.
+| The method is called only once at assembly time to retrieve a `SubscriberBuilder` that is used to build a `CompletionSubscriber` that is subscribed to the matching channel. 
 
 |
 [source,java]
@@ -373,10 +372,9 @@ The created `subscriber` is connected to the matching channel.
 @Incoming("channel")
 SubscriberBuilder<I> method()
 ----
-| Returns a `SubscriberBuilder` that receives the `Message` objects transiting on the channel `channel`.
+| Returns a `SubscriberBuilder` that is used to build a `CompletionSubscriber<I>`` that receives the _payload_ of each `Message`.
 The payload is automatically extracted from the inflight messages using `Message.getPayload()`.
-| The method is called only once to retrieve the `Subscriber` object at assembly time.
-The created `subscriber` is connected to the matching channel.
+| The method is called only once at assembly time to retrieve a `SubscriberBuilder` that is used to build a `CompletionSubscriber` that is subscribed to the matching channel. 
 
 |
 [source,java]
@@ -387,7 +385,7 @@ void method(I payload)
 | Consumes the _payload_.
 The method can return `void` or any object or `null`. 
 The returned value is ignored. 
-| This method is called for every `Message<I>` instances transiting on the channel `channel`. 
+| This method is called for every `Message<I>` instance transiting on the channel `channel`. 
 The payload is automatically extracted from the inflight messages using `Message.getPayload()`.
 The user method is never called concurrently and so must return before being called with the next payload.
 
@@ -398,8 +396,8 @@ The user method is never called concurrently and so must return before being cal
 CompletionStage<?> method(Message<I> msg)
 ----
 | Consumes the `Message` 
-| This method is called for every `Message<I>` instances transiting on the channel `channel`. 
-The user method is never called concurrently and so the returned `CompletionStage` must be completed before being calling the method with the next `Message`.
+| This method is called for every `Message<I>` instance transiting on the channel `channel`. 
+The user method is never called concurrently. The reactive messaging implementation must wait until the completion of the previously returned `CompletionStage` before calling the method again with the next `Message`.
 Note that `@Incoming("channel") void method(Message<I> msg)` is not allowed as message acknowledgement is asynchronous.
 
 |
@@ -409,9 +407,9 @@ Note that `@Incoming("channel") void method(Message<I> msg)` is not allowed as m
 CompletionStage<?> method(I payload)
 ----
 | Consumes the _payload_ asynchronously
-| This method is called for every `Message<I>` instances transiting on the channel `channel`. 
+| This method is called for every `Message<I>` instance transiting on the channel `channel`. 
 The payload is automatically extracted from the inflight messages using `Message.getPayload()`.
-The user method is never called concurrently and so the returned `CompletionStage` must be completed before being calling the method with the next `Message`.
+The user method is never called concurrently. The reactive messaging implementation must wait until the completion of the previously returned `CompletionStage` before calling the method again with the next _payload_.
 
 |===
 	
@@ -540,12 +538,10 @@ The Reactive Messaging implementation is responsible for unwrapping the _payload
 ----
 @Incoming("in")
 @Outgoing("out") 
-CompletionStage<Message<O>> 
-method(Message<I> msg)
+CompletionStage<Message<O>> method(Message<I> msg)
 ----
 | Produces a `Message` for each incoming `Message`. This method returns a `CompletionStage` that can redeem the `Message` instance asynchronously. The returned `CompletionStage` must not be completed with `null`.
-| This method is called for every incoming message. Never concurrently, so the previous call must have returned and produced a `Message` before calling it with the next incoming `Message`.
-
+| This method is called for every incoming message. Never concurrently. The reactive messaging implementation must wait until the completion of the previously returned `CompletionStage` before calling the method again with the next `Message`.
 |
 [source,java]
 ----
@@ -554,7 +550,7 @@ method(Message<I> msg)
 CompletionStage<O> method(I payload)
 ----
 | Produces a _payload_ for each incoming _payload_. This method returns a `CompletionStage` that can redeem the _payload_ instance asynchronously. The returned `CompletionStage` must not be completed with `null`.
-| This method is called for every incoming _payload_. Never concurrently, so the previous call must have returned and produced a _payload_ before calling it with the next _payload_.
+| This method is called for every incoming _payload_. Never concurrently. The reactive messaging implementation must wait until the completion of the previously returned `CompletionStage` before calling the method again with the next _payload_.
 
 |
 [source,java]
