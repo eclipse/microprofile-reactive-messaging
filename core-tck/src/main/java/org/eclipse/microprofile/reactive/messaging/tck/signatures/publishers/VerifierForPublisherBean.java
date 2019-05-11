@@ -140,8 +140,8 @@ public class VerifierForPublisherBean {
         int limit = 10;
         assertThat(counters.get("generator-payload")).hasValue(limit);
         assertThat(counters.get("generator-message")).hasValue(limit);
-        assertThat(counters.get("generator-payload-async")).hasValue(limit + 1);
-        assertThat(counters.get("generator-message-async")).hasValue(limit + 1);
+        assertThat(counters.get("generator-payload-async")).hasValueBetween(limit, limit + 1);
+        assertThat(counters.get("generator-message-async")).hasValueBetween(limit, limit + 1);
     }
 
 }

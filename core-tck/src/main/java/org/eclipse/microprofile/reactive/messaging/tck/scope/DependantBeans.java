@@ -24,8 +24,8 @@ import org.eclipse.microprofile.reactive.streams.operators.ReactiveStreams;
 import org.reactivestreams.Publisher;
 
 import javax.enterprise.context.Dependent;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Dependent
@@ -33,8 +33,8 @@ public class DependantBeans {
 
     private static final AtomicInteger COUNTER = new AtomicInteger();
     private final int id;
-    private List<Integer> list = new ArrayList<>();
-    private static final List<Integer> STATIC_LIST = new ArrayList<>();
+    private List<Integer> list = new CopyOnWriteArrayList<>();
+    private static final List<Integer> STATIC_LIST = new CopyOnWriteArrayList<>();
 
     public DependantBeans() {
         id = COUNTER.getAndIncrement();
