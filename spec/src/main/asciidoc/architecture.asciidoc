@@ -618,7 +618,7 @@ Asynchronous processing may also be used, by returning a `CompletionStage`:
 ----
 @Incoming("in")
 @Outgoing("out")
-public CompletionStage<Message<O>> processMessage(Message<I> msg) {
+public CompletionStage<Message<O>> process(Message<I> msg) {
   return asyncConvert(msg);
 }
 ----
@@ -651,11 +651,13 @@ For example, here's a message processor:
 ----
 @Incoming
 @Outgoing
-public PublisherBuilder<IncomingMessage, OutgoingMessage> processMessages() {
-  return ReactiveStreams.<IncomingMessage>builder()
+public PublisherBuilder<Message<I>, Message<O>> process() {
+  return ReactiveStreams.<Message<I>>builder()
     .map(this::convert);
 }
 ----
+
+NOTE: Implementations must support implementations of the `Message` interface.
 
 ==== Message acknowledgement
 
@@ -954,7 +956,7 @@ This implementation is also correct, since the application is returning a wrappe
 [source, java]
 ----
 @Incoming
-public Message<?> processMessage(Message<IncomingMessage> msg) {
+public Message<?> process(Message<I> msg) {
   System.out.println("Got message " + msg.getPayload());
   return msg;
 }
@@ -966,7 +968,7 @@ The above is particularly useful for processing messages that are also being sen
 ----
 @Incoming
 @Outgoing
-public Message<OutgoingMessage> processMessage(Message<IncomingMessage> msg) {
+public Message<O> process(Message<I> msg) {
   return Message.of(convert(msg.getPayload()), msg::ack);
 }
 ----
