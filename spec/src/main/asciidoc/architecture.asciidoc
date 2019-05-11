@@ -932,7 +932,7 @@ For example, the following application code is incorrect, since it accepts a mes
 ----
 @Incoming
 @Acknowledgment(MANUAL)
-public void processMessage(Message<IncomingMessage> msg) {
+public void process(Message<I> msg) {
   System.out.println("Got message " + msg.getPayload());
 }
 ----
@@ -943,7 +943,7 @@ Here is a correct implementation:
 ----
 @Incoming
 @Acknowledgment(MANUAL)
-public CompletionStage<Void> processMessage(Message<IncomingMessage> msg) {
+public CompletionStage<Void> process(Message<I> msg) {
   System.out.println("Got message " + msg.getPayload());
   return msg.ack();
 }
