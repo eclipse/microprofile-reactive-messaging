@@ -471,7 +471,8 @@ Publisher<Message<O>> method(Message<I> msg)
 | Returns a Reactive Streams `Publisher` for each incoming `Message`.
 The returned `Publisher` can be empty or emits multiple `Message` instances.
 If the returned `Publisher` emits several elements, these elements are _flatten_ in the outgoing stream as a concatenation of elements.
-| This method is called for every incoming message. Never concurrently, so the stream returned previously must complete before having the method invoked with the next incoming `Message`.
+The _flattening_ follows the same semantics as the `flatMap` operator from the MicroProfile Reactive Streams specification.
+| This method is called for every incoming message. Implementations must not call the method subsequently until the stream from the previously returned `Publisher` is completed.
 
 |
 [source,java]
@@ -483,8 +484,9 @@ Publisher<O> method(I payload)
 | Returns a Reactive Streams `Publisher` for each incoming _payload_.
 The returned `Publisher` can be empty or emits multiple _payload_ instances.
 If the returned `Publisher` emits several elements, these elements are _flatten_ in the outgoing stream as a concatenation of elements.
-The Reactive Messaging implementation must create new `Message` instances for each emitted _payloads_ as well as extracing the payload for each incoming `Message`.
-| This method is called for every incoming message. Never concurrently, so the stream returned previously must complete before having the method invoked with the next incoming `Message`.
+The _flattening_ follows the same semantics as the `flatMap` operator from the MicroProfile Reactive Streams specification.
+The Reactive Messaging implementation must create new `Message` instances for each emitted _payload_ as well as extracing the payload for each incoming `Message`.
+| This method is called for every incoming message. Implementations must not call the method subsequently until the stream from the previously returned `Publisher` is completed.
 
 |
 [source,java]
@@ -494,9 +496,10 @@ The Reactive Messaging implementation must create new `Message` instances for ea
 PublisherBuilder<Message<O>> method(Message<I> msg)
 ----
 | Returns a `PublisherBuilder` for each incoming `Message`.
-The returned `PublisherBuilder` can be empty or emits multiple `Message` instances.
-If the returned `PublisherBuilder` emits several elements, these elements are _flatten_ in the outgoing stream as a concatenation of elements.
-| This method is called for every incoming message. Never concurrently, so the stream returned previously must complete before having the method invoked with the next incoming `Message`.
+The stream resulting from the built `Publisher` can be empty or emits multiple `Message` instances.
+If the stream emitted from the built `Publisher` emits several elements, these elements are _flatten_ in the outgoing stream as a concatenation of elements.
+The _flattening_ follows the same semantics as the `flatMap` operator from the MicroProfile Reactive Streams specification.
+| This method is called for every incoming message. Implementations must not call the method subsequently until the stream built from the previously returned `PublisherBuilder` is completed.
 
 |
 [source,java]
@@ -506,10 +509,11 @@ If the returned `PublisherBuilder` emits several elements, these elements are _f
 PublisherBuilder<O> method(I payload)
 ----
 | Returns a `PublisherBuilder` for each incoming _payload_.
-The returned `PublisherBuilder` can be empty or emits multiple _payload_ instances.
-If the returned `PublisherBuilder` emits several elements, these elements are _flatten_ in the outgoing stream as a concatenation of elements.
-The Reactive Messaging implementation must create new `Message` instances for each emitted _payloads_ as well as extracing the payload for each incoming `Message`.
-| This method is called for every incoming message. Never concurrently, so the stream returned previously must complete before having the method invoked with the next incoming `Message`.
+The stream resulting from the built `Publisher` can be can be empty or emits multiple _payload_ instances.
+If the stream emitted from the built `Publisher` emits several elements, these elements are _flatten_ in the outgoing stream as a concatenation of elements.
+The _flattening_ follows the same semantics as the `flatMap` operator from the MicroProfile Reactive Streams specification.
+The Reactive Messaging implementation must create new `Message` instances for each emitted _payload_ as well as extracing the payload for each incoming `Message`.
+| This method is called for every incoming message. Implementations must not call the method subsequently until the stream built from the previously returned `PublisherBuilder` is completed.
 
 
 |
@@ -520,7 +524,7 @@ The Reactive Messaging implementation must create new `Message` instances for ea
 Message<O> method(Message<I> msg)
 ----
 | Returns a `Message` for each incoming `Message`.
-| This method is called for every incoming message. Never concurrently, so the previous call must have returned before calling it with the next incoming `Message`.
+| This method is called for every incoming message. Implementations must not call the method subsequently until the previous call must have returned.
 
 |
 [source,java]
@@ -531,7 +535,7 @@ O method(I payload)
 ----
 | Returns a _payload_ for each incoming _payload.
 The Reactive Messaging implementation is responsible for unwrapping the _payload_ from the incoming `Message` and creating a `Message` from the returned _payload_.
-| This method is called for every incoming message. Never concurrently, so the previous call must have returned before calling it with the next incoming _payload_.
+| This method is called for every incoming message. Implementations must not call the method subsequently until the previous call must have returned.
 
 |
 [source,java]
@@ -541,7 +545,7 @@ The Reactive Messaging implementation is responsible for unwrapping the _payload
 CompletionStage<Message<O>> method(Message<I> msg)
 ----
 | Produces a `Message` for each incoming `Message`. This method returns a `CompletionStage` that can redeem the `Message` instance asynchronously. The returned `CompletionStage` must not be completed with `null`.
-| This method is called for every incoming message. Never concurrently. The reactive messaging implementation must wait until the completion of the previously returned `CompletionStage` before calling the method again with the next `Message`.
+| This method is called for every incoming message. Never concurrently. The implementations must wait until the completion of the previously returned `CompletionStage` before calling the method again with the next `Message`.
 |
 [source,java]
 ----
@@ -550,7 +554,7 @@ CompletionStage<Message<O>> method(Message<I> msg)
 CompletionStage<O> method(I payload)
 ----
 | Produces a _payload_ for each incoming _payload_. This method returns a `CompletionStage` that can redeem the _payload_ instance asynchronously. The returned `CompletionStage` must not be completed with `null`.
-| This method is called for every incoming _payload_. Never concurrently. The reactive messaging implementation must wait until the completion of the previously returned `CompletionStage` before calling the method again with the next _payload_.
+| This method is called for every incoming _payload_. Never concurrently. The implementations must wait until the completion of the previously returned `CompletionStage` before calling the method again with the next _payload_.
 
 |
 [source,java]
@@ -559,7 +563,7 @@ CompletionStage<O> method(I payload)
 @Outgoing("out") 
 Publisher<Message<O>> method(Publisher<Message<I>> pub)
 ----
-| Transforms the incoming `Publisher` of `Message`. This method is used to manipulate streams and apply stream transformations.
+| Applies a transformation to the incoming stream of `Message`. This method is used to manipulate streams and apply stream transformations.
 | This method is called once, at _assembly_ time.
 
 |
@@ -569,7 +573,7 @@ Publisher<Message<O>> method(Publisher<Message<I>> pub)
 @Outgoing("out") 
 PublisherBuilder<Message<O>> method(PublisherBuilder<Message<I>> pub)
 ----
-| Transforms the incoming `PublisherBuilder` of `Message`. This method is used to manipulate streams and apply stream transformations.
+| Applies a transformation to the stream represented by the `PublisherBuilder` of `Message`. This method is used to manipulate streams and apply stream transformations.
 | This method is called once, at _assembly_ time.
 
 |
@@ -579,7 +583,7 @@ PublisherBuilder<Message<O>> method(PublisherBuilder<Message<I>> pub)
 @Outgoing("out") 
 Publisher<O> method(Publisher<I> pub)
 ----
-| Transforms the incoming `Publisher` of _payload_. This method is used to manipulate streams and apply stream transformations.
+| Applies a transformation to the incoming streams of _payloads_.  This method is used to manipulate streams and apply stream transformations.
 | This method is called once, at _assembly_ time.
 
 |
@@ -589,7 +593,7 @@ Publisher<O> method(Publisher<I> pub)
 @Outgoing("out") 
 PublisherBuilder<O> method(PublisherBuilder<I> pub)
 ----
-| Transforms the incoming `PublisherBuilder` of _payload_. This method is used to manipulate streams and apply stream transformations.
+| Applies a transformation to the stream represented by the `PublisherBuilder` of _payloads_. This method is used to manipulate streams and apply stream transformations.
 | This method is called once, at _assembly_ time.
 
 |===
@@ -602,7 +606,7 @@ The simplest shape that an application may use is a simple method. This is a met
 ----
 @Incoming("in")
 @Outgoing("out")
-public OutgoingMessage processMessage(IncomingMessage msg) {
+public Message<O> process(Message<I> msg) {
   return convert(msg);
 }
 ----
@@ -614,13 +618,18 @@ Asynchronous processing may also be used, by returning a `CompletionStage`:
 ----
 @Incoming("in")
 @Outgoing("out")
-public CompletionStage<OutgoingMessage> processMessage(IncomingMessage msg) {
+public CompletionStage<Message<O>> processMessage(Message<I> msg) {
   return asyncConvert(msg);
 }
 ----
 
 If the method is not `@Outgoing` annotated, then the returned value is ignored - however, note that for asynchronous methods, the returned `CompletionStage` is still important for determining when message processing has completed successfully, for the purposes of message acknowledgement. 
 When there is no `@Outgoing` annotation, `void` may also be returned.
+
+In addition to `Message`, implementations must allow:
+
+* payloads (the content wrapped in a `Message`)
+* implementation of the `Message` interface
 
 ===== Examples of methods using Reactive Streams or MicroProfile Reactive Streams Operators types
 
@@ -653,19 +662,21 @@ public PublisherBuilder<IncomingMessage, OutgoingMessage> processMessages() {
 Acknowledgement is an important part of message processing.
 Messages are either acknowledged explicitly, or implicitly by the implementation.
 
-Acknowledgement is controlled by the `org.eclipse.microprofile.reactive.messaging.Acknowledgment` annotation. 
+Acknowledgement for the `@Incoming` messages is controlled by the `org.eclipse.microprofile.reactive.messaging.Acknowledgment` annotation. 
 The annotation allows configuring the acknowledgement strategy among:
 
 * `NONE` - no acknowledgment is performed
-* `MANUAL` - the user is responsible for the acknowledgement, so the Reactive Messaging implementation does not apply implicit acknowledgement
+* `MANUAL` - the user is responsible for the acknowledgement, by calling the `Message#ack()` method, so the Reactive Messaging implementation does not apply implicit acknowledgement
 * `PRE_PROCESSING` - the Reactive Messaging implementation acknowledges the message before the annotated method or processing is executed
 * `POST_PROCESSING` - the Reactive Messaging implementation acknowledges the message once:
 
   1. the method or processing completes if the method does not emit data
   2. when the emitted data is acknowledged
 
-Each method signatures has different defaults and accept a different set of strategy.
+Each method signature type has different defaults and can implement different acknowledgement policies.
 If the `Acknowledgment` annotation is not set, the default policy is applied.
+
+IMPORTANT: Method only annotated with `@Outgoing` do not support acknowledgement as they don't receive an input `Message`.
 
 The following table indicates the defaults and supported acknowledgement for each supported signature:
 
@@ -674,78 +685,6 @@ The following table indicates the defaults and supported acknowledgement for eac
 |Signature
 |Default Acknoledgement Strategy
 |Supported Strategies
-
-|
-[source, java]
-----
-@Outgoing("name") 
-Publisher<Message<O>> method()
-----
-| None
-| 
-
-|
-[source, java]
-----
-@Outgoing("channel") 
-Publisher<O> method()
-----
-| None
-| 
-
-|
-[source, java]
-----
-@Outgoing("channel") 
-PublisherBuilder<Message<O>> method()
-----
-| None
-| 
-
-|
-[source, java]
-----
-@Outgoing("channel") 
-PublisherBuilder<O> method()
-----
-| None
-| 
-
-|
-[source, java]
-----
-@Outgoing("channel") 
-Message<O> method()
-----
-| None
-| 
-
-|
-[source, java]
-----
-@Outgoing("channel")
-O method()
-----
-| None
-| 
-
-|
-[source, java]
-----
-@Outgoing("channel")
-CompletionStage<Message<O>> method()
-----
-| None
-| 
-
-|
-[source, java]
-----
-@Outgoing("channel") 
-CompletionStage<O> method()
-----
-| None
-| 
 
 |
 [source,java]
@@ -799,7 +738,7 @@ void method(I payload)
 @Incoming("channel")
 CompletionStage<?> method(Message<I> msg)
 ----
-| Post-Processing	
+| Post-Processing
 | None, Pre-Processing, Post-Processing, Manual
 
 |
@@ -820,7 +759,7 @@ Processor<Message<I>, Message<O>> method()
 ----
 | Pre-Processing
 | None, Pre-Processing, Manual
-Post-Processing can be optionaly supported by implementations, however it requires a 1:1 mapping between the incoming message and the outgoing message.
+Post-Processing can be optionaly supported by implementations, however it requires a 1:1 mapping between the incoming element and the outgoing element.
 
 | 
 [source,java]
@@ -831,7 +770,7 @@ Processor<I, O> method();
 ----
 | Pre-Processing
 | None, Pre-Processing
-Post-Processing can be optionaly supported by implementations, however it requires a 1:1 mapping between the incoming message and the outgoing message.
+Post-Processing can be optionaly supported by implementations, however it requires a 1:1 mapping between the incoming element and the outgoing element.
 
 |
 [source,java]
@@ -842,7 +781,7 @@ ProcessorBuilder<Message<I>, Message<O>> method();
 ----
 | Pre-Processing
 | None, Pre-Processing, Manual
-Post-Processing can be optionaly supported by implementations, however it requires a 1:1 mapping between the incoming message and the outgoing message.
+Post-Processing can be optionaly supported by implementations, however it requires a 1:1 mapping between the incoming element and the outgoing element.
 
 |
 [source,java]
@@ -853,7 +792,7 @@ ProcessorBuilder<I, O> method();
 ----
 | Pre-Processing
 | None, Pre-Processing
-Post-Processing can be optionaly supported by implementations, however it requires a 1:1 mapping between the incoming message and the outgoing message.
+Post-Processing can be optionaly supported by implementations, however it requires a 1:1 mapping the incoming element and the outgoing element.
 
 |
 [source,java]
@@ -979,7 +918,7 @@ PublisherBuilder<O> method(PublisherBuilder<I> pub)
 
 |===
 
-Invalid acknowledgement policies must be detected and a `DeploymentException` raised when the application starts.
+Invalid acknowledgement policies must be detected and a `DeploymentException` raised when the application is deployed.
 
 ===== Acknowledgement Examples
 
@@ -1032,7 +971,7 @@ public Message<OutgoingMessage> processMessage(Message<IncomingMessage> msg) {
 }
 ----
 
-The implementation is reponsible to enforce the acknowledgement strategy defined by the user when the `@Acknowledgement` policy is used. 
+The implementation is reponsible for enforcing the acknowledgement strategy defined by the user when the `@Acknowledgement` policy is used. 
 If the annotation is not used, the default policy must be enforced.
 
 // ==== Custom message types
