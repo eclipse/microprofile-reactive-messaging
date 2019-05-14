@@ -179,9 +179,7 @@ If the connector cannot be found, the deployment of the application must be fail
 
 The Reactive Messaging specification provides a SPI to implement connectors.
 
-=== Design
-
-==== Message stream operation
+=== Message stream operation
 
 Message stream operation occurs according to the principles of reactive programming.
 The back pressure mechanism of reactive streams means that a publisher will not send data to a subscriber unless there are outstanding subscriber requests.
@@ -193,7 +191,7 @@ For example, calling an `@Outgoing` annotated method from user code will not pos
 Enabling this would bypass the automatic back pressure mechanism that is one of the benefits of the specification.
 The `@Incoming` and `@Outgoing` method annotations are used to declaratively define the stream which is then run by the implementation of MicroProfile Reactive Messaging without the user's code needing to handle concerns such as subscriptions or flow control within the stream.
 
-==== Supported CDI scopes
+=== Supported CDI scopes
 
 Implementations of the Reactive Messaging specification must support at least the following CDI scopes:
 
@@ -228,7 +226,7 @@ public class ApplicationScopeBeans {
 Implementations can provide support for other scopes. 
 However the behavior is not defined.
 
-==== Supported method signatures
+=== Supported method signatures
 
 The signature of message stream methods can have a number of different distinct types, offering differing levels of power and simplicity to application developers. Different shapes are supported depending on whether the method is a publisher, subscriber or processor, for example, a publishing stream supports returning MicroProfile Reactive Streams `PublisherBuilder`, but not `SubscriberBuilder`, the inverse is true for a subscribing stream.
 
@@ -245,7 +243,7 @@ INFO: _assembly_ time is when the Reactive Messaging implementation initializes 
 
 INFO: In the following lists, `Message` can be an implementation of the `Message` interface.
 
-===== Methods producing data
+==== Methods producing data
 
 [cols="2a,1,1",options="header"]
 |===
@@ -328,7 +326,7 @@ CompletionStage<O> method()
 |===
 
 
-===== Methods consuming data
+==== Methods consuming data
 
 [cols="2a,1,1",options="header"]
 |===
@@ -413,7 +411,7 @@ The user method is never called concurrently. The reactive messaging implementat
 
 |===
 	
-===== Methods processing data
+==== Methods processing data
 
 [cols="2a,1,1",options="header"]
 |===
@@ -598,7 +596,7 @@ PublisherBuilder<O> method(PublisherBuilder<I> pub)
 
 |===
 
-===== Examples of simple method streams
+==== Examples of simple method streams
 
 The simplest shape that an application may use is a simple method. This is a method that accepts an incoming message, and possibly publishes an outgoing message:
 
@@ -631,7 +629,7 @@ In addition to `Message`, implementations must allow:
 * payloads (the content wrapped in a `Message`)
 * implementation of the `Message` interface
 
-===== Examples of methods using Reactive Streams or MicroProfile Reactive Streams Operators types
+==== Examples of methods using Reactive Streams or MicroProfile Reactive Streams Operators types
 
 For more power, developers may use Reactive Streams instances. Reactive Streams shaped methods accept no parameters, and return one of the following:
 
@@ -659,7 +657,7 @@ public PublisherBuilder<Message<I>, Message<O>> process() {
 
 NOTE: Implementations must support implementations of the `Message` interface.
 
-==== Message acknowledgement
+=== Message acknowledgement
 
 Acknowledgement is an important part of message processing.
 Messages are either acknowledged explicitly, or implicitly by the implementation.
@@ -922,7 +920,7 @@ PublisherBuilder<O> method(PublisherBuilder<I> pub)
 
 Invalid acknowledgement policies must be detected and a `DeploymentException` raised when the application is deployed.
 
-===== Acknowledgement Examples
+==== Acknowledgement Examples
 
 Transiting data may be wrapped in a `Message`, which can be used to supply metadata, and also allows messages to be acknowledged. 
 The contract for acknowledging messages is anything that accepts a `Message` is required to acknowledge it. 
