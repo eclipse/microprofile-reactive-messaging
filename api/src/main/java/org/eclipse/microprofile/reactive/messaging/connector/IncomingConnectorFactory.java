@@ -23,62 +23,69 @@ import org.eclipse.microprofile.reactive.messaging.Message;
 import org.eclipse.microprofile.reactive.messaging.MessagingProvider;
 import org.eclipse.microprofile.reactive.streams.operators.PublisherBuilder;
 
+import javax.enterprise.inject.spi.DeploymentException;
 import java.util.NoSuchElementException;
 
 /**
- * SPI used to implement a connector managing a source of messages for a specific <em>transport</em>. Typically, to
+ * SPI used to implement a connector managing a source of messages for a specific <em>transport</em>. For example, to
  * handle the consumption of records from Kafka, the reactive messaging extension would need to implement a {@code bean}
- * implementing this interface. This bean is called for every {@code stream} that need to be created for this specific
- * <em>transport</em> (so Kafka in the example). These streams are connected to methods annotated with
+ * implementing this interface. This bean is called for every {@code channel} that needs to be created for this specific
+ * <em>transport</em> (so Kafka in this case). These channels are connected to methods annotated with
  * {@link org.eclipse.microprofile.reactive.messaging.Incoming}.
  * <p>
- * The factory is called to create a {@code stream} for each configured <em>transport</em>. The configuration is done using
+ * The factory is called to create a {@code channel} for each configured <em>transport</em>. The configuration is done using
  * MicroProfile Config. The following snippet gives an example for a hypothetical Kafka connector:
  *
  * <pre>
- * mp.messaging.incoming.my-stream.type=i.e.m.reactive.messaging.impl.kafka.Kafka
- * mp.messaging.incoming.my-stream.bootstrap-servers=localhost:9092
- * mp.messaging.incoming.my-stream.topic=my-topic
+ * mp.messaging.incoming.my-channel.type=i.e.m.reactive.messaging.impl.kafka.Kafka
+ * mp.messaging.incoming.my-channel.bootstrap-servers=localhost:9092
+ * mp.messaging.incoming.my-channel.topic=my-topic
  * ...
  * </pre>
  * <p>
- * This configuration keys are structured as follows: {@code mp.messaging.[incoming|outgoing].stream-name.attribute}.
+ * The configuration keys are structured as follows: {@code mp.messaging.[incoming|outgoing].channel-name.attribute}.
  * <p>
- * The {@code stream-name} segment in the configuration key corresponds to the name of the stream used in the
+ * <p>
+ * The portion of the key that precedes the {@code attribute} is acts as a property prefix that has a common structure
+ * across all {@code channels}.
+ * </p>
+ * <p>
+ * The {@code channel-name} segment in the configuration key corresponds to the name of the channel used in the
  * {@code Incoming} annotation:
  *
  * <pre>
- * &#64;Incoming("my-stream")
+ * &#64;Incoming("my-channel")
  * public void consume(String s) {
  *      // ...
  * }
  * </pre>
  * <p>
- * The set of attributes depend on the connector and transport layer (typically, bootstrap-servers is Kafka specific). The
- * {@code type} attribute is mandatory and indicates the fully qualified name of the {@link MessagingProvider}
+ * The set of attributes depend on the connector and transport layer (for example, bootstrap-servers is Kafka specific).
+ * The {@code type} attribute is mandatory and indicates the fully qualified name of the {@link MessagingProvider}
  * implementation. It must match the class returned by the {@link #type()} method. This is how a reactive messaging
- * implementation looks for the specific {@link IncomingConnectorFactory} required for a stream. In the previous
- * configuration, the reactive extension implementation would need to find the {@link IncomingConnectorFactory} returning
+ * implementation looks for the specific {@link IncomingConnectorFactory} required for a channel. In the previous
+ * configuration, the reactive messaging implementation would need to find the {@link IncomingConnectorFactory} returning
  * the {@code i.e.m.reactive.messaging.impl.kafka.Kafka} class as result to its {@link #type()} method to create the
- * {@code my-stream} stream. Note that if the connector cannot be found, the deployment must be failed.
+ * {@code my-channel} channel. Note that if the connector cannot be found, the deployment must be failed with a
+ * {@link DeploymentException}.
  * <p>
- * The {@link #getPublisherBuilder(Config)} is called for every stream that needs to be created. The {@link Config} object
+ * The {@link #getPublisherBuilder(Config)} is called for every channel that needs to be created. The {@link Config} object
  * passed to the method contains a subset of the global configuration, and with the prefixes removed. So for the previous
  * configuration, it would be:
  * <pre>
- * type =  i.e.m.reactive.messaging.impl.kafka.Kafka
  * bootstrap-services = localhost:9092
  * topic = my-topic
  * </pre>
  * <p>
- * So the connector implementation can retrieves the value with {@link Config#getValue(String, Class)} and
+ * So the connector implementation can retrieve the value with {@link Config#getValue(String, Class)} and
  * {@link Config#getOptionalValue(String, Class)}.
  * <p>
  * If the configuration is invalid, the {@link #getPublisherBuilder(Config)} method must throw an
- * {@link IllegalArgumentException}, caught by the reactive messaging implementation and failing the deployment.
+ * {@link IllegalArgumentException}, caught by the reactive messaging implementation and failing the deployment by
+ * throwing a {@link DeploymentException} wrapping the exception.
  * <p>
- * Note that Reactive Messaging implementation must support the configuration format described here, implementation may
- * deliver other approaches to create the streams.
+ * Note that Reactive Messaging implementations must support the configuration format described here. Implementations
+ * may support further, implementation specific, approaches.
  */
 public interface IncomingConnectorFactory {
 
@@ -92,7 +99,7 @@ public interface IncomingConnectorFactory {
     Class<? extends MessagingProvider> type();
 
     /**
-     * Creates a <em>stream</em> for the given configuration. The given configuration {@code type} attribute matches the
+     * Creates a <em>channel</em> for the given configuration. The given configuration {@code type} attribute matches the
      * {@link #type()}.
      * <p>
      * Note that the connection to the <em>transport</em> or <em>broker</em> is generally postponed until the

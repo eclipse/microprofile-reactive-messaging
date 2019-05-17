@@ -36,19 +36,19 @@ import java.util.NoSuchElementException;
  * using MicroProfile Config. The following snippet gives an example for a hypothetical Kafka connector:
  *
  * <pre>
- * mp.messaging.outgoing.my-stream.type=i.e.m.reactive.messaging.impl.kafka.Kafka
- * mp.messaging.outgoing.my-stream.bootstrap-servers=localhost:9092
- * mp.messaging.outgoing.my-stream.topic=my-topic
+ * mp.messaging.outgoing.my-channel.type=i.e.m.reactive.messaging.impl.kafka.Kafka
+ * mp.messaging.outgoing.my-channel.bootstrap-servers=localhost:9092
+ * mp.messaging.outgoing.my-channel.topic=my-topic
  * ...
  * </pre>
  * <p>
- * This configuration keys are structured as follows: {@code mp.messaging.[incoming|outgoing].stream-name.attribute}.
+ * This configuration keys are structured as follows: {@code mp.messaging.[incoming|outgoing].channel-name.attribute}.
  * <p>
- * The {@code stream-name} segment in the configuration key corresponds to the name of the stream used in the
- * {@code Incoming} annotation:
+ * The {@code channel-name} segment in the configuration key corresponds to the name of the channel used in the
+ * {@code Outgoing} annotation:
  *
  * <pre>
- * &#64;Outgoing("my-stream")
+ * &#64;Outgoing("my-channel")
  * public CompletionStage&lt;String&gt; produce(String s) {
  *      // ...
  * }
@@ -57,17 +57,17 @@ import java.util.NoSuchElementException;
  * The set of attributes depend on the connector and transport layer (typically, bootstrap-servers is Kafka specific). The
  * {@code type} attribute is mandatory and indicates the fully qualified name of the {@link MessagingProvider}
  * implementation. It must match the class returned by the {@link #type()} method. This is how a reactive messaging
- * implementation looks for the specific {@link OutgoingConnectorFactory} required for a stream. In the previous
- * configuration, the reactive extension implementation would need to find the {@link OutgoingConnectorFactory} returning
+ * implementation looks for the specific {@link OutgoingConnectorFactory} required for a channel. In the previous
+ * configuration, the reactive messaging implementation would need to find the {@link OutgoingConnectorFactory} returning
  * the {@code i.e.m.reactive.messaging.impl.kafka.Kafka} class as result to its {@link #type()} method to create the
- * {@code my-stream} <em>subscriber</em>. Note that if the connector cannot be found, the deployment must be failed.
+ * {@code my-channel} <em>subscriber</em>. Note that if the connector cannot be found, the deployment must be failed
+ * with a {@link javax.enterprise.inject.spi.DeploymentException}.
  * <p>
- * The {@link #getSubscriberBuilder(Config)} is called for every <em>sink</em> that needs to be created. The
+ * The {@link #getSubscriberBuilder(Config)} is called for every <em>channel</em> that needs to be created. The
  * {@link Config} object passed to the method contains a subset of the global configuration, and with the prefixes removed.
  * So for the previous configuration, it would be:
  * <pre>
- * type =  i.e.m.reactive.messaging.impl.kafka.Kafka
- * bootstrap-services = localhost:9092
+ * bootstrap-servers = localhost:9092
  * topic = my-topic
  * </pre>
  * <p>
@@ -77,8 +77,8 @@ import java.util.NoSuchElementException;
  * If the configuration is invalid, the {@link #getSubscriberBuilder(Config)} method must throw an
  * {@link IllegalArgumentException}, caught by the reactive messaging implementation and failing the deployment.
  * <p>
- * Note that Reactive Messaging implementation must support the configuration format described here, implementation may
- * deliver other approaches to create the streams.
+ * Note that Reactive Messaging implementations must support the configuration format described here. Implementations
+ * may support further, implementation specific, approaches.
  */
 public interface OutgoingConnectorFactory {
 
@@ -92,7 +92,7 @@ public interface OutgoingConnectorFactory {
     Class<? extends MessagingProvider> type();
 
     /**
-     * Creates a <em>sink</em> for the given configuration. The given configuration {@code type} attribute matches the
+     * Creates a <em>channel</em> for the given configuration. The given configuration {@code type} attribute matches the
      * {@link #type()}.
      * <p>
      * Note that the connection to the <em>transport</em> or <em>broker</em> is generally postponed until the
