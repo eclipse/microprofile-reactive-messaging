@@ -94,7 +94,7 @@ public interface IncomingConnectorFactory {
      * Note that the {@link MessagingProvider} is a user-facing interface used in the configuration.
      *
      * @return the {@link MessagingProvider} associated with this {@link IncomingConnectorFactory}. Must not be
-     * {@code null}. Returning {@code null} triggers a deployment failure.
+     * {@code null}. Returning {@code null} will cause a deployment failure.
      */
     Class<? extends MessagingProvider> type();
 
