@@ -70,13 +70,9 @@ import java.lang.annotation.Target;
 public @interface Outgoing {
 
     /**
-     * The name of the stream to publish to.
-     * <p>
-     * If not set, it is assumed some other messaging provider specific mechanism will be used to identify the
-     * destination that this publisher will send to.
-     * </p>
+     * The name of the channel to publish to.
      *
-     * @return the name of the stream, must not be blank.
+     * @return the name of the channel, must not be blank.
      */
     String value();
 }

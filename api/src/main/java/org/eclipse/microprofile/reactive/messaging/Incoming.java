@@ -90,9 +90,9 @@ import java.lang.annotation.Target;
 public @interface Incoming {
 
     /**
-     * The value of the consumed stream.
+     * The name of the consumed channel.
      *
-     * @return the name of the consumed stream, must not be blank.
+     * @return the name of the consumed channel, must not be blank.
      */
     String value();
 }
