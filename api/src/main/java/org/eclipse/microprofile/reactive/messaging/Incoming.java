@@ -71,7 +71,8 @@ import java.lang.annotation.Target;
  * </p>
  * <p>
  * If there is an output value, and it is wrapped, then it is the containers responsibility to invoke
- * {@link Message#ack()} on each message emitted.
+ * {@link Message#ack()} on each message emitted, except if indicated otherwise with the {@link Acknowledgment}
+ * annotation.
  * </p>
  * <p>
  * {@code Incoming} annotated methods may also have an {@link Outgoing} annotation, in which case, they must have a
