@@ -974,6 +974,115 @@ public Message<O> process(Message<I> msg) {
 The implementation is reponsible for enforcing the acknowledgement strategy defined by the user when the `@Acknowledgement` policy is used. 
 If the annotation is not used, the default policy must be enforced.
 
+=== Connector
+
+Reactive Messaging connects matching `@Incoming` and `@Outgoing` running inside the same application.
+Besides, it maps specific _channels_ to _external_ technologies such as Apache Kafka, MQTT, Web Sockets, or JMS. 
+It means that Reactive Messaging can receive messages from virtually any messaging technology and dispatch messages to any messaging technology.
+The component responsible for this role is called _connector_. 
+
+==== Connector concepts
+
+Each _connector_ is responsible for a specific technology. 
+A connector can:
+
+* act as a _Publisher_, meaning it retrieves or receives messages from an external messaging technology. The messages will then be sent to a method annotated with `@Incoming`
+* act as a _Subscriber_, meaning it dispatches messages to an external messaging technology. The messages are received from a method annotated with `@Outgoing`
+* handle both directions
+
+It's essential that connectors implement the back-pressure protocol defined by the Reactive Streams specification.
+
+A _connector_ is implemented as a CDI Bean, generally _application_ scoped implementing:
+
+* the `org.eclipse.microprofile.reactive.messaging.connector.IncomingConnectorFactory` interface to receive messages from an external source;
+* the `org.eclipse.microprofile.reactive.messaging.connector.OutgoingConnectorFactory` interface to dispatch messages to an external sink
+
+The bean is a factory called by the Reactive Messaging implementation to create `PublisherBuilder` or `SubscriberBuilder` objects. 
+These objects are then connected to methods annotated with `@Incoming` or `@Outgoing`. 
+
+Both interfaces contains a `type()` method returning a `MessagingProvider`.
+`MessagingProvider` is a marker interface implemented by the connector allowing the user to indicate which connector needs to be used. 
+For instance, the following `MessagingProvider` implementation can be used in a Kafka connector:
+
+[source, java]
+----
+package org.eclipse.reactive.sample.kafka;
+
+import org.eclipse.microprofile.reactive.messaging.MessagingProvider;
+
+public class Kafka implements MessagingProvider {
+
+  // Just a marker class.
+
+}
+----
+
+Once defined, the user can, in the configuration, refer to this connector using the fully qualified name of the class.
+When the Reactive Messaging implementation processes the configuration, it determines the connector to be used based on the `type` attribute.
+
+==== Configuration
+
+Reactive Messaging connectors are configured using MicroProfile Config.
+The implementation processes the global configuration and determines:
+
+* which channels are defined
+* which connectors are used (using the `type`) attribute
+* the configuration for each channel
+
+The builder methods defined in the `IncomingConnectorFactory` and `OutgoingConnectorFactory` receives a `org.eclipse.microprofile.config.Config` as parameter.
+The `Config` object contains key-value pairs to configure the connector.
+The configuration is specific to the connector.
+Typically, a Kafka connector expects a _bootstrap servers_ entry as well as a _topic_ entry.
+
+The Reactive Messaging implementation reads the global application configuration and must support the following format:
+
+* `mp.messaging.incoming.[channel-name].[attribute]=[value]`
+* `mp.messaging.outgoing.[channel-name].[attribute]=[value]`
+
+For each extracted `channel-name`:
+
+1. The `type` attribute value is read, and the connector implementation identified. If no connector matches, the deployment must be failed with a `DeploymentException`;
+2. The other attributes are processed to generate a `Config` object containing only `attribute=value` entries.
+
+For example, the following snippet gives an example for a hypothetical Kafka connector:
+ 
+[source]
+----
+ mp.messaging.incoming.my-channel.type=org.eclipse.reactive.sample.kafka.Kafka
+ mp.messaging.incoming.my-channel.bootstrap-servers=localhost:9092
+ mp.messaging.incoming.my-channel.topic=my-topic
+---- 
+
+The Reactive Messaging implementation:
+
+1. Reads the configuration
+2. Identifies that a `my-channel` source needs to be managed
+3. Searches for the `type` attribute and finds `org.eclipse.reactive.sample.kafka.Kafka`
+4. Looks for a bean implementing the `IncomingConnectorFactory` interface and having a `type()` method returning the `org.eclipse.reactive.sample.kafka.Kafka` class. If the configuration had contained a `mp.messaging.outgoing.my-channel...` entry, a bean implementing the `OutgoingConnectorFactory` interface would have been searched.
+5. Creates a new `Config` object with just the `key=value` pairs:
++
+[source]
+----
+bootstrap-servers=localhost:9092
+topic=my-topic
+---- 
++
+6. Calls the `PublisherBuilder<? extends Message> getPublisherBuilder(Config config)` method with the created `Config` object. If the configuration is invalid, the connector can throw:
++
+* a `NoSuchElementException` if a mandatory attribute is missing in the configuration
+* an `IllegalArgumentException` if the initialization of the connector fails for any other reasons.
++
+The Reactive Messaging implementation catches these exceptions and wraps them into a `DeploymentException`, failing the deployment of the application.
+
+7. The built `PublisherBuilder` is connected to a method using the `@Incoming("my-stream")` annotation. The implementation of the connector must map every received message to an `org.eclipse.microprofile.reactive.messaging.Message`. Optionally, it can provide its own implementation of `org.eclipse.microprofile.reactive.messaging.Message` providing additional metadata.
+
+==== Acknowledgement 
+
+The connector is responsible for the acknowledgment of the incoming and outgoing messages:
+
+* An incoming connector must only acknowledge the received message when the produced `org.eclipse.microprofile.reactive.messaging.Message` is acknowledged.
+* An outgoing connector must acknowledge the incoming `org.eclipse.microprofile.reactive.messaging.Message` once it has successfully dispatched the message.
+
 // ==== Custom message types
 
 // Implementations may provide custom subtypes of `Message` as an end user API, for the purpose of providing additional metadata associated with the messaging provider. If an application declares that it consumes or produces a subtype of the `Message` wrapper, the implementation should validate that the messaging provider supports that message wrapper type, and raise a deployment exception if it doesn't.
