@@ -26,10 +26,10 @@ import org.eclipse.microprofile.reactive.streams.operators.SubscriberBuilder;
 import java.util.NoSuchElementException;
 
 /**
- * SPI used to implement a connector managing a sink of messages for a specific <em>transport</em>. Typically, to
- * handle dispatch messages to Kafka, the reactive messaging extension would need to implement a {@code bean}
- * implementing this interface. This bean is called for every {@code stream} that need to be created for this specific
- * <em>transport</em> (so Kafka in the example). These streams are connected to methods annotated with
+ * SPI used to implement a connector managing a sink of messages for a specific <em>transport</em>. For example, to
+ * handle dispatch messages to Kafka, the reactive messaging extension would implement a {@code bean} implementing this
+ * interface. This bean is called for every {@code stream} that needs to be created for this specific <em>transport</em>
+ * (so Kafka in this example). These streams are connected to methods annotated with
  * {@link org.eclipse.microprofile.reactive.messaging.Outgoing}.
  * <p>
  * The factory is called to create a {@code subscriber} for each configured <em>transport</em>. The configuration is done
@@ -54,12 +54,12 @@ import java.util.NoSuchElementException;
  * }
  * </pre>
  * <p>
- * The set of attributes depend on the connector and transport layer (typically, bootstrap-servers is Kafka specific). The
- * {@code type} attribute is mandatory and indicates the fully qualified name of the {@link MessagingProvider}
+ * The set of attributes depend on the connector and transport layer (For example, bootstrap-servers is Kafka specific).
+ * The {@code type} attribute is mandatory and indicates the fully qualified name of the {@link MessagingProvider}
  * implementation. It must match the class returned by the {@link #type()} method. This is how a reactive messaging
  * implementation looks for the specific {@link OutgoingConnectorFactory} required for a channel. In the previous
  * configuration, the reactive messaging implementation would need to find the {@link OutgoingConnectorFactory} returning
- * the {@code i.e.m.reactive.messaging.impl.kafka.Kafka} class as result to its {@link #type()} method to create the
+ * the {@code i.e.m.reactive.messaging.impl.kafka.Kafka} class as the result of its {@link #type()} method to create the
  * {@code my-channel} <em>subscriber</em>. Note that if the connector cannot be found, the deployment must be failed
  * with a {@link javax.enterprise.inject.spi.DeploymentException}.
  * <p>
@@ -71,14 +71,15 @@ import java.util.NoSuchElementException;
  * topic = my-topic
  * </pre>
  * <p>
- * So the connector implementation can retrieves the value with {@link Config#getValue(String, Class)} and
+ * So the connector implementation can retrieve the value with {@link Config#getValue(String, Class)} and
  * {@link Config#getOptionalValue(String, Class)}.
  * <p>
  * If the configuration is invalid, the {@link #getSubscriberBuilder(Config)} method must throw an
- * {@link IllegalArgumentException}, caught by the reactive messaging implementation and failing the deployment.
+ * {@link IllegalArgumentException}, caught by the reactive messaging implementation and triggering a failure in the
+ * deployment.
  * <p>
- * Note that Reactive Messaging implementations must support the configuration format described here. Implementations
- * may support further, implementation specific, approaches.
+ * Note that a Reactive Messaging implementation must support the configuration format described here. Implementations
+ * are free to provide additional support for other approaches.
  */
 public interface OutgoingConnectorFactory {
 

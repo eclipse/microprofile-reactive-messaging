@@ -77,6 +77,10 @@ import java.util.NoSuchElementException;
  * topic = my-topic
  * </pre>
  * <p>
+ * In this example, if 'topic' was missing as a configuration property, the Kafka connector would be at liberty to
+ * default to the stream name indicated in the annotation as the Kafka topic. Such connector specific behaviours are
+ * outside the scope of this specification.
+ * <p>
  * So the connector implementation can retrieve the value with {@link Config#getValue(String, Class)} and
  * {@link Config#getOptionalValue(String, Class)}.
  * <p>
@@ -84,8 +88,8 @@ import java.util.NoSuchElementException;
  * {@link IllegalArgumentException}, caught by the reactive messaging implementation and failing the deployment by
  * throwing a {@link DeploymentException} wrapping the exception.
  * <p>
- * Note that Reactive Messaging implementations must support the configuration format described here. Implementations
- * may support further, implementation specific, approaches.
+ * Note that a Reactive Messaging implementation must support the configuration format described here. Implementations
+ * are free to provide additional support for other approaches.
  */
 public interface IncomingConnectorFactory {
 
@@ -103,12 +107,12 @@ public interface IncomingConnectorFactory {
      * {@link #type()}.
      * <p>
      * Note that the connection to the <em>transport</em> or <em>broker</em> is generally postponed until the
-     * subscription.
+     * subscription occurs.
      *
-     * @param config the configuration, never {@code null}
-     * @return the created {@link PublisherBuilder}, must not be {@code null}.
+     * @param config the configuration, must not be {@code null}
+     * @return the created {@link PublisherBuilder}, will not be {@code null}.
      * @throws IllegalArgumentException if the configuration is invalid.
-     * @throws NoSuchElementException if the configuration does not contain an expected attribute.
+     * @throws NoSuchElementException   if the configuration does not contain an expected attribute.
      */
     PublisherBuilder<? extends Message> getPublisherBuilder(Config config);
 

@@ -20,5 +20,12 @@ package org.eclipse.microprofile.reactive.messaging.tck.connector;
 
 import org.eclipse.microprofile.reactive.messaging.MessagingProvider;
 
+/**
+ * Messaging Provider used in the TCK to check the connector support of the Reactive Messaging implementation.
+ * This messaging provider is not connected to any messaging protocol, it's just for testing purpose.
+ */
 public class Dummy implements MessagingProvider {
+
+    // Marker interface.
+
 }
