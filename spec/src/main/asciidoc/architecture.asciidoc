@@ -95,8 +95,12 @@ This is detailed in the next section.
 Remember that Reactive Messaging interactions are assembled from Reactive Streams.
 A method annotated with `@Incoming` is a Reactive Streams _subscriber_ and so consumes messages that fit with the message signature and its annotations.
 Note that the handling of the Reactive Streams protocol, such as subscriptions and back pressure, is managed by the Reactive Messaging implementation.
+The MicroProfile Reactive Streams specification used as a foundation for this version of Reactive Messaging is a single subscriber model where a stream
+`Publisher` is connected to a single `Subscriber` which controls back pressure. This implies that a Reactive Messaging channel
+should appear in a single `@Incoming` annotation. The annotation of more than one `@Incoming` method to be associated with the
+same channel is not supported and will cause an error during deployment.
 
-From the user perspective, whether the incoming messages come from co-located beans or a remote message broker is transparent.
+From the user perspective, whether the incoming messages comes from co-located beans or a remote message broker is transparent.
 However, the user may decide to consume a specific subclass of `Message` if the user is aware of this characteristic:
 
 [source,java]
@@ -127,6 +131,9 @@ Reactive Messaging supports various forms of method signatures.
 This is detailed in the next section.
 
 A method annotated with `@Outgoing` is a Reactive Streams _publisher_ and so publishes messages according to the requests it receives.
+The downstream `@Incoming` method or outgoing connector with a matching channel name will be linked to this publisher. Only a single method can
+be annotated with `@Outgoing` for a particular channel name. Having the same channel name in more than one `@Outgoing` annotated method is not
+supported and will result in an error during deployment. 
 
 ===== Method consuming and producing
 
@@ -142,6 +149,8 @@ public Message<String> process(Message<String> message) {
 ----
 1. The incoming channel
 2. The outgoing channel
+
+Having the same channel appear in the `@Outgoing` and `@Incoming` annotations of a processor is not supported and will result in an error during deployment.
 
 ==== Connectors and Messaging Providers
 
