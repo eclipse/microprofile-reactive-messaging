@@ -65,7 +65,7 @@ import java.util.NoSuchElementException;
  * implementation. It must match the class returned by the {@link #type()} method. This is how a reactive messaging
  * implementation looks for the specific {@link IncomingConnectorFactory} required for a channel. In the previous
  * configuration, the reactive messaging implementation would need to find the {@link IncomingConnectorFactory} returning
- * the {@code i.e.m.reactive.messaging.impl.kafka.Kafka} class as result to its {@link #type()} method to create the
+ * the {@code i.e.m.reactive.messaging.impl.kafka.Kafka} class as the result of its {@link #type()} method to create the
  * {@code my-channel} channel. Note that if the connector cannot be found, the deployment must be failed with a
  * {@link DeploymentException}.
  * <p>
@@ -77,7 +77,7 @@ import java.util.NoSuchElementException;
  * topic = my-topic
  * </pre>
  * <p>
- * In this example, if 'topic' was missing as a configuration property, the Kafka connector would be at liberty to
+ * In this example, if {@code topic} was missing as a configuration property, the Kafka connector would be at liberty to
  * default to the stream name indicated in the annotation as the Kafka topic. Such connector specific behaviours are
  * outside the scope of this specification.
  * <p>
