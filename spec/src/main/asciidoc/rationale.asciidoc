@@ -55,8 +55,8 @@ The MicroProfile Reactive Messaging specification aims to deliver applications e
 
 Java EE offers JMS and Message Driven Beans for handling asynchronous communication; however, there are some problems with these specifications:
 
-* Both are designed for a technology landscape where messaging was a heavyweight process used on the edge of the system to hand control of a transaction from system to another; consequently, there is a lot of boilerplate associated with using these technologies.
-* It is assumed their design that consistency is handled using distributed transactions. 
+* Both are designed for a technology landscape where messaging was typically on the edge of the system to hand control of a transaction from one system to another; consequently, these technologies can appear heavyweight when used between microservices.
+* It is assumed in their design that consistency is handled using distributed transactions. 
 However, many message brokers, popular in microservice deployments, such as Apache Kafka, Amazon Kinesis and Azure Event Hubs, do not support XA transactions, rather, message acknowledgment is handled using offsets with at least once delivery guarantees.
 * They do not have support for asynchronous IO; it is assumed that message processing is done on a single thread, however, many modern specifications are moving to asynchronous IO.
 
