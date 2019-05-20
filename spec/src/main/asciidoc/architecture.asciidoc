@@ -976,19 +976,21 @@ If the annotation is not used, the default policy must be enforced.
 
 === Connector
 
-Reactive Messaging connects matching `@Incoming` and `@Outgoing` running inside the same application.
-Besides, it maps specific _channels_ to _external_ technologies such as Apache Kafka, MQTT, Web Sockets, or JMS. 
-It means that Reactive Messaging can receive messages from virtually any messaging technology and dispatch messages to any messaging technology.
-The component responsible for this role is called _connector_. 
+Reactive Messaging connects matching `@Incoming` and `@Outgoing` stream elements running inside the same application.
+Additionally, it maps specific _channels_ to _external_ technologies such as Apache Kafka, MQTT, Web Sockets, or JMS.
+This means that Reactive Messaging can receive messages from virtually any messaging technology and dispatch messages to any messaging technology.
+This bridging to an external messaging technology is done using a reactive messaging _connector_.
 
 ==== Connector concepts
 
 Each _connector_ is responsible for a specific technology. 
 A connector can:
 
-* act as a _Publisher_, meaning it retrieves or receives messages from an external messaging technology. The messages will then be sent to a method annotated with `@Incoming`
-* act as a _Subscriber_, meaning it dispatches messages to an external messaging technology. The messages are received from a method annotated with `@Outgoing`
-* handle both directions
+* act as a _Publisher_, meaning it retrieves or receives messages from an external messaging technology and publishes them to a reactive stream.
+ The messages will then be sent to a method annotated with `@Incoming`.
+* act as a _Subscriber_, meaning it subscribes to a reactive stream and dispatches messages to an external messaging technology.
+The messages are received from a method annotated with `@Outgoing`.
+* handle both directions.
 
 It's essential that connectors implement the back-pressure protocol defined by the Reactive Streams specification.
 
@@ -997,10 +999,12 @@ A _connector_ is implemented as a CDI Bean, generally _application_ scoped imple
 * the `org.eclipse.microprofile.reactive.messaging.connector.IncomingConnectorFactory` interface to receive messages from an external source;
 * the `org.eclipse.microprofile.reactive.messaging.connector.OutgoingConnectorFactory` interface to dispatch messages to an external sink
 
+NOTE: Depending on the integrated technology, the _connector_ can implement one of the interface or both.
+
 The bean is a factory called by the Reactive Messaging implementation to create `PublisherBuilder` or `SubscriberBuilder` objects. 
 These objects are then connected to methods annotated with `@Incoming` or `@Outgoing`. 
 
-Both interfaces contains a `type()` method returning a `MessagingProvider`.
+Both interfaces contain a `type()` method returning a `MessagingProvider`.
 `MessagingProvider` is a marker interface implemented by the connector allowing the user to indicate which connector needs to be used. 
 For instance, the following `MessagingProvider` implementation can be used in a Kafka connector:
 
@@ -1029,10 +1033,10 @@ The implementation processes the global configuration and determines:
 * which connectors are used (using the `type`) attribute
 * the configuration for each channel
 
-The builder methods defined in the `IncomingConnectorFactory` and `OutgoingConnectorFactory` receives a `org.eclipse.microprofile.config.Config` as parameter.
+The builder methods defined in the `IncomingConnectorFactory` and `OutgoingConnectorFactory` receive a `org.eclipse.microprofile.config.Config` as parameter.
 The `Config` object contains key-value pairs to configure the connector.
 The configuration is specific to the connector.
-Typically, a Kafka connector expects a _bootstrap servers_ entry as well as a _topic_ entry.
+For example, a Kafka connector expects a _bootstrap servers_ entry as well as a _topic_ entry.
 
 The Reactive Messaging implementation reads the global application configuration and must support the following format:
 
@@ -1059,7 +1063,7 @@ The Reactive Messaging implementation:
 2. Identifies that a `my-channel` source needs to be managed
 3. Searches for the `type` attribute and finds `org.eclipse.reactive.sample.kafka.Kafka`
 4. Looks for a bean implementing the `IncomingConnectorFactory` interface and having a `type()` method returning the `org.eclipse.reactive.sample.kafka.Kafka` class. If the configuration had contained a `mp.messaging.outgoing.my-channel...` entry, a bean implementing the `OutgoingConnectorFactory` interface would have been searched.
-5. Creates a new `Config` object with just the `key=value` pairs:
+5. Creates a new `Config` object with just the relevant `key=value` pairs:
 +
 [source]
 ----
