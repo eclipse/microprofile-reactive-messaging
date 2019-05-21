@@ -56,12 +56,13 @@ import java.util.NoSuchElementException;
  * <p>
  * The set of attributes depend on the connector and transport layer (For example, bootstrap-servers is Kafka specific).
  * The {@code type} attribute is mandatory and indicates the fully qualified name of the {@link MessagingProvider}
- * implementation. It must match the class returned by the {@link #type()} method. This is how a reactive messaging
- * implementation looks for the specific {@link OutgoingConnectorFactory} required for a channel. In the previous
- * configuration, the reactive messaging implementation would need to find the {@link OutgoingConnectorFactory} returning
- * the {@code i.e.m.reactive.messaging.impl.kafka.Kafka} class as the result of its {@link #type()} method to create the
- * {@code my-channel} <em>subscriber</em>. Note that if the connector cannot be found, the deployment must be failed
- * with a {@link javax.enterprise.inject.spi.DeploymentException}.
+ * implementation. It must match the class returned by the {@link Connector} qualifier used on the bean implementation.
+ * This is how a reactive messaging implementation looks for the specific {@link OutgoingConnectorFactory} required for
+ * a channel. In the previous configuration, the reactive messaging implementation would need to find the
+ * {@link OutgoingConnectorFactory} implementation qualified with the {@link Connector} qualifier with the value
+ * {@code i.e.m.reactive.messaging.impl.kafka.Kafka} to create the {@code my-channel} <em>subscriber</em>. Note that if
+ * the connector cannot be found, the deployment must be failed with a
+ * {@link javax.enterprise.inject.spi.DeploymentException}.
  * <p>
  * The {@link #getSubscriberBuilder(Config)} is called for every <em>channel</em> that needs to be created. The
  * {@link Config} object passed to the method contains a subset of the global configuration, and with the prefixes removed.
@@ -84,17 +85,8 @@ import java.util.NoSuchElementException;
 public interface OutgoingConnectorFactory {
 
     /**
-     * Gets the {@link MessagingProvider} class associated with this {@link OutgoingConnectorFactory}.
-     * Note that the {@link MessagingProvider} is a user-facing interface used in the configuration.
-     *
-     * @return the {@link MessagingProvider} associated with this {@link OutgoingConnectorFactory}. Must not be
-     * {@code null}. Returning {@code null} triggers a deployment failure.
-     */
-    Class<? extends MessagingProvider> type();
-
-    /**
-     * Creates a <em>channel</em> for the given configuration. The given configuration {@code type} attribute matches the
-     * {@link #type()}.
+     * Creates a <em>channel</em> for the given configuration. The given configuration {@code type} attribute matches
+     * the {@link Connector} qualifier used on the bean.
      * <p>
      * Note that the connection to the <em>transport</em> or <em>broker</em> is generally postponed until the
      * subscription.
