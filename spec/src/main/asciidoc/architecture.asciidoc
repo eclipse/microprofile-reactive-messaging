@@ -1059,7 +1059,7 @@ For each extracted `channel-name`:
 2. Relevant attributes are those matching either the `channel-name` or the resolved `connector-name`.
 3. Relevant attributes are processed to generate a `Config` object containing only `attribute=value` entries.
 If is valid to have an attribute specified at a connector level and also for a specific channel.
-If an attribute appears for both a channel and its relevant connector, the connector specific value will be used.
+If an attribute appears for both a channel and its relevant connector, the channel specific value will be used.
 
 For example, the following snippet gives an example for a hypothetical Kafka connector:
  
@@ -1067,7 +1067,7 @@ For example, the following snippet gives an example for a hypothetical Kafka con
 ----
  mp.messaging.incoming.my-channel.type=org.eclipse.reactive.sample.kafka.Kafka
  mp.messaging.incoming.my-channel.topic=my-topic
- mp.messaging.connector.org.eclipse.reactive.sample.kafka.Kafka.bootstrap-servers=localhost:9092
+ mp.messaging.connector.org.eclipse.reactive.sample.kafka.Kafka.bootstrap.servers=localhost:9092
 ---- 
 
 Note that as classnames are expected to begin with an uppercase letter and package names are expected to be lowercase, and properties are case sensitive,
@@ -1084,7 +1084,7 @@ The Reactive Messaging implementation:
 +
 [source]
 ----
-bootstrap-servers=localhost:9092
+bootstrap.servers=localhost:9092
 topic=my-topic
 ---- 
 +
