@@ -1013,8 +1013,9 @@ NOTE: Depending on the integrated technology, the _connector_ can implement one 
 The bean is a factory called by the Reactive Messaging implementation to create `PublisherBuilder` or `SubscriberBuilder` objects. 
 These objects are then connected to methods annotated with `@Incoming` or `@Outgoing`. 
 
-Both interfaces contain a `type()` method returning a `MessagingProvider`.
-`MessagingProvider` is a marker interface implemented by the connector allowing the user to indicate which connector needs to be used. 
+Beans implementing the `IncomingConnectorFactory` or `OutgoingConnectorFactory` must use the `org.eclipse.microprofile.reactive.messaging.spi.Connector` qualifier.
+This qualifier defined the `MessagingProvider` associated with the connector.
+`MessagingProvider` is a marker interface allowing the user to indicate which connector needs to be used.
 For instance, the following `MessagingProvider` implementation can be used in a Kafka connector:
 
 [source, java]
@@ -1027,6 +1028,22 @@ public class Kafka implements MessagingProvider {
 
   // Just a marker class.
 
+}
+----
+
+Implementation would use the following qualifier:
+
+[source, java]
+----
+package org.eclipse.reactive.sample.kafka;
+
+import org.eclipse.microprofile.reactive.messaging.spi.*;
+import org.eclipse.microprofile.reactive.messaging.MessagingProvider;
+
+@ApplicationScoped
+@Connector(Kafka.class)
+public class KafkaMessagingProvider implements IncomingConnectorFactory, OutgoingConnectorFactory {
+    // ...
 }
 ----
 
@@ -1071,7 +1088,8 @@ The Reactive Messaging implementation:
 1. Reads the configuration
 2. Identifies that a `my-channel` source needs to be managed
 3. Searches for the `type` attribute and finds `org.eclipse.reactive.sample.kafka.Kafka`
-4. Looks for a bean implementing the `IncomingConnectorFactory` interface and having a `type()` method returning the `org.eclipse.reactive.sample.kafka.Kafka` class. If the configuration had contained a `mp.messaging.outgoing.my-channel...` entry, a bean implementing the `OutgoingConnectorFactory` interface would have been searched.
+4. Looks for a bean implementing the `IncomingConnectorFactory` interface qualified with `@Connector(org.eclipse.reactive.sample.kafka.Kafka.class)`.
+If the configuration had contained a `mp.messaging.outgoing.my-channel...` entry, a bean implementing the `OutgoingConnectorFactory` interface would have been searched.
 5. Creates a new `Config` object with just the relevant `key=value` pairs:
 +
 [source]
