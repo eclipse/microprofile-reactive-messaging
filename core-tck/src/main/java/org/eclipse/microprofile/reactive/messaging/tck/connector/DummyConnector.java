@@ -21,6 +21,7 @@ package org.eclipse.microprofile.reactive.messaging.tck.connector;
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.reactive.messaging.Message;
 import org.eclipse.microprofile.reactive.messaging.MessagingProvider;
+import org.eclipse.microprofile.reactive.messaging.spi.Connector;
 import org.eclipse.microprofile.reactive.messaging.spi.IncomingConnectorFactory;
 import org.eclipse.microprofile.reactive.messaging.spi.OutgoingConnectorFactory;
 import org.eclipse.microprofile.reactive.streams.operators.PublisherBuilder;
@@ -33,12 +34,9 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 @ApplicationScoped
+@Connector(Dummy.class)
 public class DummyConnector implements IncomingConnectorFactory, OutgoingConnectorFactory {
     private List<String> elements = new CopyOnWriteArrayList<>();
-
-    @Override public Class<? extends MessagingProvider> type() {
-        return Dummy.class;
-    }
 
     public List<String> elements() {
         return elements;
