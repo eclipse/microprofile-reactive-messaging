@@ -30,12 +30,12 @@ import java.util.*;
  * The produced Config is equivalent to:
  * <pre>
  *      ## Dummy Incoming connector
- *      mp.messaging.incoming.dummy-source.type=org.eclipse.microprofile.reactive.messaging.tck.connector.Dummy
+ *      mp.messaging.incoming.dummy-source.connector=Dummy
  *      mp.messaging.incoming.dummy-source.attribute=value
  *      mp.messaging.incoming.dummy-source.items=a,b,c,d,e,f,g,h,i,j
  *
  *      ## Dummy Outgoing connector
- *      mp.messaging.outgoing.dummy-sink.type=org.eclipse.microprofile.reactive.messaging.tck.connector.Dummy
+ *      mp.messaging.outgoing.dummy-sink.connector=oDummy
  *      mp.messaging.outgoing.dummy-sink.attribute=value
  * </pre>
  */
@@ -47,10 +47,10 @@ public class FakeConfig {
     @Produces
     public Config config() {
         Map<String, String> backend = new HashMap<>();
-        backend.put("mp.messaging.incoming.dummy-source.type" , Dummy.class.getName());
+        backend.put("mp.messaging.incoming.dummy-source.connector" , "Dummy");
         backend.put("mp.messaging.incoming.dummy-source.attribute" , "value");
         backend.put("mp.messaging.incoming.dummy-source.items", "a,b,c,d,e,f,g,h,i,j");
-        backend.put("mp.messaging.outgoing.dummy-sink.type" , Dummy.class.getName());
+        backend.put("mp.messaging.outgoing.dummy-sink.connector" , "Dummy");
         backend.put("mp.messaging.outgoing.dummy-sink.attribute" , "value");
 
 

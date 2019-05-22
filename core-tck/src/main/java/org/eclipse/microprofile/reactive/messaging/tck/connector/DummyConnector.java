@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 @ApplicationScoped
-@Connector(Dummy.class)
+@Connector("Dummy")
 public class DummyConnector implements IncomingConnectorFactory, OutgoingConnectorFactory {
     private List<String> elements = new CopyOnWriteArrayList<>();
 
