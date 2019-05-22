@@ -20,7 +20,6 @@ package org.eclipse.microprofile.reactive.messaging.spi;
 
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.reactive.messaging.Message;
-import org.eclipse.microprofile.reactive.messaging.MessagingProvider;
 import org.eclipse.microprofile.reactive.streams.operators.SubscriberBuilder;
 
 import java.util.NoSuchElementException;
@@ -36,8 +35,8 @@ import java.util.NoSuchElementException;
  * using MicroProfile Config. The following snippet gives an example for a hypothetical Kafka connector:
  *
  * <pre>
- * mp.messaging.outgoing.my-channel.type=i.e.m.reactive.messaging.impl.kafka.Kafka
- * mp.messaging.outgoing.my-channel.bootstrap-servers=localhost:9092
+ * mp.messaging.outgoing.my-channel.connector=i.e.m.reactive.messaging.impl.kafka.Kafka
+ * mp.messaging.outgoing.my-channel.bootstrap.servers=localhost:9092
  * mp.messaging.outgoing.my-channel.topic=my-topic
  * ...
  * </pre>
@@ -54,9 +53,9 @@ import java.util.NoSuchElementException;
  * }
  * </pre>
  * <p>
- * The set of attributes depend on the connector and transport layer (For example, bootstrap-servers is Kafka specific).
- * The {@code type} attribute is mandatory and indicates the fully qualified name of the {@link MessagingProvider}
- * implementation. It must match the class returned by the {@link Connector} qualifier used on the bean implementation.
+ * The set of attributes depend on the connector and transport layer (For example, bootstrap.servers is Kafka specific).
+ * The {@code connector} attribute is mandatory and indicates the name of the connector. It must match the class
+ * returned by the {@link Connector} qualifier used on the bean implementation.
  * This is how a reactive messaging implementation looks for the specific {@link OutgoingConnectorFactory} required for
  * a channel. In the previous configuration, the reactive messaging implementation would need to find the
  * {@link OutgoingConnectorFactory} implementation qualified with the {@link Connector} qualifier with the value
@@ -68,7 +67,7 @@ import java.util.NoSuchElementException;
  * {@link Config} object passed to the method contains a subset of the global configuration, and with the prefixes removed.
  * So for the previous configuration, it would be:
  * <pre>
- * bootstrap-servers = localhost:9092
+ * bootstrap.servers = localhost:9092
  * topic = my-topic
  * </pre>
  * <p>
@@ -85,8 +84,9 @@ import java.util.NoSuchElementException;
 public interface OutgoingConnectorFactory {
 
     /**
-     * Creates a <em>channel</em> for the given configuration. The given configuration {@code type} attribute matches
-     * the {@link Connector} qualifier used on the bean.
+     * Creates a <em>channel</em> for the given configuration. The channel's configuration is associated with a
+     * specific {@code connector}, using the {@link Connector} qualifier's parameter indicating a key to
+     * which {@link org.eclipse.microprofile.reactive.messaging.Outgoing} to use.
      * <p>
      * Note that the connection to the <em>transport</em> or <em>broker</em> is generally postponed until the
      * subscription.

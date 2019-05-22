@@ -20,7 +20,6 @@ package org.eclipse.microprofile.reactive.messaging.spi;
 
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.reactive.messaging.Message;
-import org.eclipse.microprofile.reactive.messaging.MessagingProvider;
 import org.eclipse.microprofile.reactive.streams.operators.PublisherBuilder;
 
 import javax.enterprise.inject.spi.DeploymentException;
@@ -37,8 +36,8 @@ import java.util.NoSuchElementException;
  * MicroProfile Config. The following snippet gives an example for a hypothetical Kafka connector:
  *
  * <pre>
- * mp.messaging.incoming.my-channel.type=i.e.m.reactive.messaging.impl.kafka.Kafka
- * mp.messaging.incoming.my-channel.bootstrap-servers=localhost:9092
+ * mp.messaging.incoming.my-channel.connector=i.e.m.reactive.messaging.impl.kafka.Kafka
+ * mp.messaging.incoming.my-channel.bootstrap.servers=localhost:9092
  * mp.messaging.incoming.my-channel.topic=my-topic
  * ...
  * </pre>
@@ -60,9 +59,9 @@ import java.util.NoSuchElementException;
  * }
  * </pre>
  * <p>
- * The set of attributes depend on the connector and transport layer (for example, bootstrap-servers is Kafka specific).
- * The {@code type} attribute is mandatory and indicates the fully qualified name of the {@link MessagingProvider}
- * implementation. It must match the class returned by the {@link Connector} qualifier used on the bean implementation.
+ * The set of attributes depend on the connector and transport layer (for example, bootstrap.servers is Kafka specific).
+ * The {@code connector} attribute is mandatory and indicates the qualified name of the <em>connector</em>. It must
+ * match the value returned by the {@link Connector} qualifier used on the bean implementation.
  * This is how a reactive messaging implementation looks for the specific {@link IncomingConnectorFactory} required for
  * a channel.
  *
@@ -75,7 +74,7 @@ import java.util.NoSuchElementException;
  * passed to the method contains a subset of the global configuration, and with the prefixes removed. So for the previous
  * configuration, it would be:
  * <pre>
- * bootstrap-services = localhost:9092
+ * bootstrap.servers = localhost:9092
  * topic = my-topic
  * </pre>
  * <p>
@@ -96,8 +95,10 @@ import java.util.NoSuchElementException;
 public interface IncomingConnectorFactory {
 
     /**
-     * Creates a <em>channel</em> for the given configuration. The given configuration {@code type} attribute matches
-     * the {@link Connector} qualifier used on the bean.
+     * Creates a <em>channel</em> for the given configuration. The channel's configuration is associated with a
+     * specific {@code connector}, using the {@link Connector} qualifier's parameter indicating a key to
+     * which {@link IncomingConnectorFactory} to use.
+     *
      * <p>
      * Note that the connection to the <em>transport</em> or <em>broker</em> is generally postponed until the
      * subscription occurs.
