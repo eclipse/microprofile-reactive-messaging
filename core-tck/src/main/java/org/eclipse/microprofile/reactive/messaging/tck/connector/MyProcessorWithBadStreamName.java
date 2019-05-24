@@ -16,16 +16,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.eclipse.microprofile.reactive.messaging.tck.invalid;
+package org.eclipse.microprofile.reactive.messaging.tck.connector;
 
-
+import org.eclipse.microprofile.reactive.messaging.Incoming;
 import org.eclipse.microprofile.reactive.messaging.Outgoing;
 
-public class BeanWithEmptyOutgoing {
+import javax.enterprise.context.ApplicationScoped;
 
-    @Outgoing("")
-    public String producer() {
-        return "hello";
+@ApplicationScoped
+public class MyProcessorWithBadStreamName {
+
+    @Incoming("bad name")
+    @Outgoing("dummy-sink")
+    public String process(String s) {
+        return s.toUpperCase();
     }
 
 }

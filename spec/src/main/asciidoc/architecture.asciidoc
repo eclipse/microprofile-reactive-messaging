@@ -152,7 +152,7 @@ public Message<String> process(Message<String> message) {
 
 Having the same channel appear in the `@Outgoing` and `@Incoming` annotations of a processor is not supported and will result in an error during deployment.
 
-==== Connectors and Messaging Providers
+==== Connectors
 
 The application can receive and forward messages from various message brokers or transport layers.
 For instance, an application can be connected to a Kafka cluster, an AMQP broker or an MQTT server.
@@ -162,28 +162,21 @@ They are responsible for mapping a specific _channel_ to remote sink or source o
 This mapping is configured in the application configuration.
 Note that an implementation may provide various ways to configure the mapping, but support for MicroProfile Config as a configuration source is mandatory.
 
-Connectors are associated with a `org.eclipse.microprofile.reactive.messaging.MessagingProvider` class corresponding to a messaging transport, such as Apache Kafka, Amazon Kinesis, RabbitMQ or Apache ActiveMQ.
-For instance, an hypthetic Kafka connector would be associated with the following class:
+Connectors implementation are associated with a name corresponding to a messaging transport, such as Apache Kafka, Amazon Kinesis, RabbitMQ or Apache ActiveMQ.
+For instance, an hypothetic Kafka connector could be associated with the following name: `acme.kafka`.
+This name is indicated using a qualifier on the connector implementation.
 
-[source, java]
-----
-public class Kafka extends MessagingProvider {
-  private Kafka() { }
-}
-----
-
-Note that the class is just a marker class, it provides no actual functionality. 
-The user can associate a channel with this connector using:
+The user can associate a channel with this connector using the associated name:
 
 [source, properties]
 ----
-mp.messaging.incoming.my-kafka-topic.type=...Kafka  # <1>
+mp.messaging.incoming.my-kafka-topic.connector=acme.kafka  # <1>
 ----
-1. the value is the fully qualified name of the `MessagingProvider` class associated with the connector.
+1. the name associated with the connector.
 
 The configuration format is detailed later in this document.
 
-The Reactive Messaging implementation is responsible for finding the connector implementation associated with the given `MessagingProvider` in the user configuration.
+The Reactive Messaging implementation is responsible for finding the connector implementation associated with the given name in the user configuration.
 If the connector cannot be found, the deployment of the application must be failed.
 
 The Reactive Messaging specification provides a SPI to implement connectors.
@@ -980,7 +973,7 @@ public Message<O> process(Message<I> msg) {
 }
 ----
 
-The implementation is reponsible for enforcing the acknowledgement strategy defined by the user when the `@Acknowledgement` policy is used. 
+The implementation is responsible for enforcing the acknowledgement strategy defined by the user when the `@Acknowledgement` policy is used.
 If the annotation is not used, the default policy must be enforced.
 
 === Connector
@@ -1013,25 +1006,26 @@ NOTE: Depending on the integrated technology, the _connector_ can implement one 
 The bean is a factory called by the Reactive Messaging implementation to create `PublisherBuilder` or `SubscriberBuilder` objects. 
 These objects are then connected to methods annotated with `@Incoming` or `@Outgoing`. 
 
-Both interfaces contain a `type()` method returning a `MessagingProvider`.
-`MessagingProvider` is a marker interface implemented by the connector allowing the user to indicate which connector needs to be used. 
-For instance, the following `MessagingProvider` implementation can be used in a Kafka connector:
+Beans implementing the `IncomingConnectorFactory` or `OutgoingConnectorFactory` must use the `org.eclipse.microprofile.reactive.messaging.spi.Connector` qualifier.
+This qualifier defined the name associated with the connector.
+
+The `@Connector` qualifier is used as follows:
 
 [source, java]
 ----
 package org.eclipse.reactive.sample.kafka;
 
-import org.eclipse.microprofile.reactive.messaging.MessagingProvider;
+import org.eclipse.microprofile.reactive.messaging.spi.*;
 
-public class Kafka implements MessagingProvider {
-
-  // Just a marker class.
-
+@ApplicationScoped
+@Connector("acme.kafka")
+public class KafkaConnector implements IncomingConnectorFactory, OutgoingConnectorFactory {
+    // ...
 }
 ----
 
-Once defined, the user can, in the configuration, refer to this connector using the fully qualified name of the class.
-When the Reactive Messaging implementation processes the configuration, it determines the connector to be used based on the `type` attribute.
+Once defined, the user can, in the configuration, refer to this connector using the given name (`acme.kafka` in this example).
+When the Reactive Messaging implementation processes the configuration, it determines the connector to be used based on the `connector` attribute.
 
 ==== Configuration
 
@@ -1039,7 +1033,7 @@ Reactive Messaging connectors are configured using MicroProfile Config.
 The implementation processes the global configuration and determines:
 
 * which channels are defined
-* which connectors are used (using the `type`) attribute
+* which connectors are used (using the `connector`) attribute
 * the configuration for each channel
 
 The builder methods defined in the `IncomingConnectorFactory` and `OutgoingConnectorFactory` receive a `org.eclipse.microprofile.config.Config` as parameter.
@@ -1054,14 +1048,14 @@ The Reactive Messaging implementation reads the global application configuration
 
 For each extracted `channel-name`:
 
-1. The `type` attribute value is read, and the connector implementation identified. If no connector matches, the deployment must be failed with a `DeploymentException`;
+1. The `connector` attribute value is read, and the connector implementation identified. If no connector matches, the deployment must be failed with a `DeploymentException`;
 2. The other attributes are processed to generate a `Config` object containing only `attribute=value` entries.
 
 For example, the following snippet gives an example for a hypothetical Kafka connector:
  
 [source]
 ----
- mp.messaging.incoming.my-channel.type=org.eclipse.reactive.sample.kafka.Kafka
+ mp.messaging.incoming.my-channel.connector=acme.kafka
  mp.messaging.incoming.my-channel.bootstrap-servers=localhost:9092
  mp.messaging.incoming.my-channel.topic=my-topic
 ---- 
@@ -1070,13 +1064,14 @@ The Reactive Messaging implementation:
 
 1. Reads the configuration
 2. Identifies that a `my-channel` source needs to be managed
-3. Searches for the `type` attribute and finds `org.eclipse.reactive.sample.kafka.Kafka`
-4. Looks for a bean implementing the `IncomingConnectorFactory` interface and having a `type()` method returning the `org.eclipse.reactive.sample.kafka.Kafka` class. If the configuration had contained a `mp.messaging.outgoing.my-channel...` entry, a bean implementing the `OutgoingConnectorFactory` interface would have been searched.
+3. Searches for the `connector` attribute and finds `acme.kafka`
+4. Looks for a bean implementing the `IncomingConnectorFactory` interface qualified with `@Connector("acme.kafka")`.
+If the configuration had contained a `mp.messaging.outgoing.my-channel...` entry, a bean implementing the `OutgoingConnectorFactory` interface would have been searched.
 5. Creates a new `Config` object with just the relevant `key=value` pairs:
 +
 [source]
 ----
-bootstrap-servers=localhost:9092
+bootstrap.servers=localhost:9092
 topic=my-topic
 ---- 
 +
