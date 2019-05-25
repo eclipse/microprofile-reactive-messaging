@@ -42,10 +42,9 @@ public class DependantScopeTest extends TckBase {
 
     @Test
     public void verify() {
-        await().until(() -> DependantBeans.getStaticList().size() == 1);
+        // the injected instance, the source, the sink, the processor
+        await().until(() -> DependantBeans.getInstances().size() == 4);
         assertThat(bean.getList()).isEmpty();
-        assertThat(DependantBeans.getStaticList()).hasSize(1);
-        assertThat(DependantBeans.getStaticList().get(0)).isGreaterThan(1);
     }
 
 }
