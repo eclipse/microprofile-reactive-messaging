@@ -18,6 +18,7 @@
  */
 package org.eclipse.microprofile.reactive.messaging.tck.connector;
 
+import org.eclipse.microprofile.reactive.messaging.spi.ConnectorLiteral;
 import org.eclipse.microprofile.reactive.messaging.tck.ArchiveExtender;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -28,6 +29,7 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 import java.util.ServiceLoader;
 
@@ -41,7 +43,7 @@ import static org.awaitility.Awaitility.await;
 public class ConnectorTest {
 
     @Inject
-    private DummyConnector connector;
+    private BeanManager manager;
 
     @Deployment
     public static Archive<JavaArchive> deployment() {
@@ -55,6 +57,8 @@ public class ConnectorTest {
 
     @Test
     public void checkConnector() {
+        DummyConnector connector = manager.createInstance()
+            .select(DummyConnector.class, ConnectorLiteral.of("Dummy")).get();
         await().until(() -> connector.elements().size() == 10);
         assertThat(connector.elements()).containsExactly("A", "B", "C", "D", "E", "F", "G", "H", "I", "J");
     }
