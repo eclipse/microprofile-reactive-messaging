@@ -23,7 +23,7 @@ import org.eclipse.microprofile.reactive.messaging.Incoming;
 
 public class BeanWithEmptyIncoming {
 
-    @Incoming
+    @Incoming("")
     public void consumer(String data) {
 
     }

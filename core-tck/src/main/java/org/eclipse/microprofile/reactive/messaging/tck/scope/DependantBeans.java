@@ -34,14 +34,15 @@ public class DependantBeans {
     private static final AtomicInteger COUNTER = new AtomicInteger();
     private final int id;
     private List<Integer> list = new CopyOnWriteArrayList<>();
-    private static final List<Integer> STATIC_LIST = new CopyOnWriteArrayList<>();
+    private static final List<String> INSTANCES = new CopyOnWriteArrayList<>();
 
     public DependantBeans() {
+        INSTANCES.add(this.toString());
         id = COUNTER.getAndIncrement();
     }
 
-    static List<Integer> getStaticList() {
-        return STATIC_LIST;
+    static List<String> getInstances() {
+        return INSTANCES;
     }
 
     @Outgoing("source")
@@ -57,7 +58,6 @@ public class DependantBeans {
 
     @Incoming("output")
     public void sink(int v) {
-        STATIC_LIST.add(v);
         list.add(v);
     }
 
