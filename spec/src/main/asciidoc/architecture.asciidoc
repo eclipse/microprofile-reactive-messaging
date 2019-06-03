@@ -1039,7 +1039,7 @@ The implementation processes the global configuration and determines:
 The builder methods defined in the `IncomingConnectorFactory` and `OutgoingConnectorFactory` receive a `org.eclipse.microprofile.config.Config` as parameter.
 The `Config` object contains key-value pairs to configure the connector.
 The configuration is specific to the connector.
-For example, a Kafka connector expects a _bootstrap servers_ entry as well as a _topic_ entry.
+For example, a Kafka connector expects a _bootstrap.servers_ entry as well as a _topic_ entry.
 
 The Reactive Messaging implementation reads the global application configuration and must support the following format:
 
@@ -1054,7 +1054,7 @@ For each extracted `channel-name`:
 3. Relevant attributes are processed to generate a `Config` object containing only `attribute=value` entries.
 If is valid to have an attribute specified at a connector level and also for a specific channel.
 If an attribute appears for both a channel and its relevant connector, the channel specific value will be used.
-In the example below, the 'acme.kafka' default value for 'bootstrap.servers' is overridden for 'my-channel' to be '9096'.
+In the example below, the `acme.kafka` default value for `bootstrap.servers` is overridden for `my-channel` to be `9096`.
 
 The following snippet gives an example for a hypothetical Kafka connector:
  
@@ -1066,11 +1066,16 @@ The following snippet gives an example for a hypothetical Kafka connector:
  mp.messaging.connector.acme.kafka.bootstrap.servers=localhost:9092
 ---- 
 
-For properties that have a `mp.messaging.connector.connector.` prefix, this string is stripped off the property name and
+For properties that have a `mp.messaging.incoming.` or `mp.messaging.outgoing` prefix, 
+this prefix is stripped off the property name and the remainder of the property name
+up to the first occurrence of `.` is treated as the channel name. Channel names may not
+include the `.` character.
+
+For properties that have a `mp.messaging.connector.` prefix, this prefix is stripped off the property name and
 the longest remaining prefix that matches any configured `connector`
 is treated as a connector name. 
-The remainder of the string, minus the initial `.` separator,  is taken
-as the name of an attribute for this connector. For example 'bootstrap.servers' appears as a
+The remainder of the property name, minus the expected initial `.` separator,  is taken
+as the name of an attribute for this connector. For example `bootstrap.servers` appears as a
 default attribute for all channels that use the `acme.kafka` connector. 
 
 The Reactive Messaging implementation:
