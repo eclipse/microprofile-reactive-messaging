@@ -162,7 +162,7 @@ They are responsible for mapping a specific _channel_ to remote sink or source o
 This mapping is configured in the application configuration.
 Note that an implementation may provide various ways to configure the mapping, but support for MicroProfile Config as a configuration source is mandatory.
 
-Connectors implementation are associated with a name corresponding to a messaging transport, such as Apache Kafka, Amazon Kinesis, RabbitMQ or Apache ActiveMQ.
+Connector implementations are associated with a name corresponding to a messaging transport, such as Apache Kafka, Amazon Kinesis, RabbitMQ or Apache ActiveMQ.
 For instance, an hypothetic Kafka connector could be associated with the following name: `acme.kafka`.
 This name is indicated using a qualifier on the connector implementation.
 
@@ -187,7 +187,7 @@ Message stream operation occurs according to the principles of reactive programm
 The back pressure mechanism of reactive streams means that a publisher will not send data to a subscriber unless there are outstanding subscriber requests.
 This implies that data flow along the stream is enabled by the first request for data received by the publisher.
 For methods that are annotated with `@Incoming` and `@Outgoing` this data flow control is handled automatically by the underlying system which will call the `@Incoming` and `@Outgoing` methods as appropriate.
- 
+
 Although `@Incoming` and `@Outgoing` methods remain callable from Java code, calling them directly will not affect the reactive streams they are associated with.
 For example, calling an `@Outgoing` annotated method from user code will not post a message on a message queue and calling an `@Incoming` method cannot be used to read a message.
 Enabling this would bypass the automatic back pressure mechanism that is one of the benefits of the specification.
@@ -1049,25 +1049,29 @@ The Reactive Messaging implementation reads the global application configuration
 
 For each extracted `channel-name`:
 
-1. The `connector` attribute value is read, and the connector implementation identified. If no connector matches, the deployment must be failed with a `DeploymentException`;
+1. The `connector` attribute of the channel is read, and the connector implementation identified. If no loadable connector implementation matches, the deployment must be failed with a `DeploymentException`;
 2. Relevant attributes are those matching either the `channel-name` or the resolved `connector-name`.
 3. Relevant attributes are processed to generate a `Config` object containing only `attribute=value` entries.
 If is valid to have an attribute specified at a connector level and also for a specific channel.
 If an attribute appears for both a channel and its relevant connector, the channel specific value will be used.
+In the example below, the 'acme.kafka' default value for 'bootstrap.servers' is overridden for 'my-channel' to be '9096'.
 
-For example, the following snippet gives an example for a hypothetical Kafka connector:
+The following snippet gives an example for a hypothetical Kafka connector:
  
 [source]
 ----
  mp.messaging.incoming.my-channel.connector=acme.kafka
- mp.messaging.incoming.my-channel.bootstrap-servers=localhost:9092
+ mp.messaging.incoming.my-channel.bootstrap.servers=localhost:9096
  mp.messaging.incoming.my-channel.topic=my-topic
- mp.messaging.connector.org.eclipse.reactive.sample.kafka.Kafka.bootstrap.servers=localhost:9092
+ mp.messaging.connector.acme.kafka.bootstrap.servers=localhost:9092
 ---- 
 
-Note that as classnames are expected to begin with an uppercase letter and package names are expected to be lowercase, and properties are case sensitive,
-the problem of having one fully qualified connector name being the prefix of another is not expected to occur. In practical terms the first uppercased
-property name element in a connector property name containing full stops can be read as the class name and the next element as the attribute name.
+For properties that have a `mp.messaging.connector.connector.` prefix, this string is stripped off the property name and
+the longest remaining prefix that matches any configured `connector`
+is treated as a connector name. 
+The remainder of the string, minus the initial `.` separator,  is taken
+as the name of an attribute for this connector. For example 'bootstrap.servers' appears as a
+default attribute for all channels that use the `acme.kafka` connector. 
 
 The Reactive Messaging implementation:
 
@@ -1075,12 +1079,12 @@ The Reactive Messaging implementation:
 2. Identifies that a `my-channel` source needs to be managed
 3. Searches for the `connector` attribute and finds `acme.kafka`
 4. Looks for a bean implementing the `IncomingConnectorFactory` interface qualified with `@Connector("acme.kafka")`.
-If the configuration had contained a `mp.messaging.outgoing.my-channel...` entry, a bean implementing the `OutgoingConnectorFactory` interface would have been searched.
+If the configuration had contained a `mp.messaging.outgoing.my-channel...` entry, a bean implementing the `OutgoingConnectorFactory` interface would have been searched for.
 5. Creates a new `Config` object with just the relevant `key=value` pairs:
 +
 [source]
 ----
-bootstrap.servers=localhost:9092
+bootstrap.servers=localhost:9096
 topic=my-topic
 ---- 
 +
