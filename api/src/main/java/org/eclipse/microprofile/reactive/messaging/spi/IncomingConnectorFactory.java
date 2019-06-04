@@ -36,7 +36,6 @@ import java.util.NoSuchElementException;
  * MicroProfile Config. The following snippet gives an example for a hypothetical Kafka connector:
  *
  * <pre>
- * mp.messaging.incoming.my-channel.connector=acme.kafka
  * mp.messaging.incoming.my-channel.topic=my-topic
  * mp.messaging.connector.acme.kafka.bootstrap.servers=localhost:9092
  * ...
@@ -44,12 +43,12 @@ import java.util.NoSuchElementException;
  * <p>
  * The configuration keys are structured as follows: {@code mp.messaging.[incoming|outgoing].channel-name.attribute} or 
  * {@code mp.messaging.[connector].connector-name.attribute}.
- * Channel names are not expected to contain {@code .} so the first occurrence of a {@code .} in the channel-name portion 
- * of a property terminates the channel name and precedes the attribute name.
+ * Channel names are not expected to contain {@code .} so the first occurrence of a {@code .} in the {@code channel-name}
+ * portion of a property terminates the channel name and precedes the attribute name.
  * For connector attributes, the longest string, inclusive of {@code .}s, that matches a loadable
  * connector is used as a {@code connector-name}. The remainder, after a {@code .} separator, is the attribute name.
- * Configuration keys that begin
- * {@code mp.messaging.outgoing}} are not used for {@link IncomingConnectorFactory} configuration.
+ * Configuration keys that begin {@code mp.messaging.outgoing}} are not used for {@link IncomingConnectorFactory}
+ * configuration.
  * <p>
  * The portion of the key that precedes the {@code attribute} acts as a property prefix that has a common structure
  * across all MicroProfile Reactive Messaging configuration properties.
@@ -100,7 +99,7 @@ import java.util.NoSuchElementException;
  * Note that a Reactive Messaging implementation must support the configuration format described here. Implementations
  * are free to provide additional support for other approaches.
  */
-public interface IncomingConnectorFactory {
+public interface IncomingConnectorFactory extends ConnectorFactory {
 
     /**
      * Creates a <em>channel</em> for the given configuration. The channel's configuration is associated with a
@@ -111,7 +110,8 @@ public interface IncomingConnectorFactory {
      * Note that the connection to the <em>transport</em> or <em>broker</em> is generally postponed until the
      * subscription occurs.
      *
-     * @param config the configuration, must not be {@code null}
+     * @param config the configuration, must not be {@code null}, must contain the {@link #CHANNEL_NAME_ATTRIBUTE}
+     *               attribute.
      * @return the created {@link PublisherBuilder}, will not be {@code null}.
      * @throws IllegalArgumentException if the configuration is invalid.
      * @throws NoSuchElementException   if the configuration does not contain an expected attribute.

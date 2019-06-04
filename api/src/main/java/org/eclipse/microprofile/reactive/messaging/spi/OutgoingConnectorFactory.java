@@ -93,7 +93,7 @@ import java.util.NoSuchElementException;
  * Note that a Reactive Messaging implementation must support the configuration format described here. Implementations
  * are free to provide additional support for other approaches.
  */
-public interface OutgoingConnectorFactory {
+public interface OutgoingConnectorFactory extends ConnectorFactory {
 
     /**
      * Creates a <em>channel</em> for the given configuration. The channel's configuration is associated with a
@@ -103,7 +103,8 @@ public interface OutgoingConnectorFactory {
      * Note that the connection to the <em>transport</em> or <em>broker</em> is generally postponed until the
      * subscription.
      *
-     * @param config the configuration, never {@code null}
+     * @param config the configuration, never {@code null}, must contain the {@link #CHANNEL_NAME_ATTRIBUTE}
+     *               attribute.
      * @return the created {@link SubscriberBuilder}, must not be {@code null}.
      * @throws IllegalArgumentException if the configuration is invalid.
      * @throws NoSuchElementException if the configuration does not contain an expected attribute.

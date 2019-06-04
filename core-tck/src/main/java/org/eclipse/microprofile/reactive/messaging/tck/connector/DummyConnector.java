@@ -32,6 +32,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @ApplicationScoped
 @Connector("Dummy")
 public class DummyConnector implements IncomingConnectorFactory, OutgoingConnectorFactory {
@@ -42,6 +44,10 @@ public class DummyConnector implements IncomingConnectorFactory, OutgoingConnect
     }
 
     @Override public SubscriberBuilder<? extends Message, Void> getSubscriberBuilder(Config config) {
+        // Check mandatory attributes
+        assertThat(config.getValue(CHANNEL_NAME_ATTRIBUTE, String.class)).isNotBlank();
+        assertThat(config.getValue(CONNECTOR_ATTRIBUTE, String.class)).isEqualTo("Dummy");
+
         // Would throw a NoSuchElementException if not set.
         config.getValue("attribute", String.class);
 
@@ -50,6 +56,10 @@ public class DummyConnector implements IncomingConnectorFactory, OutgoingConnect
 
     @Override public PublisherBuilder<? extends Message> getPublisherBuilder(Config config) {
         String[] values = config.getValue("items", String.class).split(",");
+
+        // Check mandatory attributes
+        assertThat(config.getValue(CHANNEL_NAME_ATTRIBUTE, String.class)).isNotBlank();
+        assertThat(config.getValue(CONNECTOR_ATTRIBUTE, String.class)).isEqualTo("Dummy");
 
         // Would throw a NoSuchElementException if not set.
         config.getValue("attribute", String.class);
