@@ -36,7 +36,6 @@ import java.util.NoSuchElementException;
  * MicroProfile Config. The following snippet gives an example for a hypothetical Kafka connector:
  *
  * <pre>
- * mp.messaging.incoming.my-channel.connector=acme.kafka
  * mp.messaging.incoming.my-channel.topic=my-topic
  * mp.messaging.connector.acme.kafka.bootstrap.servers=localhost:9092
  * ...
@@ -53,6 +52,11 @@ import java.util.NoSuchElementException;
  * <p>
  * The portion of the key that precedes the {@code attribute} acts as a property prefix that has a common structure
  * across all MicroProfile Reactive Messaging configuration properties.
+ * </p>
+ * <p>
+ * The connector also gets configuration values written using the following syntax:
+ * {@code mp.messaging.connector.connector-name.attribute=value}, with {@code connector-name} being the name of the
+ * connector. Values configured that way are passed to every channel created with the matching connector.
  * </p>
  * <p>
  * The {@code channel-name} segment in the configuration key corresponds to the name of the channel used in the
@@ -100,7 +104,7 @@ import java.util.NoSuchElementException;
  * Note that a Reactive Messaging implementation must support the configuration format described here. Implementations
  * are free to provide additional support for other approaches.
  */
-public interface IncomingConnectorFactory {
+public interface IncomingConnectorFactory extends ConnectorFactory {
 
     /**
      * Creates a <em>channel</em> for the given configuration. The channel's configuration is associated with a
@@ -111,7 +115,8 @@ public interface IncomingConnectorFactory {
      * Note that the connection to the <em>transport</em> or <em>broker</em> is generally postponed until the
      * subscription occurs.
      *
-     * @param config the configuration, must not be {@code null}
+     * @param config the configuration, must not be {@code null}, must contain the {@link #CHANNEL_NAME_ATTRIBUTE}
+     *               attribute.
      * @return the created {@link PublisherBuilder}, will not be {@code null}.
      * @throws IllegalArgumentException if the configuration is invalid.
      * @throws NoSuchElementException   if the configuration does not contain an expected attribute.
