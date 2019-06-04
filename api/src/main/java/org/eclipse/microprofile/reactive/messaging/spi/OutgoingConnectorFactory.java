@@ -50,12 +50,6 @@ import java.util.NoSuchElementException;
  * Configuration keys that begin
  * {@code mp.messaging.incoming} are not used for {@link OutgoingConnectorFactory} configuration.
  * <p>
- * <p>
- * The connector also gets configuration values written using the following syntax:
- * {@code mp.messaging.connector.connector-name.attribute=value}, with {@code connector-name} being the name of the
- * connector. Values configured that way are passed to every channel created with the matching connector.
- * </p>
- * <p>
  * The {@code channel-name} segment in the configuration key corresponds to the name of the channel used in the
  * {@code Outgoing} annotation:
  *
@@ -109,8 +103,8 @@ public interface OutgoingConnectorFactory extends ConnectorFactory {
      * Note that the connection to the <em>transport</em> or <em>broker</em> is generally postponed until the
      * subscription.
      *
-     * @param config the configuration, never {@code null}, must contain the {@link #CHANNEL_NAME_ATTRIBUTE} and
-     *                {@link #CONNECTOR_ATTRIBUTE} attributes.
+     * @param config the configuration, never {@code null}, must contain the {@link #CHANNEL_NAME_ATTRIBUTE}
+     *               attribute.
      * @return the created {@link SubscriberBuilder}, must not be {@code null}.
      * @throws IllegalArgumentException if the configuration is invalid.
      * @throws NoSuchElementException if the configuration does not contain an expected attribute.

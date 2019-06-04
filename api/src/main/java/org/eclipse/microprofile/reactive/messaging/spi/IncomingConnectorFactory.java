@@ -43,20 +43,15 @@ import java.util.NoSuchElementException;
  * <p>
  * The configuration keys are structured as follows: {@code mp.messaging.[incoming|outgoing].channel-name.attribute} or 
  * {@code mp.messaging.[connector].connector-name.attribute}.
- * Channel names are not expected to contain {@code .} so the first occurrence of a {@code .} in the channel-name portion 
- * of a property terminates the channel name and precedes the attribute name.
+ * Channel names are not expected to contain {@code .} so the first occurrence of a {@code .} in the {@code channel-name}
+ * portion of a property terminates the channel name and precedes the attribute name.
  * For connector attributes, the longest string, inclusive of {@code .}s, that matches a loadable
  * connector is used as a {@code connector-name}. The remainder, after a {@code .} separator, is the attribute name.
- * Configuration keys that begin
- * {@code mp.messaging.outgoing}} are not used for {@link IncomingConnectorFactory} configuration.
+ * Configuration keys that begin {@code mp.messaging.outgoing}} are not used for {@link IncomingConnectorFactory}
+ * configuration.
  * <p>
  * The portion of the key that precedes the {@code attribute} acts as a property prefix that has a common structure
  * across all MicroProfile Reactive Messaging configuration properties.
- * </p>
- * <p>
- * The connector also gets configuration values written using the following syntax:
- * {@code mp.messaging.connector.connector-name.attribute=value}, with {@code connector-name} being the name of the
- * connector. Values configured that way are passed to every channel created with the matching connector.
  * </p>
  * <p>
  * The {@code channel-name} segment in the configuration key corresponds to the name of the channel used in the
