@@ -61,6 +61,11 @@ public class ConnectorTest {
             .select(DummyConnector.class, ConnectorLiteral.of("Dummy")).get();
         await().until(() -> connector.elements().size() == 10);
         assertThat(connector.elements()).containsExactly("A", "B", "C", "D", "E", "F", "G", "H", "I", "J");
+
+        assertThat(connector.getReceivedConfigurations()).hasSize(3).allSatisfy(config -> {
+            assertThat(config.getValue("common-A", String.class)).isEqualTo("Value-A");
+            assertThat(config.getValue("common-B", String.class)).isEqualTo("Value-B");
+        });
     }
 
 }

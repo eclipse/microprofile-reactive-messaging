@@ -29,10 +29,18 @@ import java.util.*;
  * Bean used to produce a MicroProfile Config avoiding the TCK to depends on a specific implementation.
  * The produced Config is equivalent to:
  * <pre>
+ *      ## Dummy connector common configuration
+ *      mp.messaging.connector.Dummy.common-A=Value-A
+ *      mp.messaging.connector.Dummy.common-B=Value-B
+ *
  *      ## Dummy Incoming connector
  *      mp.messaging.incoming.dummy-source.connector=Dummy
  *      mp.messaging.incoming.dummy-source.attribute=value
  *      mp.messaging.incoming.dummy-source.items=a,b,c,d,e,f,g,h,i,j
+ *
+ *      ## Another Dummy Incoming channel
+ *      mp.messaging.incoming.dummy-source-2.connector=Dummy
+ *      mp.messaging.incoming.dummy-source-2.attribute=value-2
  *
  *      ## Dummy Outgoing connector
  *      mp.messaging.outgoing.dummy-sink.connector=oDummy
@@ -47,9 +55,23 @@ public class FakeConfig {
     @Produces
     public Config config() {
         Map<String, String> backend = new HashMap<>();
+        // Connector config
+        backend.put("mp.messaging.connector.Dummy.common-A" , "Value-A");
+        backend.put("mp.messaging.connector.Dummy.common-B" , "Value-B");
+
+        // Incoming 1
         backend.put("mp.messaging.incoming.dummy-source.connector" , "Dummy");
         backend.put("mp.messaging.incoming.dummy-source.attribute" , "value");
         backend.put("mp.messaging.incoming.dummy-source.items", "a,b,c,d,e,f,g,h,i,j");
+
+
+        // Incoming 2
+        backend.put("mp.messaging.incoming.dummy-source-2.connector" , "Dummy");
+        backend.put("mp.messaging.incoming.dummy-source-2.attribute" , "value-2");
+        backend.put("mp.messaging.incoming.dummy-source-2.items", "");
+
+
+        // Outgoing 1
         backend.put("mp.messaging.outgoing.dummy-sink.connector" , "Dummy");
         backend.put("mp.messaging.outgoing.dummy-sink.attribute" , "value");
 

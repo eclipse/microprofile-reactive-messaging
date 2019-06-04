@@ -39,22 +39,33 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class DummyConnector implements IncomingConnectorFactory, OutgoingConnectorFactory {
     private List<String> elements = new CopyOnWriteArrayList<>();
 
-    public List<String> elements() {
+    /**
+     * Stores the received configs.
+     */
+    private List<Config> configs = new CopyOnWriteArrayList<>();
+
+    List<String> elements() {
         return elements;
     }
 
-    @Override public SubscriberBuilder<? extends Message, Void> getSubscriberBuilder(Config config) {
-        // Check mandatory attributes
-        assertThat(config.getValue(CHANNEL_NAME_ATTRIBUTE, String.class)).isNotBlank();
-        assertThat(config.getValue(CONNECTOR_ATTRIBUTE, String.class)).isEqualTo("Dummy");
+    List<Config> getReceivedConfigurations() {
+        return configs;
+    }
 
+    @Override
+    public SubscriberBuilder<? extends Message, Void> getSubscriberBuilder(Config config) {
+        configs.add(config);
         // Would throw a NoSuchElementException if not set.
         config.getValue("attribute", String.class);
+        config.getValue("common-A", String.class);
+        config.getValue("common-B", String.class);
 
         return ReactiveStreams.<Message<String>>builder().map(Message::getPayload).forEach(s -> elements.add(s));
     }
 
-    @Override public PublisherBuilder<? extends Message> getPublisherBuilder(Config config) {
+    @Override
+    public PublisherBuilder<? extends Message> getPublisherBuilder(Config config) {
+        configs.add(config);
         String[] values = config.getValue("items", String.class).split(",");
 
         // Check mandatory attributes
@@ -63,7 +74,10 @@ public class DummyConnector implements IncomingConnectorFactory, OutgoingConnect
 
         // Would throw a NoSuchElementException if not set.
         config.getValue("attribute", String.class);
+        config.getValue("common-A", String.class);
+        config.getValue("common-B", String.class);
 
         return ReactiveStreams.fromIterable(Arrays.asList(values)).map(Message::of);
     }
+
 }
