@@ -43,7 +43,7 @@ import java.util.*;
  *      mp.messaging.incoming.dummy-source-2.attribute=value-2
  *
  *      ## Dummy Outgoing connector
- *      mp.messaging.outgoing.dummy-sink.connector=oDummy
+ *      mp.messaging.outgoing.dummy-sink.connector=Dummy
  *      mp.messaging.outgoing.dummy-sink.attribute=value
  * </pre>
  */

@@ -54,7 +54,12 @@ public class DummyConnector implements IncomingConnectorFactory, OutgoingConnect
 
     @Override
     public SubscriberBuilder<? extends Message, Void> getSubscriberBuilder(Config config) {
+        // Check mandatory attributes
+        assertThat(config.getValue(CHANNEL_NAME_ATTRIBUTE, String.class)).isNotBlank();
+        assertThat(config.getValue(CONNECTOR_ATTRIBUTE, String.class)).isEqualTo("Dummy");
+
         configs.add(config);
+
         // Would throw a NoSuchElementException if not set.
         config.getValue("attribute", String.class);
         config.getValue("common-A", String.class);
