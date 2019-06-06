@@ -649,8 +649,8 @@ For example, here's a message processor:
 
 [source, java]
 ----
-@Incoming
-@Outgoing
+@Incoming("in")
+@Outgoing("out")
 public PublisherBuilder<Message<I>, Message<O>> process() {
   return ReactiveStreams.<Message<I>>builder()
     .map(this::convert);
@@ -680,12 +680,31 @@ If the `Acknowledgment` annotation is not set, the default policy is applied.
 
 IMPORTANT: Method only annotated with `@Outgoing` do not support acknowledgement as they don't receive an input `Message`.
 
+When a method annotated with `@Incoming` defines its acknowledgement policy to be `PRE_PROCESSING` or `POST_PROCESSING`, the Reactive Messaging implementation is responsible for the acknowledgement of the message.
+When the `POST_PROCESSING` policy is used, the incoming message is acknowledged when the outgoing message is acknowledged.
+Thus, it creates a chain of acknowledgements, making sure that the messages produced by an `IncomingConnectorFactory` are only acknowledged when the dispatching of the messages has been completed successfully.
+
+The `NONE` strategy indicates that the incoming message is not acknowledged.
+The `MANUAL` strategy indicates that the incoming message acknowledgement is managed by the user code.
+The `MANUAL` strategy is often used to acknowledge incoming messages when the produced messages are acknowledged.
+For example, in the next snippet, the received `KafkaMessage` is acknowledged when the produced message is acknowledged.
+
+[source, java]
+----
+@Incoming("data")
+@Outgoing("sink")
+@Acknowledgment(Acknowledgment.Strategy.MANUAL)
+public Message<Integer> process(KafkaMessage<String, Integer> input) {
+  return Message.of(processThePayload(input.getPayload(), () -> input.ack());
+}
+----
+
 The following table indicates the defaults and supported acknowledgement for each supported signature:
 
 [cols="2a,1,1",options="header"]
 |===
 |Signature
-|Default Acknoledgement Strategy
+|Default Acknowledgement Strategy
 |Supported Strategies
 
 |
@@ -695,7 +714,7 @@ The following table indicates the defaults and supported acknowledgement for eac
 Subscriber<Message<I>> method()
 ----
 | Post-Processing	
-| None, Pre-Processing, Post-Processing, Manual
+| None, Pre-Processing, Post-Processing (when the `onNext` method returns), Manual
 
 |
 [source,java]
@@ -704,7 +723,7 @@ Subscriber<Message<I>> method()
 Subscriber<I> method()
 ----
 | Post-Processing	
-| None, Pre-Processing, Post-Processing
+| None, Pre-Processing, Post-Processing (when the `onNext` method returns)
 
 |
 [source,java]
@@ -713,7 +732,7 @@ Subscriber<I> method()
 SubscriberBuilder<Message<I>> method()
 ----
 | Post-Processing	
-| None, Pre-Processing, Post-Processing, Manual
+| None, Pre-Processing, Post-Processing (when the `onNext` method returns), Manual
 
 
 |
@@ -723,7 +742,7 @@ SubscriberBuilder<Message<I>> method()
 SubscriberBuilder<I> method()
 ----
 | Post-Processing	
-| None, Pre-Processing, Post-Processing
+| None, Pre-Processing, Post-Processing (when the `onNext` method returns)
 
 |
 [source,java]
@@ -732,7 +751,7 @@ SubscriberBuilder<I> method()
 void method(I payload)
 ----
 | Post-Processing	
-| None, Pre-Processing, Post-Processing
+| None, Pre-Processing, Post-Processing (when the method returns)
 
 |
 [source,java]
@@ -741,7 +760,7 @@ void method(I payload)
 CompletionStage<?> method(Message<I> msg)
 ----
 | Post-Processing
-| None, Pre-Processing, Post-Processing, Manual
+| None, Pre-Processing, Post-Processing (when the returned `CompletionStage` is completed), Manual
 
 |
 [source,java]
@@ -750,7 +769,7 @@ CompletionStage<?> method(Message<I> msg)
 CompletionStage<?> method(I payload)
 ----
 | Post-Processing	
-| None, Pre-Processing, Post-Processing
+| None, Pre-Processing, Post-Processing (when the returned `CompletionStage` is completed)
 
 | 
 [source,java]
@@ -761,7 +780,7 @@ Processor<Message<I>, Message<O>> method()
 ----
 | Pre-Processing
 | None, Pre-Processing, Manual
-Post-Processing can be optionaly supported by implementations, however it requires a 1:1 mapping between the incoming element and the outgoing element.
+Post-Processing can be optionally supported by implementations, however it requires a 1:1 mapping between the incoming element and the outgoing element.
 
 | 
 [source,java]
@@ -772,7 +791,7 @@ Processor<I, O> method();
 ----
 | Pre-Processing
 | None, Pre-Processing
-Post-Processing can be optionaly supported by implementations, however it requires a 1:1 mapping between the incoming element and the outgoing element.
+Post-Processing can be optionally supported by implementations, however it requires a 1:1 mapping between the incoming element and the outgoing element.
 
 |
 [source,java]
@@ -783,7 +802,7 @@ ProcessorBuilder<Message<I>, Message<O>> method();
 ----
 | Pre-Processing
 | None, Pre-Processing, Manual
-Post-Processing can be optionaly supported by implementations, however it requires a 1:1 mapping between the incoming element and the outgoing element.
+Post-Processing can be optionally supported by implementations, however it requires a 1:1 mapping between the incoming element and the outgoing element.
 
 |
 [source,java]
@@ -794,7 +813,7 @@ ProcessorBuilder<I, O> method();
 ----
 | Pre-Processing
 | None, Pre-Processing
-Post-Processing can be optionaly supported by implementations, however it requires a 1:1 mapping the incoming element and the outgoing element.
+Post-Processing can be optionally supported by implementations, however it requires a 1:1 mapping the incoming element and the outgoing element.
 
 |
 [source,java]
@@ -844,8 +863,8 @@ PublisherBuilder<O> method(I payload)
 @Outgoing("out") 
 Message<O> method(Message<I> msg)
 ----
-| Post-Processing
-| None, Manual, Pre-Processing, Post-Processing
+| Pre-Processing
+| None, Manual, Pre-Processing
 
 |
 [source,java]
@@ -855,18 +874,17 @@ Message<O> method(Message<I> msg)
 O method(I payload)
 ----
 | Post-Processing
-| None, Pre-Processing, Post-Processing
+| None, Pre-Processing, Post-Processing (when the message wrapping the produced payload is acknowledged)
 
 |
 [source,java]
 ----
 @Incoming("in")
 @Outgoing("out") 
-CompletionStage<Message<O>> 
-method(Message<I> msg)
+CompletionStage<Message<O>> method(Message<I> msg)
 ----
-| Post-Processing
-| None, Manual, Pre-Processing, Post-Processing
+| Pre-Processing
+| None, Manual, Pre-Processing
 
 |
 [source,java]
@@ -876,7 +894,7 @@ method(Message<I> msg)
 CompletionStage<O> method(I payload)
 ----
 | Post-Processing
-| None, Pre-Processing, Post-Processing
+| None, Pre-Processing, Post-Processing (when the message wrapping the produced payload is acknowledged)
 
 |
 [source,java]
@@ -932,8 +950,8 @@ For example, the following application code is incorrect, since it accepts a mes
 
 [source, java]
 ----
-@Incoming
-@Acknowledgment(MANUAL)
+@Incoming("in")
+@Acknowledgment(Acknowledgment.Strategy.MANUAL)
 public void process(Message<I> msg) {
   System.out.println("Got message " + msg.getPayload());
 }
@@ -943,31 +961,48 @@ Here is a correct implementation:
 
 [source, java]
 ----
-@Incoming
-@Acknowledgment(MANUAL)
+@Incoming("in")
+@Acknowledgment(Acknowledgment.Strategy.MANUAL)
 public CompletionStage<Void> process(Message<I> msg) {
   System.out.println("Got message " + msg.getPayload());
   return msg.ack();
 }
 ----
 
-This implementation is also correct, since the application is returning a wrapped message back to the implementation, making it the implementations responsibility to invoke `ack()`:
+This implementation is also correct, since the application receives a payload wrapped in a message.
+It's the implementations responsibility to invoke `ack()` on the incoming message:
 
 [source, java]
 ----
-@Incoming
-public Message<?> process(Message<I> msg) {
-  System.out.println("Got message " + msg.getPayload());
-  return msg;
+@Incoming("in")
+public void process(I payload) {
+  System.out.println("Got payload " + payload);
+  return ...;
 }
 ----
 
-The above is particularly useful for processing messages that are also being sent to a destination, as the implementation must not invoke `ack` until after the outgoing message has been sent to the destination:
+When dealing with single payloads, the `POST_PROCESSING` strategy is the default strategy.
+In the following snippet, the incoming payload is transported into a message and unwrapped before calling the method.
+The produced result is wrapped into another `Message`.
+Following the `POST_PROCESSING` strategy, the incoming message must only be acknowledged when the output message is acknowledged.
+The implementation is responsible to chain the acknowledgements.
 
 [source, java]
 ----
-@Incoming
-@Outgoing
+@Incoming("in")
+@Outgoing("out")
+public O process(I payload) {
+  ...
+}
+----
+
+The following snippet is particularly useful for processing messages that are also being sent to a destination, as the implementation must not invoke `ack` until after the outgoing message has been sent to the destination:
+
+[source, java]
+----
+@Incoming("in")
+@Outgoing("out")
+@Acknowledgment(Acknowledgment.Strategy.MANUAL)
 public Message<O> process(Message<I> msg) {
   return Message.of(convert(msg.getPayload()), msg::ack);
 }
