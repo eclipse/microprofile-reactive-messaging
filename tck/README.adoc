@@ -34,10 +34,10 @@ In your implementation, create a new module depending on the TCK artifact:
 </dependency>
 ----
 
-This project will likely also depends on your implementation.
+Your test project that runs the TCK is also very likely to depend on your implementation project.
 
-As the tests are implemented in the TCK artifacts, you need to configure your test running to scan the tests included
-in this artifacts. With Maven it's done using the following plugin configuration:
+As the tests are implemented in the TCK artifacts, you need to configure your test run to scan the tests included
+in this artifact. With Maven it's done using the following plugin configuration:
 
 [source,xml]
 ----
