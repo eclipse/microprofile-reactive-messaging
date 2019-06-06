@@ -16,31 +16,53 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-
 = MicroProfile Reactive Messaging TCK
 
-This project contains the TCK for MicroProfile Reactive Messaging.
+This project contains the TCK for Reactive Messaging
 
-== Running the TCK against an implementation
 
-The TCK uses http://arquillian.org/[Arquillian], so an implementation needs Arquillian container support to run. In addition, the implementation must also implement the TCK's SPI in order to allow the TCK to interact and make assertions on messages sent and received from topics under test.
+== Checking an implementation against the TCK
 
-=== `TckContainer`
+In your implementation, create a new module depending on the TCK artifact:
 
-The primary entry point into the tck is the `org.eclipse.microprofile.reactive.messaging.tck.spi.TckContainer`. An instance of this must be provided through the JDK `ServiceLoader` mechanism (that is, provide a `META-INF/services/org.eclipse.microprofile.reactive.messaging.tck.spi.TckContainer` file that contains the fully qualified classname of the implementation).
+[source,xml]
+----
+<dependency>
+    <groupId>org.eclipse.microprofile.reactive.messaging</groupId>
+    <artifactId>microprofile-reactive-messaging-tck</artifactId>
+    <version>${microprofile-reactive-messaging.version}</version>
+</dependency>
+----
 
-This class provides a number of methods for telling the TCK which parts of the spec this implementation implements, for example, an implementation does not have to provide support for both incoming and outgoing messages, so this can be used to configure which ones it does support. Additionally, it allows the TCK to instruct the container to deploy and prepare topics for being published to and subscribed from.
+Your test project that runs the TCK is also very likely to depend on your implementation project.
 
-=== `org.eclipse.microprofile.reactive.messaging.tck.spi.TestEnvironment`
+As the tests are implemented in the TCK artifacts, you need to configure your test run to scan the tests included
+in this artifact. With Maven it's done using the following plugin configuration:
 
-The `TestEnvironment` provides a mechanism for general environment configuration, such as what timeouts to use for various assertions.
+[source,xml]
+----
+<build>
+  <plugins>
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-surefire-plugin</artifactId>
+      <version>2.22.1</version>
+      <configuration>
+        <dependenciesToScan>org.eclipse.microprofile.reactive.messaging:microprofile-reactive-messaging-tck</dependenciesToScan>
+      </configuration>
+    </plugin>
+  </plugins>
+</build>
+----
 
-=== `TckMessagingPuppet`
+Finally, because the tests are going to package the "checked" application against your extension, you need to implement
+the `org.eclipse.microprofile.reactive.messaging.tck.ArchiveExtender` SPI that lets you add the classes required by your
+implementation into the tested application.
 
-The `org.eclipse.microprofile.reactive.messaging.tck.spi.TckMessagingPuppet` is for use in the container. It is the responsiblity of the `TckContainer` to return a deployment from its `createDeployments` method that provides a `TckMessagingPuppet` that can be injected into the tests and beans under test. This is used to trigger the container to send a message to certain queues, and receive messages from queues.
+The SPI must be implemented in your project and declare in the
+`META-INF/services/org.eclipse.microprofile.reactive.messaging.tck.ArchiveExtender` file.
 
-== TCK design
 
-In general, each test class defines a single bean that it returns in a deployment. This bean will generally have one `@Incoming` or `@Outgoing` annotated method per test method, each working with a unique topic name. This ensures isolation between tests. The test class defines an `@Topics` annotation that allows the TCK to discover which topics the test uses, it then passes this list of topics to the SPI implementation to instruct it to create and/or reset the topics before each class is run.
 
-In each test method, `MockedSender` and `MockedReceiver` are used to register the receipt of individual messages, or to create publishers and subscribers to be returned by the method. These then capture messages received, and enqueue messages to be sent, so that the test cases can work with them. A `TckMessagingManager` holds a map of topics to `MockedSender` and `MockedReceiver` instances, so that both the bean and the tests can access them easily.
+
+
