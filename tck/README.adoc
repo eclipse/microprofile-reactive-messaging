@@ -48,7 +48,7 @@ in this artifacts. With Maven it's done using the following plugin configuration
       <artifactId>maven-surefire-plugin</artifactId>
       <version>2.22.1</version>
       <configuration>
-        <dependenciesToScan>org.eclipse.microprofile.reactive.messaging:microprofile-reactive-messaging-core-tck</dependenciesToScan>
+        <dependenciesToScan>org.eclipse.microprofile.reactive.messaging:microprofile-reactive-messaging-tck</dependenciesToScan>
       </configuration>
     </plugin>
   </plugins>
