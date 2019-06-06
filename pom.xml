@@ -108,7 +108,6 @@
         <module>api</module>
         <module>tck</module>
         <module>spec</module>
-        <module>core-tck</module>
     </modules>
 
     <pluginRepositories>
