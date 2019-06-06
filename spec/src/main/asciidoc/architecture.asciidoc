@@ -680,7 +680,7 @@ If the `Acknowledgment` annotation is not set, the default policy is applied.
 
 IMPORTANT: Method only annotated with `@Outgoing` do not support acknowledgement as they don't receive an input `Message`.
 
-When a method annotated with `@Incoming` defines its acknowledgement policy to `PRE_PROCESSING` or `POST_PROCESSING`, the Reactive Messaging implementation is responsible of the acknowledgement of the message.
+When a method annotated with `@Incoming` defines its acknowledgement policy to be `PRE_PROCESSING` or `POST_PROCESSING`, the Reactive Messaging implementation is responsible for the acknowledgement of the message.
 When the `POST_PROCESSING` policy is used, the incoming message is acknowledged when the outgoing message is acknowledged.
 Thus, it creates a chain of acknowledgements, making sure that the messages produced by an `IncomingConnectorFactory` are only acknowledged when the dispatching of the messages has been completed successfully.
 
