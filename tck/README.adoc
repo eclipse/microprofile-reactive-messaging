@@ -29,7 +29,7 @@ In your implementation, create a new module depending on the TCK artifact:
 ----
 <dependency>
     <groupId>org.eclipse.microprofile.reactive.messaging</groupId>
-    <artifactId>microprofile-reactive-messaging-core-tck</artifactId>
+    <artifactId>microprofile-reactive-messaging-tck</artifactId>
     <version>${microprofile-reactive-messaging.version}</version>
 </dependency>
 ----
