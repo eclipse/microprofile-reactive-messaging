@@ -780,7 +780,6 @@ Processor<Message<I>, Message<O>> method()
 ----
 | Pre-Processing
 | None, Pre-Processing, Manual
-Post-Processing can be optionally supported by implementations, however it requires a 1:1 mapping between the incoming element and the outgoing element.
 
 | 
 [source,java]
@@ -802,7 +801,6 @@ ProcessorBuilder<Message<I>, Message<O>> method();
 ----
 | Pre-Processing
 | None, Pre-Processing, Manual
-Post-Processing can be optionally supported by implementations, however it requires a 1:1 mapping between the incoming element and the outgoing element.
 
 |
 [source,java]
