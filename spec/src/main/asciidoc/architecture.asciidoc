@@ -40,7 +40,7 @@ image::overall.png[Overall architecture]
 Application's beans contain methods annotated with `@Incoming` and `@Outgoing` annotations. 
 A method with an `@Incoming` annotation consumes messages from a _channel_. 
 A method with an `@Outgoing` annotation publishes messages to a _channel_.
-A method with both an `@Incoming` and an `@Outgoing` annotation is a message processor, it consumes messages from a _channel_, does some transformation to them, and publishes messages to another_channel_.
+A method with both an `@Incoming` and an `@Outgoing` annotation is a message processor, it consumes messages from a _channel_, does some transformation to them, and publishes messages to another _channel_.
 
 ==== Channel
 
@@ -188,7 +188,7 @@ The back pressure mechanism of reactive streams means that a publisher will not 
 This implies that data flow along the stream is enabled by the first request for data received by the publisher.
 For methods that are annotated with `@Incoming` and `@Outgoing` this data flow control is handled automatically by the underlying system which will call the `@Incoming` and `@Outgoing` methods as appropriate.
 
-Although `@Incoming` and `@Outgoing` methods remain callable from Java code, calling them directly will not affect the reactive streams they are associated with.
+NOTE: Although `@Incoming` and `@Outgoing` methods remain callable from Java code, calling them directly will not affect the reactive streams they are associated with.
 For example, calling an `@Outgoing` annotated method from user code will not post a message on a message queue and calling an `@Incoming` method cannot be used to read a message.
 Enabling this would bypass the automatic back pressure mechanism that is one of the benefits of the specification.
 The `@Incoming` and `@Outgoing` method annotations are used to declaratively define the stream which is then run by the implementation of MicroProfile Reactive Messaging without the user's code needing to handle concerns such as subscriptions or flow control within the stream.
@@ -241,9 +241,9 @@ They are invoked by the Reactive Messaging implementation following the Reactive
 Also the method must be implemented in a non-blocking fashion.
 For blocking transformations, asynchronous variants can be used.
 
-INFO: _assembly_ time is when the Reactive Messaging implementation initializes itself and creates the different bean instances and connects them together.
+NOTE: _assembly_ time is when the Reactive Messaging implementation initializes itself and creates the different bean instances and connects them together.
 
-INFO: In the following lists, `Message` can be an implementation of the `Message` interface.
+NOTE: In the following lists, `Message` can be an implementation of the `Message` interface.
 
 ==== Methods producing data
 
