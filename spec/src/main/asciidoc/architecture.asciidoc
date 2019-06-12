@@ -470,7 +470,7 @@ Publisher<Message<O>> method(Message<I> msg)
 ----
 | Returns a Reactive Streams `Publisher` for each incoming `Message`.
 The returned `Publisher` can be empty or emits multiple `Message` instances.
-If the returned `Publisher` emits several elements, these elements are _flatten_ in the outgoing stream as a concatenation of elements.
+If the returned `Publisher` emits several elements, these elements are _flattened_ in the outgoing stream as a concatenation of elements.
 The _flattening_ follows the same semantics as the `flatMap` operator from the MicroProfile Reactive Streams specification.
 | This method is called for every incoming message. Implementations must not call the method subsequently until the stream from the previously returned `Publisher` is completed.
 
@@ -483,7 +483,7 @@ Publisher<O> method(I payload)
 ----
 | Returns a Reactive Streams `Publisher` for each incoming _payload_.
 The returned `Publisher` can be empty or emits multiple _payload_ instances.
-If the returned `Publisher` emits several elements, these elements are _flatten_ in the outgoing stream as a concatenation of elements.
+If the returned `Publisher` emits several elements, these elements are _flattened_ in the outgoing stream as a concatenation of elements.
 The _flattening_ follows the same semantics as the `flatMap` operator from the MicroProfile Reactive Streams specification.
 The Reactive Messaging implementation must create new `Message` instances for each emitted _payload_ as well as extracing the payload for each incoming `Message`.
 | This method is called for every incoming message. Implementations must not call the method subsequently until the stream from the previously returned `Publisher` is completed.
@@ -497,7 +497,7 @@ PublisherBuilder<Message<O>> method(Message<I> msg)
 ----
 | Returns a `PublisherBuilder` for each incoming `Message`.
 The stream resulting from the built `Publisher` can be empty or emits multiple `Message` instances.
-If the stream emitted from the built `Publisher` emits several elements, these elements are _flatten_ in the outgoing stream as a concatenation of elements.
+If the stream emitted from the built `Publisher` emits several elements, these elements are _flattened_ in the outgoing stream as a concatenation of elements.
 The _flattening_ follows the same semantics as the `flatMap` operator from the MicroProfile Reactive Streams specification.
 | This method is called for every incoming message. Implementations must not call the method subsequently until the stream built from the previously returned `PublisherBuilder` is completed.
 
@@ -510,7 +510,7 @@ PublisherBuilder<O> method(I payload)
 ----
 | Returns a `PublisherBuilder` for each incoming _payload_.
 The stream resulting from the built `Publisher` can be can be empty or emits multiple _payload_ instances.
-If the stream emitted from the built `Publisher` emits several elements, these elements are _flatten_ in the outgoing stream as a concatenation of elements.
+If the stream emitted from the built `Publisher` emits several elements, these elements are _flattened_ in the outgoing stream as a concatenation of elements.
 The _flattening_ follows the same semantics as the `flatMap` operator from the MicroProfile Reactive Streams specification.
 The Reactive Messaging implementation must create new `Message` instances for each emitted _payload_ as well as extracing the payload for each incoming `Message`.
 | This method is called for every incoming message. Implementations must not call the method subsequently until the stream built from the previously returned `PublisherBuilder` is completed.
