@@ -53,7 +53,7 @@ public class DummyConnector implements IncomingConnectorFactory, OutgoingConnect
     }
 
     @Override
-    public SubscriberBuilder<? extends Message, Void> getSubscriberBuilder(Config config) {
+    public SubscriberBuilder<? extends Message<?>, Void> getSubscriberBuilder(Config config) {
         // Check mandatory attributes
         assertThat(config.getValue(CHANNEL_NAME_ATTRIBUTE, String.class)).isNotBlank();
         assertThat(config.getValue(CONNECTOR_ATTRIBUTE, String.class)).isEqualTo("Dummy");
@@ -69,7 +69,7 @@ public class DummyConnector implements IncomingConnectorFactory, OutgoingConnect
     }
 
     @Override
-    public PublisherBuilder<? extends Message> getPublisherBuilder(Config config) {
+    public PublisherBuilder<? extends Message<?>> getPublisherBuilder(Config config) {
         configs.add(config);
         String[] values = config.getValue("items", String.class).split(",");
 
