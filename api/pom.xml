@@ -39,6 +39,7 @@
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.annotation.versioning</artifactId>
+            <version>1.1.0</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.microprofile.reactive-streams-operators</groupId>
@@ -83,7 +84,7 @@
             <plugin>
                 <groupId>biz.aQute.bnd</groupId>
                 <artifactId>bnd-maven-plugin</artifactId>
-                <version>3.4.0</version>
+                <version>4.2.0</version>
 
                 <executions>
                     <execution>
@@ -108,21 +109,21 @@
             <plugin>
                 <groupId>biz.aQute.bnd</groupId>
                 <artifactId>bnd-baseline-maven-plugin</artifactId>
-                <version>3.5.0</version>
+                <version>4.2.0</version>
                 <configuration>
-                    <base>
-                        <version>1.0.0</version>
+                    <base>                     
+                        <version>1.0.0</version> 
                     </base>
                 </configuration>
                 <executions>
-                    <!--
+                <!-- uncomment after 1.0.0 is released>
                     <execution>
                         <id>baseline</id>
                         <goals>
                             <goal>baseline</goal>
                         </goals>
                     </execution>
-                    -->
+                -->
                 </executions>
             </plugin>
         </plugins>
