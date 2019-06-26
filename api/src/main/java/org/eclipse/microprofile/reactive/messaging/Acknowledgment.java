@@ -57,7 +57,7 @@ public @interface Acknowledgment {
     PRE_PROCESSING,
 
     /**
-     * Acknowledgment performed automatically after the message being processed.
+     * Acknowledgment performed automatically once the message has been processed.
      * When {@code POST_PROCESSING} is used, the incoming message is acknowledged when the produced message is
      * acknowledged.
      *
