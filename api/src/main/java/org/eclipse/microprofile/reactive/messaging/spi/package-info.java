@@ -22,7 +22,7 @@
  * <p>
  * This package provides the SPI to implement {@code connector}. A {@code connector} can be seen as a Reactive Messaging
  * plug-in to support a specific messaging technology. For example, you can have a Kafka connector to deal with Kafka,
- * an AMQP connector to deal interact with AMQP brokers and routers and so on. Connector implementation should be
+ * an AMQP connector to interact with AMQP brokers and routers and so on. Connector implementation should be
  * agnostic to the Reactive Messaging implementation.
  *
  * A connector can be seen as:

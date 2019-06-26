@@ -24,9 +24,9 @@ import java.lang.annotation.RetentionPolicy;
 /**
  * Configure the acknowledgement policy for the given {@code @Incoming}.
  *
- * The set of supported acknowledgment policy depends on the method signature. The following list gives the supported
+ * The set of supported acknowledgment policies depends on the method signature. The following list gives the supported
  * strategies for some common use cases.
- * Please refer to the specification document to check the full list.
+ * Please refer to the specification for the full list.
  *
  * <ul>
  *     <li><code> @Incoming("channel") void method(I payload)</code>: Post-processing (default), Pre-processing, None</li>
@@ -57,11 +57,11 @@ public @interface Acknowledgment {
     PRE_PROCESSING,
 
     /**
-     * Acknowledgment performed automatically after the processing of the message.
+     * Acknowledgment performed automatically after the message being processed.
      * When {@code POST_PROCESSING} is used, the incoming message is acknowledged when the produced message is
      * acknowledged.
      *
-     * Notice that this mode is not supported for all signatures. When supported it's the default policy.
+     * Notice that this mode is not supported for all signatures. When supported, it's the default policy.
      *
      */
     POST_PROCESSING
