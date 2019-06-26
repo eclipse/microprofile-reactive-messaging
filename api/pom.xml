@@ -75,6 +75,16 @@
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <detectJavaApiLink>true</detectJavaApiLink>
+                    <detectOfflineLinks>true</detectOfflineLinks>
+                    <links>
+                        <link>https://docs.jboss.org/cdi/api/${cdi-api.version}/</link>
+                        <link>https://download.eclipse.org/microprofile/microprofile-reactive-streams-operators-${microprofile.reactive.streams.operators.version}/apidocs/</link>
+                        <link>https://download.eclipse.org/microprofile/microprofile-config-${microprofile-config-api.version}/apidocs/</link>
+                        <link>https://osgi.org/javadoc/r6/annotation/</link>
+                    </links>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

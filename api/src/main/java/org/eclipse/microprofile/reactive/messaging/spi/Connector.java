@@ -40,7 +40,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 public @interface Connector {
 
     /**
-     * @return the name of the connector associated with the bean implementing {@link IncomingConnectorFactory}
+     * @return The name of the connector associated with the bean implementing {@link IncomingConnectorFactory}
      * or {@link OutgoingConnectorFactory}. Must not be {@code null}. Returning {@code null} will cause a deployment
      * failure.
      */

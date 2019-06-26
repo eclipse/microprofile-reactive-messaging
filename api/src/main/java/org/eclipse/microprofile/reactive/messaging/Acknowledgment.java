@@ -24,45 +24,15 @@ import java.lang.annotation.RetentionPolicy;
 /**
  * Configure the acknowledgement policy for the given {@code @Incoming}.
  *
- * The set of supported acknowledgment policy depends on the method signature. The given list indicates the supported
- * policies for each type of signature:
+ * The set of supported acknowledgment policies depends on the method signature. The following list gives the supported
+ * strategies for some common use cases.
+ * Please refer to the specification for the full list.
  *
  * <ul>
- *     <li><code>@Incoming Subscriber&lt;Message&lt;I&gt;&gt; method()</code>: None, Pre, Manual</li>
- *     <li><code>@Incoming Subscriber&lt;I&gt; method()</code>: None, Pre, Post</li>
- *     <li><code>@Incoming void method(I msg)</code>: None, Pre, Post</li>
- *     <li><code>@Incoming CompletionStage&lt;?&gt; method(Message&lt;I&gt; msg)</code>: None, Pre, Post, Manual</li>
- *     <li><code>@Incoming CompletionStage&lt;?&gt; method(I msg)</code>: None, Pre, Post</li>
- *
- *     <li><code>@Outgoing @Incoming Processor&lt;Message&lt;I&gt;, Message&lt;O&gt;&gt; method()</code>: None, Pre,
- *     Manual, Post with the assumption that each incoming message produces a single outgoing message</li>
- *     <li><code>@Outgoing @Incoming Processor&lt;I, O&gt; method()</code>: None, Pre, Post with the assumption
- *     that each incoming payload produces a single outgoing payload</li>
- *     <li><code>@Outgoing @Incoming ProcessorBuilder&lt;Message&lt;I&gt;, Message&lt;O&gt;&gt; method()</code>: None,
- *     Manual, Pre, Post with the assumption that each incoming message produces a single outgoing message</li>
- *     <li><code>@Outgoing @Incoming ProcessorBuilder&lt;I, O&gt; method()</code>: None, Manual, Pre, Post with the
- *     assumption that each incoming payload produces a single outgoing payload</li>
- *
- *     <li><code>@Outgoing @Incoming Publisher&lt;Message&lt;O&gt;&gt; method(Message&lt;I&gt; msg)</code>: None,
- *     Manual,Pre</li>
- *     <li><code>@Outgoing @Incoming Publisher&lt;O&gt; method(I payload)</code>: None, Pre</li>
- *     <li><code>@Outgoing @Incoming PublisherBuilder&lt;Message&lt;O&gt;&gt; method(Message&lt;I&gt; msg)</code>: None,
- *     Pre, Manual</li>
- *     <li><code>@Outgoing @Incoming PublisherBuilder&lt;O&gt; method(I payload)</code>: None, Pre</li>
- *
- *     <li><code>@Outgoing @Incoming Message&lt;O&gt; method(Message&lt;I&gt; msg)</code>: None, Manual, Pre, Post</li>
- *     <li><code>@Outgoing @Incoming O method(I payload)</code>: None, Pre, Post</li>
- *     <li><code>@Outgoing @Incoming CompletionStage&lt;Message&lt;O&gt;&gt; method(Message&lt;I&gt; msg)</code>: None,
- *     Manual, Pre, Post</li>
- *     <li><code>@Outgoing @Incoming CompletionStage&lt;O&gt; method(I msg)</code>: None, Pre, Post</li>
- *
- *     <li><code>@Outgoing @Incoming Publisher&lt;Message&lt;O&gt;&gt; method(Publisher&lt;Message&lt;I&gt;&gt; pub)
- *     </code>: None, Manual, Pre</li>
- *     <li><code>@Outgoing @Incoming Publisher&lt;O&gt; method(Publisher&lt;I&gt; pub)</code>: None, Pre</li>
- *     <li><code>@Outgoing @Incoming PublisherBuilder&lt;Message&lt;O&gt;&gt; method(PublisherBuilder&lt;Message&lt;I&gt;&gt; pub)
- *     </code>: None, Manual, Pre</li>
- *     <li><code>@Outgoing @Incoming PublisherBuilder&lt;O&gt; method(PublisherBuilder&lt;I&gt; pub)</code>: None, Pre
- *     </li>
+ *     <li><code> @Incoming("channel") void method(I payload)</code>: Post-processing (default), Pre-processing, None</li>
+ *     <li><code> @Incoming("channel") CompletionStage&lt;?&gt; method(I payload)</code>: Post-processing (default), Pre-processing, None</li>
+ *     <li><code> @Incoming("in") @Outgoing("out") Message&lt;O&gt; method(Message&lt;I&gt; msg)</code>: Pre-processing (default), None, Manual</li>
+ *     <li><code> @Incoming("in") @Outgoing("out") O method(I payload)</code>: Post-Processing (default), Pre-processing, None</li>
  * </ul>
  *
  */
@@ -87,10 +57,11 @@ public @interface Acknowledgment {
     PRE_PROCESSING,
 
     /**
-     * Acknowledgment performed automatically after the user processing of the message.
+     * Acknowledgment performed automatically once the message has been processed.
+     * When {@code POST_PROCESSING} is used, the incoming message is acknowledged when the produced message is
+     * acknowledged.
      *
-     * Notice that this mode is not supported for all signatures. check the list above.
-     * When supported it's the default policy.
+     * Notice that this mode is not supported for all signatures. When supported, it's the default policy.
      *
      */
     POST_PROCESSING
