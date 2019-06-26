@@ -39,4 +39,5 @@
  * {@link org.eclipse.microprofile.reactive.messaging.spi.Connector} qualifier. Connectors receive the channel
  * configuration matching their {@link Connector} name.
  */
+@org.osgi.annotation.versioning.Version("1.0")
 package org.eclipse.microprofile.reactive.messaging.spi;
