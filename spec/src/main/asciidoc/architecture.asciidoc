@@ -101,7 +101,7 @@ should appear in a single `@Incoming` annotation. The annotation of more than on
 same channel is not supported and will cause an error during deployment.
 
 From the user perspective, whether the incoming messages comes from co-located beans or a remote message broker is transparent.
-However, the user may decide to consume a specific subclass of `Message` if the user is aware of this characteristic:
+However, the user may decide to consume a specific subclass of `Message` (e.g. `KafkaMessage` in the following example) if the user is aware of this characteristic:
 
 [source,java]
 ----
@@ -975,7 +975,6 @@ It's the implementations responsibility to invoke `ack()` on the incoming messag
 @Incoming("in")
 public void process(I payload) {
   System.out.println("Got payload " + payload);
-  return ...;
 }
 ----
 
@@ -1040,7 +1039,7 @@ If the annotation is not used, the default policy must be enforced.
 === Connector
 
 Reactive Messaging connects matching `@Incoming` and `@Outgoing` stream elements running inside the same application.
-Additionally, it maps specific _channels_ to _external_ technologies such as Apache Kafka, MQTT, Web Sockets, or JMS.
+Additionally, it maps specific _channels_ to _external_ technologies such as Apache Kafka, MQTT, Web Sockets, AMQP, or JMS.
 This means that Reactive Messaging can receive messages from virtually any messaging technology and dispatch messages to any messaging technology.
 This bridging to an external messaging technology is done using a reactive messaging _connector_.
 
