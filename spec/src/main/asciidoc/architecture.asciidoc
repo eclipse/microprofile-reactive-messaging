@@ -57,8 +57,8 @@ These channels are managed by _connectors_.
 ==== Message
 
 At the core of the Reactive Messaging specification is the concept of _message_. 
-A _message_  is an enveloppe wrapping a _payload_. 
-A message is sent to a specific channel and, when received and processed successfuly, _acknowledged_.
+A _message_  is an envelope wrapping a _payload_.
+A message is sent to a specific channel and, when received and processed successfully, _acknowledged_.
 
 Reactive Messaging application components are addressable recipients which await the arrival of messages on a channel and react to them, otherwise lying dormant. 
 
@@ -73,7 +73,7 @@ Note that the `ack` method is asynchronous as acknowledgement is generally an as
 _Plain_ messages are created using:
 
 * `org.eclipse.microprofile.reactive.messaging.Message#of(T)` - wraps the given payload, no acknowledgement
-* `org.eclipse.microprofile.reactive.messaging.Message#of(T, java.util.function.Supplier<java.util.concurrent.CompletionStage<java.lang.Void>>)` - wraps the given payload and provides the acknowlegment logic
+* `org.eclipse.microprofile.reactive.messaging.Message#of(T, java.util.function.Supplier<java.util.concurrent.CompletionStage<java.lang.Void>>)` - wraps the given payload and provides the acknowledgment logic
 
 ==== Message consumption with @Incoming
 
@@ -163,7 +163,7 @@ This mapping is configured in the application configuration.
 Note that an implementation may provide various ways to configure the mapping, but support for MicroProfile Config as a configuration source is mandatory.
 
 Connector implementations are associated with a name corresponding to a messaging transport, such as Apache Kafka, Amazon Kinesis, RabbitMQ or Apache ActiveMQ.
-For instance, an hypothetic Kafka connector could be associated with the following name: `acme.kafka`.
+For instance, an hypothetical Kafka connector could be associated with the following name: `acme.kafka`.
 This name is indicated using a qualifier on the connector implementation.
 
 The user can associate a channel with this connector using the associated name:
