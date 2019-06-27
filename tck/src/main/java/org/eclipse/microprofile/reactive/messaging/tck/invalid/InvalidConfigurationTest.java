@@ -39,7 +39,7 @@ public class InvalidConfigurationTest {
   @Deployment(managed = false, name = "empty-incoming")
   public static Archive<JavaArchive> emptyIncoming() {
     JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
-      .addClasses(BeanWithEmptyIncoming.class)
+      .addClasses(BeanWithEmptyIncoming.class, ArchiveExtender.class)
       .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
 
     ServiceLoader.load(ArchiveExtender.class).iterator().forEachRemaining(ext -> ext.extend(archive));
@@ -49,7 +49,7 @@ public class InvalidConfigurationTest {
   @Deployment(managed = false, name = "empty-outgoing")
   public static Archive<JavaArchive> emptyOutgoing() {
     JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
-      .addClasses(BeanWithEmptyOutgoing.class)
+      .addClasses(BeanWithEmptyOutgoing.class, ArchiveExtender.class)
       .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
 
     ServiceLoader.load(ArchiveExtender.class).iterator().forEachRemaining(ext -> ext.extend(archive));
@@ -59,7 +59,7 @@ public class InvalidConfigurationTest {
   @Deployment(managed = false, name = "invalid-publisher-method")
   public static Archive<JavaArchive> invalidPublisherMethod() {
     JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
-      .addClasses(BeanWithBadOutgoingSignature.class)
+      .addClasses(BeanWithBadOutgoingSignature.class, ArchiveExtender.class)
       .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
 
     ServiceLoader.load(ArchiveExtender.class).iterator().forEachRemaining(ext -> ext.extend(archive));
@@ -69,7 +69,7 @@ public class InvalidConfigurationTest {
   @Deployment(managed = false, name = "incomplete-chain")
   public static Archive<JavaArchive> incompleteChain() {
     JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
-      .addClasses(BeanWithBadOutgoingSignature.class)
+      .addClasses(BeanWithBadOutgoingSignature.class, ArchiveExtender.class)
       .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
 
     ServiceLoader.load(ArchiveExtender.class).iterator().forEachRemaining(ext -> ext.extend(archive));

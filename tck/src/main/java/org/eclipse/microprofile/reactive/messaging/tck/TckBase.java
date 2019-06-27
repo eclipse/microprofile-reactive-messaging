@@ -35,6 +35,7 @@ public abstract class TckBase {
 
     public static JavaArchive getBaseArchive() {
         JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
+            .addClasses(ArchiveExtender.class, TckBase.class)
             .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
 
         ServiceLoader.load(ArchiveExtender.class).iterator().forEachRemaining(ext -> ext.extend(archive));

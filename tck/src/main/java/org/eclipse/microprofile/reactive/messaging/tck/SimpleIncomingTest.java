@@ -39,7 +39,7 @@ public class SimpleIncomingTest {
   @Deployment
   public static Archive<JavaArchive> deployment() {
     JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
-      .addClasses(SimpleIncomingBean.class, ValueCollector.class, StringSource.class)
+      .addClasses(SimpleIncomingBean.class, ValueCollector.class, StringSource.class, ArchiveExtender.class)
       .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
 
     ServiceLoader.load(ArchiveExtender.class).iterator().forEachRemaining(ext -> ext.extend(archive));

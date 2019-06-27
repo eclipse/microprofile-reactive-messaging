@@ -39,7 +39,7 @@ public class ProcessorChainTest {
     @Deployment
     public static Archive<JavaArchive> deployment() {
         JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
-            .addClasses(BeanWithChain.class)
+            .addClasses(BeanWithChain.class, ArchiveExtender.class)
             .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
 
         ServiceLoader.load(ArchiveExtender.class).iterator().forEachRemaining(ext -> ext.extend(archive));

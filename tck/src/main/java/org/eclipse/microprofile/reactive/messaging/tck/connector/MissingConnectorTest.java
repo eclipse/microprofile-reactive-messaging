@@ -45,7 +45,7 @@ public class MissingConnectorTest {
     @Deployment(managed = false, name = "missing-connector")
     public static Archive<JavaArchive> missingConnectorDeployment() {
         JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
-            .addClasses(MyProcessor.class, FakeConfig.class)
+            .addClasses(MyProcessor.class, FakeConfig.class, ArchiveExtender.class)
             .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
 
         ServiceLoader.load(ArchiveExtender.class).iterator().forEachRemaining(ext -> ext.extend(archive));
@@ -60,7 +60,7 @@ public class MissingConnectorTest {
     @Deployment(managed = false, name = "missing-stream")
     public static Archive<JavaArchive> missingStreamDeployment() {
         JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
-            .addClasses(MyProcessorWithBadStreamName.class, DummyConnector.class, FakeConfig.class)
+            .addClasses(MyProcessorWithBadStreamName.class, DummyConnector.class, FakeConfig.class, ArchiveExtender.class)
             .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
 
         ServiceLoader.load(ArchiveExtender.class).iterator().forEachRemaining(ext -> ext.extend(archive));
