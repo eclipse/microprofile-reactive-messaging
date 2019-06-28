@@ -21,6 +21,7 @@ package org.eclipse.microprofile.reactive.messaging.tck.connector;
 import org.eclipse.microprofile.reactive.messaging.tck.ArchiveExtender;
 import org.jboss.arquillian.container.test.api.Deployer;
 import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.container.test.api.ShouldThrowException;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.Archive;
@@ -43,6 +44,7 @@ public class MissingConnectorTest {
     private Deployer deployer;
 
     @Deployment(managed = false, name = "missing-connector")
+    @ShouldThrowException(value = DeploymentException.class, testable = true)
     public static Archive<JavaArchive> missingConnectorDeployment() {
         JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
             .addClasses(MyProcessor.class, ArchiveExtender.class)
@@ -53,12 +55,13 @@ public class MissingConnectorTest {
         return archive;
     }
 
-    @Test(expected = DeploymentException.class)
+    @Test
     public void testWhenTheConnectorAreNotConfigured() {
         deployer.deploy("missing-connector");
     }
 
     @Deployment(managed = false, name = "missing-stream")
+    @ShouldThrowException(value = DeploymentException.class, testable = true)
     public static Archive<JavaArchive> missingStreamDeployment() {
         JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
             .addClasses(MyProcessorWithBadStreamName.class, DummyConnector.class, ArchiveExtender.class)
@@ -69,7 +72,7 @@ public class MissingConnectorTest {
         return archive;
     }
 
-    @Test(expected = DeploymentException.class)
+    @Test
     public void testWhenTheStreamNameDoesNotMatch() {
         deployer.deploy("missing-stream");
     }
