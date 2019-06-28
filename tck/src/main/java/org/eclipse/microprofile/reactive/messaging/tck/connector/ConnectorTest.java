@@ -48,7 +48,8 @@ public class ConnectorTest {
     @Deployment
     public static Archive<JavaArchive> deployment() {
         JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
-            .addClasses(DummyConnector.class, MyProcessor.class, FakeConfig.class)
+            .addClasses(DummyConnector.class, MyProcessor.class, ArchiveExtender.class)
+            .addAsManifestResource(MissingConnectorTest.class.getResource("connector-config.properties"), "microprofile-config.properties")
             .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
 
         ServiceLoader.load(ArchiveExtender.class).iterator().forEachRemaining(ext -> ext.extend(archive));

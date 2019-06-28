@@ -16,31 +16,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.eclipse.microprofile.reactive.messaging.tck;
+package org.eclipse.microprofile.reactive.messaging.tck.extension;
 
-import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.container.test.spi.client.deployment.CachedAuxilliaryArchiveAppender;
+import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.junit.runner.RunWith;
 
-import java.util.ServiceLoader;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
+public class AwaitilityArchiveAppender extends CachedAuxilliaryArchiveAppender {
 
-@RunWith(Arquillian.class)
-public abstract class TckBase {
-
-    public final static Executor EXECUTOR = Executors.newSingleThreadExecutor();
-
-    public static JavaArchive getBaseArchive() {
-        JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
-            .addClasses(ArchiveExtender.class, TckBase.class)
-            .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
-
-        ServiceLoader.load(ArchiveExtender.class).iterator().forEachRemaining(ext -> ext.extend(archive));
-
-        return archive;
+    @Override
+    protected Archive<?> buildArchive() {
+        return ShrinkWrap.create(JavaArchive.class, "awatility.jar")
+                .addPackages(true, "org.awaitility");
     }
 
 }
