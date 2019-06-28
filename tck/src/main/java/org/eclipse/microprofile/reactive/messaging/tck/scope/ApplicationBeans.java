@@ -23,6 +23,7 @@ import org.eclipse.microprofile.reactive.messaging.Outgoing;
 import org.eclipse.microprofile.reactive.streams.operators.ReactiveStreams;
 import org.reactivestreams.Publisher;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,11 +33,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ApplicationBeans {
 
   private static final AtomicInteger COUNTER = new AtomicInteger();
-  private final int id;
+  private int id;
   private List<Integer> list = new ArrayList<>();
   private static final List<Integer> STATIC_LIST = new ArrayList<>();
 
-  public ApplicationBeans() {
+  @PostConstruct
+  private void init() {
     id = COUNTER.getAndIncrement();
   }
 
