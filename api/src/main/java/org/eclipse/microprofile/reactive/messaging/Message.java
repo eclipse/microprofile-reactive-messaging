@@ -80,4 +80,29 @@ public interface Message<T> {
     default CompletionStage<Void> ack() {
         return CompletableFuture.completedFuture(null);
     }
+
+    /**
+     * Returns an object of the specified type to allow access to the connector-specific {@link Message} implementation.
+     * If the {@link Message} implementation does not support the target class, an {@link IllegalArgumentException}
+     * should be raised.
+     * The default implementation only supports the {@link Message} class as argument. When a connector provides
+     * its own {@link Message} implementation, it should override this method to support the specific type.
+     *
+     * @param unwrapType the class of the object to be returned, must not be {@code null}
+     * @param <C> the target type
+     * @return an instance of the specified class
+     * @throws IllegalArgumentException if the current {@link Message} instance does not support the call
+     */
+    @SuppressWarnings({"unchecked"})
+    default <C> C unwrap(Class<C> unwrapType) {
+        if (unwrapType == null) {
+            throw new NullPointerException("The target class must not be `null`");
+        }
+        if (Message.class.equals(unwrapType)) {
+            return (C) this;
+        }
+        throw new IllegalArgumentException("Cannot unwrap an instance of " + this.getClass().getName()
+            + " to " + unwrapType.getName());
+
+    }
 }
