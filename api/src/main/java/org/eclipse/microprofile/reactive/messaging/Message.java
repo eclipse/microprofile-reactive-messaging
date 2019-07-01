@@ -96,13 +96,16 @@ public interface Message<T> {
     @SuppressWarnings({"unchecked"})
     default <C> C unwrap(Class<C> unwrapType) {
         if (unwrapType == null) {
-            throw new NullPointerException("The target class must not be `null`");
+            throw new IllegalArgumentException("The target class must not be `null`");
         }
-        if (Message.class.equals(unwrapType)) {
-            return (C) this;
+        try {
+            return unwrapType.cast(this);
         }
-        throw new IllegalArgumentException("Cannot unwrap an instance of " + this.getClass().getName()
-            + " to " + unwrapType.getName());
+        catch (ClassCastException e) {
+            throw new IllegalArgumentException("Cannot unwrap an instance of " + this.getClass().getName()
+                + " to " + unwrapType.getName(), e);
+        }
+
 
     }
 }
