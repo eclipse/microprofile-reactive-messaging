@@ -80,4 +80,35 @@ public interface Message<T> {
     default CompletionStage<Void> ack() {
         return CompletableFuture.completedFuture(null);
     }
+
+    /**
+     * Returns an object of the specified type to allow access to the connector-specific {@link Message} implementation,
+     * and other classes. For example, a Kafka connector could implement this method to allow unwrapping to a specific
+     * Kafka message implementation, or to {@code ConsumerRecord} and {@code ProducerRecord}. If the {@link Message}
+     * implementation does not support the target class, an {@link IllegalArgumentException} should be raised.
+     *
+     * The default implementation tries to <em>cast</em> the current {@link Message} instance to the target class.
+     * When a connector provides its own {@link Message} implementation, it should override this method to support
+     * specific types.
+     *
+     * @param unwrapType the class of the object to be returned, must not be {@code null}
+     * @param <C> the target type
+     * @return an instance of the specified class
+     * @throws IllegalArgumentException if the current {@link Message} instance does not support the call
+     */
+    @SuppressWarnings({"unchecked"})
+    default <C> C unwrap(Class<C> unwrapType) {
+        if (unwrapType == null) {
+            throw new IllegalArgumentException("The target class must not be `null`");
+        }
+        try {
+            return unwrapType.cast(this);
+        }
+        catch (ClassCastException e) {
+            throw new IllegalArgumentException("Cannot unwrap an instance of " + this.getClass().getName()
+                + " to " + unwrapType.getName(), e);
+        }
+
+
+    }
 }
