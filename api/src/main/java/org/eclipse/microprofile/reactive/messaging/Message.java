@@ -82,11 +82,14 @@ public interface Message<T> {
     }
 
     /**
-     * Returns an object of the specified type to allow access to the connector-specific {@link Message} implementation.
-     * If the {@link Message} implementation does not support the target class, an {@link IllegalArgumentException}
-     * should be raised.
-     * The default implementation only supports the {@link Message} class as argument. When a connector provides
-     * its own {@link Message} implementation, it should override this method to support the specific type.
+     * Returns an object of the specified type to allow access to the connector-specific {@link Message} implementation,
+     * and other classes. For example, a Kafka connector could implement this method to allow unwrapping to a specific
+     * Kafka message implementation, or to {@code ConsumerRecord} and {@code ProducerRecord}. If the {@link Message}
+     * implementation does not support the target class, an {@link IllegalArgumentException} should be raised.
+     *
+     * The default implementation tries to <em>cast</em> the current {@link Message} instance to the target class.
+     * When a connector provides its own {@link Message} implementation, it should override this method to support
+     * specific types.
      *
      * @param unwrapType the class of the object to be returned, must not be {@code null}
      * @param <C> the target type
