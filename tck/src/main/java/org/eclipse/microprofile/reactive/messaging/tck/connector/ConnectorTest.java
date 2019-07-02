@@ -64,14 +64,16 @@ public class ConnectorTest {
         await().until(() -> connector.elements().size() == 10);
         assertThat(connector.elements()).containsExactly("A", "B", "C", "D", "E", "F", "G", "H", "I", "J");
 
-        assertThat(connector.getReceivedConfigurations()).hasSize(3).allSatisfy(config -> {
+        // We expect configurations for dummy-source and dummy-sink.
+        // We may also get a configuration for dummy-source-2 which is configured but not connected to anything
+        assertThat(connector.getReceivedConfigurations()).hasSizeBetween(2, 3).allSatisfy(config -> {
             assertThat(config.getValue("common-A", String.class)).isEqualTo("Value-A");
             assertThat(config.getValue("common-B", String.class)).isEqualTo("Value-B");
         });
         
         assertThat(connector.getReceivedConfigurations())
             .extracting(c -> c.getValue(ConnectorFactory.CHANNEL_NAME_ATTRIBUTE, String.class))
-            .containsExactlyInAnyOrder("dummy-source", "dummy-source-2", "dummy-sink");
+            .contains("dummy-source", "dummy-sink");
     }
 
 }
