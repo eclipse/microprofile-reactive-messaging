@@ -1163,6 +1163,7 @@ The Reactive Messaging implementation catches these exceptions and wraps them in
 7. The built `PublisherBuilder` is connected to a method using the `@Incoming("my-stream")` annotation. The implementation of the connector must map every received message to an `org.eclipse.microprofile.reactive.messaging.Message`. Optionally, it can provide its own implementation of `org.eclipse.microprofile.reactive.messaging.Message` providing additional metadata.
 
 The configuration passed to the `IncomingConnectorFactory` and `OutgoingConnectorFactory` contains at least the:
+
 * `channel-name` attribute indicating the name of the channel being configured,
 * `connector` attribute indicating the fully qualified name of the connector.
 
