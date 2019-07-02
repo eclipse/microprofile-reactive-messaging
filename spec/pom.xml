@@ -25,7 +25,7 @@
     <parent>
         <groupId>org.eclipse.microprofile.reactive.messaging</groupId>
         <artifactId>microprofile-reactive-messaging-parent</artifactId>
-        <version>1.0-RC4</version>
+        <version>1.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>microprofile-reactive-messaging-spec</artifactId>
