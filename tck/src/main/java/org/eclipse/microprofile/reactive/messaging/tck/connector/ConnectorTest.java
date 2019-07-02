@@ -18,6 +18,7 @@
  */
 package org.eclipse.microprofile.reactive.messaging.tck.connector;
 
+import org.eclipse.microprofile.reactive.messaging.spi.ConnectorFactory;
 import org.eclipse.microprofile.reactive.messaging.spi.ConnectorLiteral;
 import org.eclipse.microprofile.reactive.messaging.tck.ArchiveExtender;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -67,6 +68,10 @@ public class ConnectorTest {
             assertThat(config.getValue("common-A", String.class)).isEqualTo("Value-A");
             assertThat(config.getValue("common-B", String.class)).isEqualTo("Value-B");
         });
+        
+        assertThat(connector.getReceivedConfigurations())
+            .extracting(c -> c.getValue(ConnectorFactory.CHANNEL_NAME_ATTRIBUTE, String.class))
+            .containsExactlyInAnyOrder("dummy-source", "dummy-source-2", "dummy-sink");
     }
 
 }
