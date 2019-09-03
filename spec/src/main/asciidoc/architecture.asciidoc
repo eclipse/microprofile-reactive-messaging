@@ -663,11 +663,11 @@ NOTE: Implementations must support implementations of the `Message` interface.
 
 Acknowledgement is an important part of message processing.
 Messages are either acknowledged explicitly, or implicitly by the implementation.
+All messages must be acknowledged.
 
 Acknowledgement for the `@Incoming` messages is controlled by the `org.eclipse.microprofile.reactive.messaging.Acknowledgment` annotation. 
 The annotation allows configuring the acknowledgement strategy among:
 
-* `NONE` - no acknowledgment is performed
 * `MANUAL` - the user is responsible for the acknowledgement, by calling the `Message#ack()` method, so the Reactive Messaging implementation does not apply implicit acknowledgement
 * `PRE_PROCESSING` - the Reactive Messaging implementation acknowledges the message before the annotated method or processing is executed
 * `POST_PROCESSING` - the Reactive Messaging implementation acknowledges the message once:
@@ -684,7 +684,6 @@ When a method annotated with `@Incoming` defines its acknowledgement policy to b
 When the `POST_PROCESSING` policy is used, the incoming message is acknowledged when the outgoing message is acknowledged.
 Thus, it creates a chain of acknowledgements, making sure that the messages produced by an `IncomingConnectorFactory` are only acknowledged when the dispatching of the messages has been completed successfully.
 
-The `NONE` strategy indicates that the incoming message is not acknowledged.
 The `MANUAL` strategy indicates that the incoming message acknowledgement is managed by the user code.
 The `MANUAL` strategy is often used to acknowledge incoming messages when the produced messages are acknowledged.
 For example, in the next snippet, the received `KafkaMessage` is acknowledged when the produced message is acknowledged.
@@ -698,6 +697,14 @@ public Message<Integer> process(KafkaMessage<String, Integer> input) {
   return Message.of(processThePayload(input.getPayload(), () -> input.ack());
 }
 ----
+
+Specifying `NONE` as acknowledgment strategy allows for this method to complete processing and return without handling
+ acknowledgment and for this to be considered valid behavior of the method.
+However, if messages were never acknowledged this would result in a build-up of unacknowledged messages in the system as
+ no automatic acknowledgment will be done when `NONE` is specified.
+When 'NONE' is specified, each message object's `ack()` method should still be invoked once as part of the overall
+processing but this is considered valid behavior either before, during, or after this method's execution.
+
 
 The following table indicates the defaults and supported acknowledgement for each supported signature:
 
@@ -1008,7 +1015,7 @@ public O process(I payload) {
 ----
 
 The `NONE` strategy indicates that the incoming message is not acknowledged and the acknowledgment of the outgoing message would not acknowledge the incoming message anymore.
-The `NONE` strategy may be used for protocols that do not support acknowledgment. 
+The `NONE` strategy may be used when the incoming messages are acknowledged in another location, or a different mechanism..
 
 [source, java]
 ----

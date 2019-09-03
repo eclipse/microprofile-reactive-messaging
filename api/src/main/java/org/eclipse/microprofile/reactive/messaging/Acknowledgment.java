@@ -35,15 +35,13 @@ import java.lang.annotation.RetentionPolicy;
  *     <li><code> @Incoming("in") @Outgoing("out") O method(I payload)</code>: Post-Processing (default), Pre-processing, None</li>
  * </ul>
  *
+ * Note that all messages must be acknowledged. An absence of acknowledgment is considered as a failure.
+ *
  */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Acknowledgment {
 
   enum Strategy {
-    /**
-     * No acknowledgment performed.
-     */
-    NONE,
 
     /**
      * Acknowledgment managed by the user code. No automatic acknowledgment is performed. This strategy is only
@@ -64,7 +62,14 @@ public @interface Acknowledgment {
      * Notice that this mode is not supported for all signatures. When supported, it's the default policy.
      *
      */
-    POST_PROCESSING
+    POST_PROCESSING,
+
+   /**
+    * No acknowledgment is performed, neither implicitly or explicitly.
+    * It means that the incoming messages are going to be acknowledged in a different location or using a different
+    * mechanism.
+    */
+    NONE
   }
 
     /**
