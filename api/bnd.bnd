@@ -2,7 +2,6 @@
     org.eclipse.microprofile.*
 
 Import-Package: \
-    org.eclipse.microprofile.reactive.streams;version="[1.0.0,2)", \
     *
 
 Bundle-SymbolicName: org.eclipse.microprofile.reactive.messaging
