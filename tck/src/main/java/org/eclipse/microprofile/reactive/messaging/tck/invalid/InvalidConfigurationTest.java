@@ -74,7 +74,7 @@ public class InvalidConfigurationTest {
   @ShouldThrowException(value = DeploymentException.class, testable = true)
   public static Archive<JavaArchive> incompleteChain() {
     JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
-      .addClasses(BeanWithBadOutgoingSignature.class, ArchiveExtender.class)
+      .addClasses(BeanWithIncompleteChain.class, ArchiveExtender.class)
       .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
 
     ServiceLoader.load(ArchiveExtender.class).iterator().forEachRemaining(ext -> ext.extend(archive));
