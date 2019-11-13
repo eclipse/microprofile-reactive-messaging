@@ -128,18 +128,16 @@
                 <version>4.2.0</version>
                 <configuration>
                     <base>                     
-                        <version>1.0.0</version> 
+                        <version>1.0</version> 
                     </base>
                 </configuration>
-                <executions>
-                <!-- uncomment after 1.0.0 is released>
+                <executions>     
                     <execution>
                         <id>baseline</id>
                         <goals>
                             <goal>baseline</goal>
                         </goals>
                     </execution>
-                -->
                 </executions>
             </plugin>
         </plugins>
