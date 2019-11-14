@@ -121,18 +121,6 @@ public class SubscriberBean {
         add("void-payload", payload);
     }
 
-    @Outgoing("string-payload")
-    public Publisher<Message<String>> sourceForStringPayload() {
-        return ReactiveStreams.fromIterable(EXPECTED).map(Message::of).buildRs();
-    }
-
-    @Incoming("string-payload")
-    public String consumePayloadsAndReturnSomething(String payload) {
-        increment("string-payload");
-        add("string-payload", payload);
-        return payload;
-    }
-
     @Outgoing("cs-void-message")
     public Publisher<Message<String>> sourceForCsVoidMessage() {
         return ReactiveStreams.fromIterable(EXPECTED).map(Message::of).buildRs();
@@ -155,53 +143,20 @@ public class SubscriberBean {
         return CompletableFuture.runAsync(() -> add("cs-void-payload", payload), EXECUTOR);
     }
 
-    @Outgoing("cs-string-message")
-    public Publisher<Message<String>> sourceForCsStringMessage() {
-        return ReactiveStreams.fromIterable(EXPECTED).map(Message::of).buildRs();
-    }
-
-    @Incoming("cs-string-message")
-    public CompletionStage<String> consumeMessageAndReturnCompletionStageOfString(Message<String> message) {
-        increment("cs-string-message");
-        return CompletableFuture.supplyAsync(() -> {
-            add("cs-string-message", message.getPayload());
-            return "something";
-        }, EXECUTOR);
-    }
-
-    @Outgoing("cs-string-payload")
-    public Publisher<Message<String>> sourceForCsStringPayload() {
-        return ReactiveStreams.fromIterable(EXPECTED).map(Message::of).buildRs();
-    }
-
-    @Incoming("cs-string-payload")
-    public CompletionStage<String> consumePayloadAndReturnCompletionStageOfString(String payload) {
-        increment("cs-string-payload");
-        return CompletableFuture.supplyAsync(() -> {
-            add("cs-string-payload", payload);
-            return "something";
-        }, EXECUTOR);
-    }
-
     private void add(String key, String value) {
         collector.computeIfAbsent(key, x -> new CopyOnWriteArrayList<>()).add(value);
     }
 
     void verify() {
-        await().until(() -> collector.size() == 10);
-        assertThat(collector).hasSize(10).allSatisfy((k, v) -> assertThat(v).containsExactlyElementsOf(EXPECTED));
+        await().until(() -> collector.size() == 7);
+        assertThat(collector).hasSize(7).allSatisfy((k, v) -> assertThat(v).containsExactlyElementsOf(EXPECTED));
         assertThat(counters.get("subscriber-message")).hasValue(1);
         assertThat(counters.get("subscriber-payload")).hasValue(1);
         assertThat(counters.get("subscriber-builder-message")).hasValue(1);
         assertThat(counters.get("subscriber-builder-payload")).hasValue(1);
-
         assertThat(counters.get("void-payload")).hasValue(EXPECTED.size());
-        assertThat(counters.get("string-payload")).hasValue(EXPECTED.size());
-
         assertThat(counters.get("cs-void-payload")).hasValue(EXPECTED.size());
-        assertThat(counters.get("cs-string-payload")).hasValue(EXPECTED.size());
         assertThat(counters.get("cs-void-message")).hasValue(EXPECTED.size());
-        assertThat(counters.get("cs-string-message")).hasValue(EXPECTED.size());
     }
 
 }
