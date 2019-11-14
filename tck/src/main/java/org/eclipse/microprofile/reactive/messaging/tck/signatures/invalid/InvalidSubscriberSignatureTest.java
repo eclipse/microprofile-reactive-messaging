@@ -68,7 +68,7 @@ public class InvalidSubscriberSignatureTest {
     }
 
     @Test
-    public void checkThatIncomingShouldNotReturnNonVoidCompletionStagw() {
+    public void checkThatIncomingShouldNotReturnNonVoidCompletionStage() {
         deployer.deploy("incoming-returning-non-void-cs");
     }
 
