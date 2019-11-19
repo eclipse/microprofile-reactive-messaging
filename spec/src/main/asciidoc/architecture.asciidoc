@@ -383,8 +383,6 @@ The payload is automatically extracted from the inflight messages using `Message
 void method(I payload)
 ----
 | Consumes the _payload_.
-The method can return `void` or any object or `null`. 
-The returned value is ignored. 
 | This method is called for every `Message<I>` instance transiting on the channel `channel`. 
 The payload is automatically extracted from the inflight messages using `Message.getPayload()`.
 The user method is never called concurrently and so must return before being called with the next payload.
@@ -393,7 +391,7 @@ The user method is never called concurrently and so must return before being cal
 [source,java]
 ----
 @Incoming("channel")
-CompletionStage<?> method(Message<I> msg)
+CompletionStage<Void> method(Message<I> msg)
 ----
 | Consumes the `Message` 
 | This method is called for every `Message<I>` instance transiting on the channel `channel`. 
