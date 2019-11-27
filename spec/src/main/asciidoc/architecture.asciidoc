@@ -633,9 +633,9 @@ In addition to `Message`, implementations must allow:
 
 For more power, developers may use Reactive Streams instances. Reactive Streams shaped methods accept no parameters, and return one of the following:
 
-* `org.eclipse.microprofile.reactive.streams.PublisherBuilder`
-* `org.eclipse.microprofile.reactive.streams.SubscriberBuilder`
-* `org.eclipse.microprofile.reactive.streams.ProcessorBuilder`
+* `org.eclipse.microprofile.reactive.streams.operators.PublisherBuilder`
+* `org.eclipse.microprofile.reactive.streams.operators.SubscriberBuilder`
+* `org.eclipse.microprofile.reactive.streams.operators.ProcessorBuilder`
 * `org.reactivestreams.Publisher`
 * `org.reactivestreams.Subscriber`
 * `org.reactivestreams.Processor`
