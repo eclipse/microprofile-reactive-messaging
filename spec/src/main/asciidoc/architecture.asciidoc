@@ -361,7 +361,7 @@ The payload is automatically extracted from the inflight messages using `Message
 [source,java]
 ----
 @Incoming("channel") 
-SubscriberBuilder<Message<I>> method()
+SubscriberBuilder<Message<I>, Void> method()
 ----
 | Returns a `SubscriberBuilder` that receives the `Message` objects transiting on the channel `channel`.
 | The method is called only once at assembly time to retrieve a `SubscriberBuilder` that is used to build a `CompletionSubscriber` that is subscribed to the matching channel. 
@@ -370,7 +370,7 @@ SubscriberBuilder<Message<I>> method()
 [source,java]
 ----
 @Incoming("channel")
-SubscriberBuilder<I> method()
+SubscriberBuilder<I, Void> method()
 ----
 | Returns a `SubscriberBuilder` that is used to build a `CompletionSubscriber<I>`` that receives the _payload_ of each `Message`.
 The payload is automatically extracted from the inflight messages using `Message.getPayload()`.
@@ -633,9 +633,9 @@ In addition to `Message`, implementations must allow:
 
 For more power, developers may use Reactive Streams instances. Reactive Streams shaped methods accept no parameters, and return one of the following:
 
-* `org.eclipse.microprofile.reactive.streams.PublisherBuilder`
-* `org.eclipse.microprofile.reactive.streams.SubscriberBuilder`
-* `org.eclipse.microprofile.reactive.streams.ProcessorBuilder`
+* `org.eclipse.microprofile.reactive.streams.operators.PublisherBuilder`
+* `org.eclipse.microprofile.reactive.streams.operators.SubscriberBuilder`
+* `org.eclipse.microprofile.reactive.streams.operators.ProcessorBuilder`
 * `org.reactivestreams.Publisher`
 * `org.reactivestreams.Subscriber`
 * `org.reactivestreams.Processor`
@@ -734,7 +734,7 @@ Subscriber<I> method()
 [source,java]
 ----
 @Incoming("channel") 
-SubscriberBuilder<Message<I>> method()
+SubscriberBuilder<Message<I>, Void> method()
 ----
 | Post-Processing	
 | None, Pre-Processing, Post-Processing (when the `onNext` method returns), Manual
@@ -744,7 +744,7 @@ SubscriberBuilder<Message<I>> method()
 [source,java]
 ----
 @Incoming("channel")
-SubscriberBuilder<I> method()
+SubscriberBuilder<I, Void> method()
 ----
 | Post-Processing	
 | None, Pre-Processing, Post-Processing (when the `onNext` method returns)
