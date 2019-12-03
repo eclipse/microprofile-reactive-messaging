@@ -1199,3 +1199,118 @@ The following metrics are produced for each channel declared by the application
 // ==== Custom message types
 
 // Implementations may provide custom subtypes of `Message` as an end user API, for the purpose of providing additional metadata associated with the messaging provider. If an application declares that it consumes or produces a subtype of the `Message` wrapper, the implementation should validate that the messaging provider supports that message wrapper type, and raise a deployment exception if it doesn't.
+
+== Publishing messages to a stream from imperative code
+Traditionally, the reactive world and imperative world are separated and operate in parallel. Reactive Messaging deals with streams of data in the reactive world, while the imperative world is pretty much point to point and synchronous communication. However, imperative programme sometimes needs to connect to reactive streams so that responses can be emitted to a destination service. 
+Bridging the two worlds is very valuable thing to do, so that one microservice can use technologies from both environments. For an instance, a JAX-RS resource might want to publish messages to a Reactive Messaging channel. This section is about enabling imperative code to publish messages to a Reactive Messaging channel, so that it can be consumed by a consumer.
+The approach is to introduce the concept of _channel_.
+
+=== Connect to a channel
+
+In order to publish messages on a _channel_, we need to connect a channel first. `@Channel("channel_name")` is used for this purpose.
+`@Channel` is a qualifier to inject a _channel_ to a CDI bean or any class that supports CDI injection. 
+
+=== Transit messages to a channel
+
+You can either inject a _Publisher_ or _PublisherBuilder_ with the specified channel, shown below.
+
+[source, java]
+----
+
+@Inject
+@Channel("myChannel")
+private Publisher<Message<String>> field;
+
+----
+
+The value _myChannel_ indicates the name of the channel. A channel can be used for the following type:
+
+* Publisher<Message<X>> or Publisher<X>
+* PublisherBuilder<Message<X>> or PublisherBuilder<X>
+
+
+In addition to the above messaging publishers, an additional `Emitter` is also providied by this specification. 
+
+* Emitter<X>
+
+
+For an instance, in order for a method to send messages, you can use _Emitter_ to send payload `X` or `Message<X>`, as demonstrated below.
+
+[source, java]
+----
+@Inject @Channel("myChannel")
+private Emitter<String> emitter;
+
+public void publishMessage() {
+  emitter.send("a");
+  emitter.send("b");
+  emitter.complete();
+}
+----
+
+[source, java]
+----
+@Inject
+@Channel("foo")
+private Emitter<String> emitter;
+
+public void run() {
+    emitter.send(Message.of("a"));
+    emitter.send(Message.of("b"));
+    emitter.send(Message.of("c"));
+}
+
+----
+
+When injecting an _Emitter_ (e.g. `@Inject @Emitter`), you can configure how the backpressure is handled. The `@OnOverflow` annotation configures how the backpressure behaves when emitting messages/payloads faster than the consumption of the messages.
+
+[source, java]
+----
+@Inject @Channel("myChannel")
+@OnOverflow(value=OnOverflow.Strategy.BUFFER, bufferSize=300)
+Private Emitter<String> emitter;
+
+public void publishMessage() {
+  emitter.send("a");
+  emitter.send("b");
+  emitter.complete();
+}
+----
+
+In the above snippet, the buffer size is set to 300 elements. If `_@OnOverflow_` is absent, the buffer strategy _OnOverflow.Strategy.BUFFER_ will be used. 
+
+If the `bufferSize` is not specified, the size will be the value of the config property _mp.messaging.emitter.defult-buffer-size_.
+If the property does not exist, the default value will be 128 elements. If the buffer is full, an error will be propagated.
+
+The _value_ attribute on `OnOverflow` can be:
+
+* `OnOverflow.Strategy.BUFFER` - use a buffer, whose size will be determined by the value of _bufferSize_ if set. Otherwise, the size will be the value of the config property _mp.messaging.emitter.defult-buffer-size_ if it exists. Otherwise, 128 will be used. If the buffer is full, an error will be propagated.
+* `OnOverflow.Strategy.UNBOUNDED_BUFFER` - use an unbounded buffer. If the buffer is full, the applicaiton will die of _OutOfMemory_.
+* `OnOverflow.Strategy.DROP` - drops the most recent value if the downstream can’t keep up. It means that new value emitted by the emitter are ignored.
+* `OnOverflow.Strategy.FAIL` - propagates a failure in case the downstream can’t keep up.
+* `OnOverflow.Strategy.LATEST` - keeps only the latest value, dropping any previous value if the downstream can’t keep up.
+* `OnOverflow.Strategy.NONE` - ignore the back-pressure signals letting the downstream consumer to implement a strategy.
+
+Here are some examples:
+
+[source, java]
+----
+
+@Inject
+@Channel("myChannel")
+@OnOverflow(value = OnOverflow.Strategy.BUFFER) // Buffer strategy using the buffer size specified by _mp.messaging.emitter.defult-buffer-size_ if exists. Otherwise, 128 will be used.
+Emitter<String> emitter;
+
+@Inject
+@Channel("myChannel") // Buffer strategy will be used. It behaves as if @OnOverflow(value = OnOverflow.Strategy.BUFFER) is present.
+Emitter<String> emitter;
+
+@Inject
+@Channel("myChannel")
+@OnOverflow(value = OnOverflow.Strategy.DROP) // Drop the most recent values
+Emitter<String> emitter;
+----
+    
+Since the `@Channel("myChannel")` is used to produce messages, a consumer with the `@Incoming("myChannel")` should be specified to consume the messages transiting on the channel _myChannel_.
+The `IllegalStateException` will be thrown if no consumer is found by the time a message is emitted to a channel.
+
