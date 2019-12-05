@@ -1179,6 +1179,23 @@ The connector is responsible for the acknowledgment of the incoming and outgoing
 * An incoming connector must only acknowledge the received message when the produced `org.eclipse.microprofile.reactive.messaging.Message` is acknowledged.
 * An outgoing connector must acknowledge the incoming `org.eclipse.microprofile.reactive.messaging.Message` once it has successfully dispatched the message.
 
+== Metrics
+
+When MicroProfile Reactive Metrics is used in an environment where MicroProfile Metrics is enabled, the Reactive Messaging implementation automatically produces metrics.
+
+The following metrics are produced for each channel declared by the application
+
+[cols="8,3,4,9"]
+|===
+| Name | Type | Unit | Description
+
+| `mp.messaging.message.count{channel="<channelname>"}`
+| Counter | None
+| The number of messages sent on the named channel.
+
+|===
+
+
 // ==== Custom message types
 
 // Implementations may provide custom subtypes of `Message` as an end user API, for the purpose of providing additional metadata associated with the messaging provider. If an application declares that it consumes or produces a subtype of the `Message` wrapper, the implementation should validate that the messaging provider supports that message wrapper type, and raise a deployment exception if it doesn't.
