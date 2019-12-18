@@ -48,6 +48,7 @@
         <!-- keeping closed repos with failure - default is false because the errors are visible in the maven output, but true will leave the repo open for investigation in Sonatype Nexus -->
         <keepStagingReposOnFailure>false</keepStagingReposOnFailure>
         <microprofile-config-api.version>1.3</microprofile-config-api.version>
+        <microprofile-metrics-api.version>2.0</microprofile-metrics-api.version>
         <cdi-api.version>2.0</cdi-api.version>
     </properties>
 
@@ -135,6 +136,11 @@
                 <groupId>org.eclipse.microprofile.config</groupId>
                 <artifactId>microprofile-config-api</artifactId>
                 <version>${microprofile-config-api.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.microprofile.metrics</groupId>
+                <artifactId>microprofile-metrics-api</artifactId>
+                <version>${microprofile-metrics-api.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.osgi</groupId>
