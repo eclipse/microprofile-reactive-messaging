@@ -45,7 +45,7 @@ public class DropOverflowStrategyOverflowTest extends TckBase {
         
         bean.emitALotOfItems();
         await().until(bean::isDone);
-        assertThat(bean.output()).contains("1", "2", "3", "4", "5").doesNotContain("999");
+        assertThat(bean.output()).isNotEmpty().doesNotContain("999");
         assertThat(bean.failure()).isNull();
         assertThat(bean.exception()).isNull();
     }

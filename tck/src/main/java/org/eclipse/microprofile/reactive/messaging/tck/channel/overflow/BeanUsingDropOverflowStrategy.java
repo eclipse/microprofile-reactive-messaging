@@ -107,7 +107,7 @@ public class BeanUsingDropOverflowStrategy {
         
         return values.via(ReactiveStreams.<String>builder().flatMapCompletionStage(s -> CompletableFuture.supplyAsync(()-> {
             try {
-                Thread.sleep(1000); 
+                Thread.sleep(1); 
             } 
             catch (InterruptedException ignored) {
                 Thread.currentThread().interrupt();
