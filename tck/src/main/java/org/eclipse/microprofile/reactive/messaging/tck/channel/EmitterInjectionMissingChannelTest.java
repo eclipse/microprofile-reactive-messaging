@@ -22,7 +22,6 @@ import javax.inject.Inject;
 
 import org.eclipse.microprofile.reactive.messaging.Message;
 import org.eclipse.microprofile.reactive.messaging.tck.TckBase;
-import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
@@ -31,7 +30,6 @@ import org.junit.Test;
 public class EmitterInjectionMissingChannelTest extends TckBase {
     private @Inject BeanWithMissingChannel bean;
 
-    @Deployment(managed = false, name = "missing-channel")
     public static Archive<JavaArchive> deployment() {
         return getBaseArchive()
             .addClasses( BeanWithMissingChannel.class);

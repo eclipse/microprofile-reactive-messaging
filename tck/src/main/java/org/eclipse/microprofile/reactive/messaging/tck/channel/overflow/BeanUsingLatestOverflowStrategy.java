@@ -38,8 +38,12 @@
 package org.eclipse.microprofile.reactive.messaging.tck.channel.overflow;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
+import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
@@ -49,6 +53,7 @@ import org.eclipse.microprofile.reactive.messaging.Incoming;
 import org.eclipse.microprofile.reactive.messaging.OnOverflow;
 import org.eclipse.microprofile.reactive.messaging.Outgoing;
 import org.eclipse.microprofile.reactive.streams.operators.PublisherBuilder;
+import org.eclipse.microprofile.reactive.streams.operators.ReactiveStreams;
 
 
 
@@ -56,6 +61,13 @@ import org.eclipse.microprofile.reactive.streams.operators.PublisherBuilder;
 public class BeanUsingLatestOverflowStrategy {
 
 
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
+  
+    @PreDestroy
+    public void terminate() {
+        executor.shutdown();
+    } 
+    
     @Inject
     @Channel("hello")
     @OnOverflow(value = OnOverflow.Strategy.LATEST)
@@ -115,14 +127,16 @@ public class BeanUsingLatestOverflowStrategy {
     @Outgoing("out")
     public PublisherBuilder<String> consume(final PublisherBuilder<String> values) {
         
-        try {
-            Thread.sleep(1); // add 1 millisec sleep to slow down 
-        } 
-        catch (Exception e) {
-            //ignore
-        }
-        return values.onError(err -> downstreamFailure = err);
-        
+        return values.via(ReactiveStreams.<String>builder().flatMapCompletionStage(s -> CompletableFuture.supplyAsync(()-> {
+            try {
+                Thread.sleep(1000); 
+            } 
+            catch (InterruptedException ignored) {
+                Thread.currentThread().interrupt();
+            }
+            return s;
+        }, executor))).onError(err -> downstreamFailure = err);
+            
     }
 
     @Incoming("out")
