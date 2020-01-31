@@ -22,6 +22,9 @@ import javax.enterprise.context.ApplicationScoped;
 
 import org.eclipse.microprofile.reactive.messaging.Incoming;
 import org.eclipse.microprofile.reactive.messaging.Outgoing;
+import org.eclipse.microprofile.reactive.streams.operators.ProcessorBuilder;
+import org.eclipse.microprofile.reactive.streams.operators.PublisherBuilder;
+import org.eclipse.microprofile.reactive.streams.operators.ReactiveStreams;
 import org.reactivestreams.Publisher;
 
 import io.reactivex.Flowable;
@@ -36,13 +39,13 @@ public class SourceBean {
 
     @Outgoing("bonjour")
     @Incoming("raw")
-    public Flowable<String> bonjour(Flowable<String> input) {
-        return input.map(String::toUpperCase);
+    public ProcessorBuilder<String, Object> bonjour(Flowable<String> input) {
+        return ReactiveStreams.<String>builder().map(String::toUpperCase);
     }
 
     @Outgoing("raw")
-    public Flowable<String> raw() {
-        return Flowable.fromArray("b", "o", "n", "j", "o", "u", "r");
+    public PublisherBuilder<String> raw() {
+        return ReactiveStreams.of("b", "o", "n", "j", "o", "u", "r");
     }
 
 }

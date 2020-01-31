@@ -59,7 +59,7 @@ public class ChannelInjectionDifferentFlavourSameChannelTest extends TckBase {
     @Test
     public void testMultipleFieldInjection() {
         
-        assertThat(beanInjectedWithDifferentFlavorsOfTheSameChannel.consume()).hasSize(10);
+        assertThat(beanInjectedWithDifferentFlavorsOfTheSameChannel.consume()).hasSize(6);
     }
 
 }

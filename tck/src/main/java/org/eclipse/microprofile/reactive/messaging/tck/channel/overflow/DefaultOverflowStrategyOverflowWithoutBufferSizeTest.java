@@ -30,7 +30,6 @@ import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 
-import io.reactivex.exceptions.MissingBackpressureException;
 
 public class DefaultOverflowStrategyOverflowWithoutBufferSizeTest extends TckBase {
 
@@ -53,6 +52,6 @@ public class DefaultOverflowStrategyOverflowWithoutBufferSizeTest extends TckBas
         await().until(() -> bean.exception() != null);
         assertThat(bean.output()).doesNotContain("10");
         assertThat(bean.output()).hasSize(5);
-        assertThat(bean.failure()).isNotNull().isInstanceOf(MissingBackpressureException.class);
+        assertThat(bean.failure()).isNotNull().isInstanceOf(Exception.class);
     }
 }

@@ -29,8 +29,6 @@ import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 
-import io.reactivex.exceptions.MissingBackpressureException;
-
 
 public class BufferOverflowStrategyOverflowTest extends TckBase {
 
@@ -53,6 +51,6 @@ public class BufferOverflowStrategyOverflowTest extends TckBase {
 
         await().until(() -> bean.exception() != null);
         assertThat(bean.output()).doesNotContain("999");
-        assertThat(bean.failure()).isNotNull().isInstanceOf(MissingBackpressureException.class);
+        assertThat(bean.failure()).isNotNull().isInstanceOf(Exception.class);
     }
 }
