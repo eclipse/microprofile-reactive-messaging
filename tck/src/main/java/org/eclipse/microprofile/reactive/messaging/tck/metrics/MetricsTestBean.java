@@ -20,6 +20,7 @@ package org.eclipse.microprofile.reactive.messaging.tck.metrics;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.enterprise.context.ApplicationScoped;
 
@@ -41,12 +42,11 @@ public class MetricsTestBean {
     public static final String CHANNEL_APP_A = "channel-app-a";
     public static final String CHANNEL_APP_B = "channel-app-b";
     
-    private volatile int inAppMessagesReceived = 0;
+    private AtomicInteger inAppMessagesReceived = new AtomicInteger(0);
 
     @Incoming(CONNECTOR_IN)
     @Outgoing(CONNECTOR_PROCESS)
     public String simpleMapping(String a) {
-        System.out.println("Mapping " + a);
         return a + "-test";
     }
     
@@ -78,10 +78,10 @@ public class MetricsTestBean {
     
     @Incoming(CHANNEL_APP_B)
     public void receive(String input) {
-        inAppMessagesReceived++;
+        inAppMessagesReceived.incrementAndGet();
     }
 
     public int getInAppMessagesReceived() {
-        return inAppMessagesReceived;
+        return inAppMessagesReceived.get();
     }
 }
