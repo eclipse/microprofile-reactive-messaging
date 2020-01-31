@@ -73,7 +73,7 @@ public class BeanUsingBufferOverflowWithoutBufferSizeStrategy {
     }
 
     @Incoming("hello")
-    public Subscriber<String> consume(final String values) {
+    public Subscriber<String> consume() {
         // create a subscriber sitting there and doing nothing
         return new Subscriber<String>() {
 
@@ -89,7 +89,7 @@ public class BeanUsingBufferOverflowWithoutBufferSizeStrategy {
 
             @Override
             public void onError(Throwable t) {
-                
+                downstreamFailure = t;
             }
 
             @Override

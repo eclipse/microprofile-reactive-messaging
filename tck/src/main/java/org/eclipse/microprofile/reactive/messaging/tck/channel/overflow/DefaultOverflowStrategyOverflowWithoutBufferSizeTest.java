@@ -39,7 +39,7 @@ public class DefaultOverflowStrategyOverflowWithoutBufferSizeTest extends TckBas
         return getBaseArchive()
             .addClasses(BeanUsingBufferOverflowWithoutBufferSizeStrategy.class)
             .addAsManifestResource(new StringAsset(
-                "mp.messaging.emitter.defult-buffer-size=5"),
+                "mp.messaging.emitter.default-buffer-size=5"),
                     "microprofile-config.properties");
     }
 

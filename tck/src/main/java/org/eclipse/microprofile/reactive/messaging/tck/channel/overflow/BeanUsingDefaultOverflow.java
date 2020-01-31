@@ -31,6 +31,7 @@ import javax.inject.Inject;
 import org.eclipse.microprofile.reactive.messaging.Channel;
 import org.eclipse.microprofile.reactive.messaging.Emitter;
 import org.eclipse.microprofile.reactive.messaging.Incoming;
+import org.eclipse.microprofile.reactive.messaging.Outgoing;
 import org.eclipse.microprofile.reactive.streams.operators.PublisherBuilder;
 import org.eclipse.microprofile.reactive.streams.operators.ReactiveStreams;
 
@@ -91,6 +92,8 @@ public class BeanUsingDefaultOverflow {
         }).start();
     }
 
+    @Incoming("hello")
+    @Outgoing("out")
     public PublisherBuilder<String> consume(final PublisherBuilder<String> values) {
         
         return values.via(ReactiveStreams.<String>builder().flatMapCompletionStage(s -> CompletableFuture.supplyAsync(()-> {
