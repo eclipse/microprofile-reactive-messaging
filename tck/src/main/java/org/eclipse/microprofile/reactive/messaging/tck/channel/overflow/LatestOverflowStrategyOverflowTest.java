@@ -62,11 +62,10 @@ public class LatestOverflowStrategyOverflowTest extends TckBase {
     public void testOverflow() {
         
         bean.emitALotOfItems();
-
         await().until(bean::isDone);
         await().until(() -> bean.output().contains("999"));
-        assertThat(bean.output()).contains("1", "2", "3", "4", "5", "999");
-        assertThat(bean.output()).hasSizeBetween(50, 1000);
+        assertThat(bean.output()).contains("999");
+        assertThat(bean.output()).hasSizeLessThan(999);
         assertThat(bean.failure()).isNull();
         assertThat(bean.exception()).isNull();
     }

@@ -39,7 +39,7 @@ public class SourceBean {
 
     @Outgoing("bonjour")
     @Incoming("raw")
-    public ProcessorBuilder<String, Object> bonjour(Flowable<String> input) {
+    public ProcessorBuilder<String, Object> bonjour() {
         return ReactiveStreams.<String>builder().map(String::toUpperCase);
     }
 

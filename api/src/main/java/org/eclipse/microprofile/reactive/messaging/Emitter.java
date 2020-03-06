@@ -21,7 +21,7 @@ package org.eclipse.microprofile.reactive.messaging;
 import java.util.concurrent.CompletionStage;
 
 /**
- * Interface used to feed a stream from an <em>imperative</em> piece of code.
+ * Interface used to feed a channel from an <em>imperative</em> piece of code.
  * <p>
  * Instances are injected using:
  *
@@ -35,9 +35,9 @@ import java.util.concurrent.CompletionStage;
  * {@link org.eclipse.microprofile.reactive.messaging.Message Messages}.
  * <p>
  * The name of the channel (given in the {@link Channel Channel annotation})
- * indicates which streams is fed. It must match the name used in a method using
+ * indicates which channels is fed. It must match the name used in a method using
  * {@link org.eclipse.microprofile.reactive.messaging.Incoming @Incoming} or an
- * outgoing stream configured in the application configuration.
+ * outgoing channel configured in the application configuration.
  *
  * @param <T> type of payload or
  *        {@link org.eclipse.microprofile.reactive.messaging.Message
@@ -46,32 +46,30 @@ import java.util.concurrent.CompletionStage;
 public interface Emitter<T> {
 
     /**
-     * Sends a payload to the stream.
+     * Sends a payload to the channel.
      *
      * @param msg the <em>thing</em> to send, must not be {@code null}
      * @return the {@code CompletionStage}, which will be completed as sending the payload alone does not provide a callback
-     *         mechnanism.
-     * @throws IllegalStateException if the stream has been cancelled or terminated.
+     *         mechanism.
+     * @throws IllegalStateException if the channel has been cancelled or terminated.
      */
     CompletionStage<Void> send(T msg);
 
     /**
-     * Sends a message to the stream.
+     * Sends a message to the channel.
      * @param <M> the <em>Message</em> type
      * @param msg the <em>Message</em> to send, must not be {@code null}
-     * @throws IllegalStateException if the stream has been cancelled or terminated.
+     * @throws IllegalStateException if the channel has been cancelled or terminated.
      */
     <M extends Message<? extends T>> void send(M msg);
 
     /**
-     * Completes the stream.
-     * This method sends the completion signal, no messages can be sent once this method is called.
+     * Sends the completion event to the channel indicating that no other events will be sent afterwards.
      */
     void complete();
 
     /**
-     * Propagates an error in the stream.
-     * This methods sends an error signal, no messages can be sent once this method is called.
+     * Sends a failure event to the channel. No more events will be sent afterwards.
      *
      * @param e the exception, must not be {@code null}
      */

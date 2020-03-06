@@ -96,15 +96,8 @@ public class BeanWithFailOverflowStrategy {
     @Incoming("hello")
     @Outgoing("out")
     public PublisherBuilder<String> consume(final PublisherBuilder<String> values) {
-        return values.via(ReactiveStreams.<String>builder().flatMapCompletionStage(s -> CompletableFuture.supplyAsync(()-> {
-        try {
-            Thread.sleep(1000); 
-        } 
-        catch (InterruptedException ignored) {
-            Thread.currentThread().interrupt();
-        }
-        return s;
-    }, executor))).onError(err -> downstreamFailure = err);
+        return values.via(ReactiveStreams.<String>builder().flatMapCompletionStage(s -> CompletableFuture.supplyAsync(()-> s, executor)))
+        .onError(err -> downstreamFailure = err);
         
     }
 
