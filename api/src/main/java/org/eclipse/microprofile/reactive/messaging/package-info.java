@@ -53,5 +53,5 @@
  * </pre>
  */
 
-@org.osgi.annotation.versioning.Version("1.0")
+@org.osgi.annotation.versioning.Version("1.1")
 package org.eclipse.microprofile.reactive.messaging;
