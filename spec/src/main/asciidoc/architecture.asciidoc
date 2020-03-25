@@ -718,7 +718,7 @@ The following table indicates the defaults and supported acknowledgement for eac
 @Incoming("channel")
 Subscriber<Message<I>> method()
 ----
-| Post-Processing	
+| Manual
 | None, Pre-Processing, Post-Processing (when the `onNext` method returns), Manual
 
 |
@@ -736,7 +736,7 @@ Subscriber<I> method()
 @Incoming("channel") 
 SubscriberBuilder<Message<I>, Void> method()
 ----
-| Post-Processing	
+| Manual
 | None, Pre-Processing, Post-Processing (when the `onNext` method returns), Manual
 
 
@@ -783,7 +783,7 @@ CompletionStage<?> method(I payload)
 @Outgoing("out")
 Processor<Message<I>, Message<O>> method()
 ----
-| Pre-Processing
+| Manual
 | None, Pre-Processing, Manual
 
 | 
@@ -804,7 +804,7 @@ Post-Processing can be optionally supported by implementations, however it requi
 @Outgoing("out") 
 ProcessorBuilder<Message<I>, Message<O>> method();
 ----
-| Pre-Processing
+| Manual
 | None, Pre-Processing, Manual
 
 |
@@ -825,7 +825,7 @@ Post-Processing can be optionally supported by implementations, however it requi
 @Outgoing("out") 
 Publisher<Message<O>> method(Message<I> msg)
 ----
-| Pre-Processing
+| Manual
 | None, Manual, Pre-Processing
 
 |
@@ -845,7 +845,7 @@ Publisher<O> method(I payload)
 @Outgoing("out") 
 PublisherBuilder<Message<O>> method(Message<I> msg)
 ----
-| Pre-Processing
+| Manual
 | None, Manual, Pre-Processing
 
 |
@@ -1012,6 +1012,21 @@ public O process(I payload) {
 }
 ----
 
+`PRE_PROCESSING` can also be used with `Messages`:
+
+[source, java]
+----
+@Incoming("in")
+@Outgoing("out")
+@Acknowledgment(Acknowledgment.Strategy.PRE_PROCESSING)
+public Message<O> process(Message<I> msg) {
+  return Message.of(convert(msg.getPayload()));
+}
+----
+
+In this case, the message `msg` is acknowledged before the method being called.
+The outgoing message (returned by the method) does not have to chain the acknowledgment.
+
 The `NONE` strategy indicates that the incoming message is not acknowledged and the acknowledgment of the outgoing message would not acknowledge the incoming message anymore.
 The `NONE` strategy may be used when the incoming messages are acknowledged in another location, or a different mechanism..
 
@@ -1032,6 +1047,7 @@ The following snippet is particularly useful for processing messages that are al
 ----
 @Incoming("in")
 @Outgoing("out")
+@Acknowledgment(Acknowledgment.Strategy.MANUAL) // Default strategy 
 public Message<O> process(Message<I> msg) {
   return Message.of(convert(msg.getPayload()), msg::ack);
 }
