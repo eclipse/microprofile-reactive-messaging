@@ -52,9 +52,10 @@ public class BeanUsingBufferOverflowStrategy {
     private Emitter<String> emitter;
 
     private final List<String> output = new CopyOnWriteArrayList<>();
+    private final List<String> accepted = new CopyOnWriteArrayList<>();
+    private final List<String> rejected = new CopyOnWriteArrayList<>();
 
     private volatile Throwable downstreamFailure;
-    private Exception callerException;
 
     public List<String> output() {
         return output;
@@ -64,34 +65,34 @@ public class BeanUsingBufferOverflowStrategy {
         return downstreamFailure;
     }
 
-    public Exception exception() {
-        return callerException;
+    public List<String> accepted() {
+        return accepted;
     }
 
-    public void emitThree() {
-        try {
-            emitter.send("1");
-            emitter.send("2");
-            emitter.send("3");
-            emitter.complete();
+    public List<String> rejected() {
+        return rejected;
+    }
 
-        } 
-        catch (final Exception e) {
-            callerException = e;
+    public void tryEmitThree() {
+        for (int i = 0; i < 3; i++) {
+            tryEmit(Integer.toString(i));
         }
     }
 
-    public void emitALotOfItems() {
-        new Thread(() -> {
-            try {
-                for (int i = 1; i < 1000; i++) {
-                    emitter.send("" + i);
-                }
-            } 
-            catch (final Exception e) {
-                callerException = e;
-            }
-        }).start();
+    public void tryEmitThousand() {
+        for (int i = 0; i < 1000; i++) {
+            tryEmit(Integer.toString(i));
+        }
+    }
+    
+    private void tryEmit(String item) {
+        try {
+            emitter.send(item);
+            accepted.add(item);
+        }
+        catch (IllegalStateException e) {
+            rejected.add(item);
+        }
     }
 
     @Incoming("hello")
@@ -99,7 +100,7 @@ public class BeanUsingBufferOverflowStrategy {
     public PublisherBuilder<String> consume(final PublisherBuilder<String> values) {
         return values.via(ReactiveStreams.<String>builder().flatMapCompletionStage(s -> CompletableFuture.supplyAsync(()-> {
             try {
-                Thread.sleep(1000); 
+                Thread.sleep(1); 
             } 
             catch (InterruptedException ignored) {
                 Thread.currentThread().interrupt();

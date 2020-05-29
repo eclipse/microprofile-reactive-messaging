@@ -18,11 +18,8 @@
  */
 package org.eclipse.microprofile.reactive.messaging.tck.channel.overflow;
 
-import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
-
-import java.util.stream.IntStream;
 
 import javax.inject.Inject;
 
@@ -32,32 +29,46 @@ import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 
-
-public class BufferOverflowStrategyOverflowTest extends TckBase {
+public class ThrowExceptionOverflowStrategyOverflowTest extends TckBase {
 
     @Deployment
     public static Archive<JavaArchive> deployment() {
         return getBaseArchive()
-            .addClasses(BeanUsingBufferOverflowStrategy.class);
+            .addClasses(BeanUsingThrowExceptionStrategy.class);
     }
 
-    @Inject
-    private BeanUsingBufferOverflowStrategy bean;
-    
+    private @Inject BeanUsingThrowExceptionStrategy bean;
 
     @Test
-    public void testOverflow() {
+    public void testOverflow() throws InterruptedException {
         
-        bean.tryEmitThousand();
+        bean.tryEmitTen();
 
-        assertThat(bean.accepted().size() + bean.rejected().size()).isEqualTo(1000);
+        // Assert all items either accepted or rejected
+        assertThat(bean.accepted().size() + bean.rejected().size()).isEqualTo(10);
+        // At least the first item should have been accepted
+        assertThat(bean.accepted()).contains("1");
+        // But not everything should have been accepted
         assertThat(bean.rejected()).isNotEmpty();
         
-        // Buffer size is 300, so first 300 items should always be accepted
-        assertThat(bean.accepted()).containsAll(IntStream.range(0, 300).mapToObj(Integer::toString).collect(toList()));
+        // Everything accepted should eventually be processed
+        await().until(() -> bean.output().size() == bean.accepted().size());
+        assertThat(bean.output()).containsExactlyElementsOf(bean.accepted());
+        assertThat(bean.failure()).isNull();
+        
+        int acceptedFirstRun = bean.accepted().size();
+        int rejectedFirstRun = bean.rejected().size();
+        
+        // Stream should still be running, so we should be able to test this again
+        bean.tryEmitTen();
+        
+        await().until(() -> bean.accepted().size() + bean.rejected().size() == 20);
+        assertThat(bean.accepted()).hasSizeGreaterThan(acceptedFirstRun);
+        assertThat(bean.rejected()).hasSizeGreaterThan(rejectedFirstRun);
         
         await().until(() -> bean.output().size() == bean.accepted().size());
-        assertThat(bean.accepted()).containsExactlyElementsOf(bean.accepted());
+        assertThat(bean.output()).containsExactlyElementsOf(bean.accepted());
         assertThat(bean.failure()).isNull();
     }
+
 }

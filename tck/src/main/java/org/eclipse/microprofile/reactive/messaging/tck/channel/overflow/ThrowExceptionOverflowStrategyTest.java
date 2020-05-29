@@ -27,31 +27,27 @@ import org.eclipse.microprofile.reactive.messaging.tck.TckBase;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
-
 import org.junit.Test;
 
-public class BufferOverflowStrategyTest extends TckBase {
-    
+public class ThrowExceptionOverflowStrategyTest extends TckBase {
+
     @Deployment
     public static Archive<JavaArchive> deployment() {
         return getBaseArchive()
-            .addClasses(BeanUsingBufferOverflowStrategy.class);
+            .addClasses(BeanUsingThrowExceptionStrategy.class);
     }
 
-    @Inject
-    private BeanUsingBufferOverflowStrategy bean;
+    private @Inject BeanUsingThrowExceptionStrategy bean;
 
     @Test
     public void testNormal() {
         
-        bean.tryEmitThree();
+        bean.tryEmitOne();
 
-        assertThat(bean.accepted()).containsExactly("0", "1", "2");
+        await().until(() -> bean.output().size() == 1);
+        assertThat(bean.accepted()).containsExactly("1");
         assertThat(bean.rejected()).isEmpty();
-        
-        await().until(() -> bean.output().size() == 3);
-        assertThat(bean.output()).containsExactly("0", "1", "2");
+        assertThat(bean.output()).containsExactly("1");
         assertThat(bean.failure()).isNull();
     }
-
 }

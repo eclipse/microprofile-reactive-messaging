@@ -19,8 +19,12 @@
 package org.eclipse.microprofile.reactive.messaging.tck.channel.overflow;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
+import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
@@ -28,25 +32,33 @@ import org.eclipse.microprofile.reactive.messaging.Channel;
 import org.eclipse.microprofile.reactive.messaging.Emitter;
 import org.eclipse.microprofile.reactive.messaging.Incoming;
 import org.eclipse.microprofile.reactive.messaging.OnOverflow;
-import org.reactivestreams.Subscriber;
-import org.reactivestreams.Subscription;
+import org.eclipse.microprofile.reactive.messaging.Outgoing;
+import org.eclipse.microprofile.reactive.streams.operators.PublisherBuilder;
+import org.eclipse.microprofile.reactive.streams.operators.ReactiveStreams;
 
 @ApplicationScoped
-public class BeanUsingBufferOverflowWithoutBufferSizeStrategy {
-
+public class BeanUsingThrowExceptionStrategy {
+    
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    
+    @PreDestroy
+    public void terminate() {
+        executor.shutdown();
+    } 
 
     @Inject
     @Channel("hello")
-    @OnOverflow(value = OnOverflow.Strategy.BUFFER)
+    @OnOverflow(value = OnOverflow.Strategy.THROW_EXCEPTION)
     private Emitter<String> emitter;
 
+    private final List<String> output = new CopyOnWriteArrayList<>();
     private final List<String> accepted = new CopyOnWriteArrayList<>();
     private final List<String> rejected = new CopyOnWriteArrayList<>();
 
     private volatile Throwable downstreamFailure;
 
-    public Throwable failure() {
-        return downstreamFailure;
+    public List<String> output() {
+        return output;
     }
 
     public List<String> accepted() {
@@ -57,14 +69,16 @@ public class BeanUsingBufferOverflowWithoutBufferSizeStrategy {
         return rejected;
     }
 
-    public void tryEmitThree() {
-        for (int i = 0; i < 3; i++) {
-            tryEmit(Integer.toString(i));
-        }
+    public Throwable failure() {
+        return downstreamFailure;
     }
 
-    public void tryEmitThousand() {
-        for (int i = 0; i < 1000; i++) {
+    public void tryEmitOne() {
+        tryEmit("1");
+    }
+
+    public void tryEmitTen() {
+        for (int i = 0; i < 10; i++) {
             tryEmit(Integer.toString(i));
         }
     }
@@ -78,35 +92,24 @@ public class BeanUsingBufferOverflowWithoutBufferSizeStrategy {
             rejected.add(item);
         }
     }
-
+    
     @Incoming("hello")
-    public Subscriber<String> consume() {
-        // create a subscriber sitting there and doing nothing
-        return new Subscriber<String>() {
-
-            @Override
-            public void onSubscribe(Subscription s) {
-                
+    @Outgoing("out")
+    public PublisherBuilder<String> consume(final PublisherBuilder<String> values) {
+        return values.via(ReactiveStreams.<String>builder().flatMapCompletionStage(s -> CompletableFuture.supplyAsync(()-> {
+            try {
+                Thread.sleep(1000); 
+            } 
+            catch (InterruptedException ignored) {
+                Thread.currentThread().interrupt();
             }
-
-            @Override
-            public void onNext(String t) {
-                
-            }
-
-            @Override
-            public void onError(Throwable t) {
-                downstreamFailure = t;
-            }
-
-            @Override
-            public void onComplete() {
-                
-            }
-
-       };
+            return s;
+        }, executor))).onError(err -> downstreamFailure = err);
     }
 
-  
+    @Incoming("out")
+    public void out(final String s) {
+        output.add(s);
+    }
 
 }
