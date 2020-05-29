@@ -56,14 +56,22 @@ public @interface OnOverflow {
          * This creates a buffer with the size specified by {@link #bufferSize()} if present.
          * Otherwise, the size will be the value of the config property
          * <strong>mp.messaging.emitter.default-buffer-size</strong>.
-         * If the buffer is full, an error will be propagated.
+         * <p>
+         * If the buffer is full, an {@link IllegalStateException} will be thrown by the {@code Emitter.send} method.
          */
         BUFFER,
+        
         /**
          * Buffers <strong>all</strong> values until the downstream consumes it.
          * This creates an unbounded buffer so the application may run out of memory if values are continually added faster than they are consumed.
          */
         UNBOUNDED_BUFFER,
+        
+        /**
+         * Causes an {@link IllegalStateException} to be thrown by the {@code Emitter.send} method if the downstream can't keep up.
+         */
+        THROW_EXCEPTION,
+        
         /**
          * Drops the most recent value if the downstream can't keep up. It means that new value emitted by the upstream
          * are ignored.

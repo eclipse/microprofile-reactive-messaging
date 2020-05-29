@@ -1302,8 +1302,9 @@ If the property does not exist, the default value will be 128 elements. If the b
 
 The _value_ attribute on `OnOverflow` is shown below:
 
-* `OnOverflow.Strategy.BUFFER` - use a buffer, whose size will be determined by the value of `bufferSize` if set. Otherwise, the size will be the value of the config property `mp.messaging.emitter.default-buffer-size` if it exists. Otherwise, 128 will be used. If the buffer is full, an error will be propagated.
+* `OnOverflow.Strategy.BUFFER` - use a buffer, whose size will be determined by the value of `bufferSize` if set. Otherwise, the size will be the value of the config property `mp.messaging.emitter.default-buffer-size` if it exists. Otherwise, 128 will be used. If the buffer is full, an exception will be thrown from the `send` method.
 * `OnOverflow.Strategy.UNBOUNDED_BUFFER` - use an unbounded buffer. The application may run out of memory if values are continually added faster than they are consumed.
+* `OnOverflow.Stragegy.THROW_EXCEPTION` - throws an exception from the `send` method if the downstream can't keep up.
 * `OnOverflow.Strategy.DROP` - drops the most recent value if the downstream can’t keep up. It means that new value emitted by the emitter are ignored.
 * `OnOverflow.Strategy.FAIL` - propagates a failure in case the downstream can’t keep up. No more value will be emitted.
 * `OnOverflow.Strategy.LATEST` - keeps only the latest value, dropping any previous value if the downstream can’t keep up.
