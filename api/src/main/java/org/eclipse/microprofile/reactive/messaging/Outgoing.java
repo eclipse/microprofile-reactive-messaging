@@ -35,8 +35,8 @@ import java.lang.annotation.Target;
  * <ul>
  * <li>Take zero parameters, and return a {@link PublisherBuilder}, or a {@link org.reactivestreams.Publisher}.</li>
  * <li>Take zero parameters, and return a {@link ProcessorBuilder} or a {@link org.reactivestreams.Processor}.</li>
- * <li>Accept a single parameter, and return a {@link java.util.concurrent.CompletionStage}.</li>
- * <li>Accept a single parameter, and return any type.</li>
+ * <li>Take zero parameters, and return a {@link java.util.concurrent.CompletionStage}.</li>
+ * <li>Take zero parameters, and return any type.</li>
  * </ul>
  * <p>
  * In addition, implementations of this specification may allow returning additional types, such as implementation
