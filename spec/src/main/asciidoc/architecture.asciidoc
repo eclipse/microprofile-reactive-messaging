@@ -1185,7 +1185,7 @@ The Reactive Messaging implementation catches these exceptions and wraps them in
 The configuration passed to the `IncomingConnectorFactory` and `OutgoingConnectorFactory` contains at least the:
 
 * `channel-name` attribute indicating the name of the channel being configured,
-* `connector` attribute indicating the fully qualified name of the connector.
+* `connector` attribute must match the name given to the `@Connector` qualifier.
 
 ==== Acknowledgement 
 
