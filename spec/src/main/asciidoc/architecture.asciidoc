@@ -1185,7 +1185,7 @@ The Reactive Messaging implementation catches these exceptions and wraps them in
 The configuration passed to the `IncomingConnectorFactory` and `OutgoingConnectorFactory` contains at least the:
 
 * `channel-name` attribute indicating the name of the channel being configured,
-* `connector` attribute indicating the fully qualified name of the connector.
+* `connector` attribute must match the name given to the `@Connector` qualifier.
 
 ==== Acknowledgement 
 
@@ -1196,7 +1196,7 @@ The connector is responsible for the acknowledgment of the incoming and outgoing
 
 == Metrics
 
-When MicroProfile Reactive Metrics is used in an environment where MicroProfile Metrics is enabled, the Reactive Messaging implementation automatically produces metrics.
+When MicroProfile Reactive Messaging is used in an environment where MicroProfile Metrics is enabled, the Reactive Messaging implementation automatically produces metrics.
 
 The following metrics are produced for each channel declared by the application
 
@@ -1216,7 +1216,7 @@ The following metrics are produced for each channel declared by the application
 // Implementations may provide custom subtypes of `Message` as an end user API, for the purpose of providing additional metadata associated with the messaging provider. If an application declares that it consumes or produces a subtype of the `Message` wrapper, the implementation should validate that the messaging provider supports that message wrapper type, and raise a deployment exception if it doesn't.
 
 
-== Injecting a Publisher or PublishBuilder
+== Injecting a Publisher or PublisherBuilder
 
 You can receive messages from a channel by injecting either a `Publisher` or `PublisherBuilder` and using the `@Channel` qualifier to specify the channel name:
 
@@ -1257,7 +1257,7 @@ For a payload type `X`, the following types can be injected:
 * `Publisher<X>`
 * `PublisherBuilder<X>`
 * `Publisher<Message<X>>`
-* `Publisher<Message<X>>`
+* `PublisherBuilder<Message<X>>`
 
 
 == Publishing messages to a channel from imperative code
@@ -1285,7 +1285,7 @@ public void publishMessage() {
 ----
 @Inject
 @Channel("foo")
-private Emitter<String> emitter;
+private Emitter<Message<String>> emitter;
 
 public void run() {
     emitter.send(Message.of("a"));
