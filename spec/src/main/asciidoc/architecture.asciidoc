@@ -692,7 +692,7 @@ For example, in the next snippet, the received `KafkaMessage` is acknowledged wh
 @Outgoing("sink")
 @Acknowledgment(Acknowledgment.Strategy.MANUAL)
 public Message<Integer> process(KafkaMessage<String, Integer> input) {
-  return Message.of(processThePayload(input.getPayload(), () -> input.ack());
+  return Message.of(processThePayload(input.getPayload(), () -> input.ack()));
 }
 ----
 
