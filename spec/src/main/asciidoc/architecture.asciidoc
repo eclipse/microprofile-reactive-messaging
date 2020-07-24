@@ -239,7 +239,7 @@ It's important to remember that users must not call these methods directly.
 They are invoked by the Reactive Messaging implementation following the Reactive Streams protocol.
 
 Also the method must be implemented in a non-blocking fashion.
-For blocking transformations, asynchronous variants can be used.
+For blocking transformations, synchronous variants can be used.
 
 NOTE: _assembly_ time is when the Reactive Messaging implementation initializes itself and creates the different bean instances and connects them together.
 
