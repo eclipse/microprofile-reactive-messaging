@@ -1198,7 +1198,7 @@ The connector is responsible for the acknowledgment of the incoming and outgoing
 
 When MicroProfile Reactive Messaging is used in an environment where MicroProfile Metrics is enabled, the Reactive Messaging implementation automatically produces metrics.
 
-The following metrics are produced for each channel declared by the application
+The following metrics are produced for each channel declared by the application and are added to the `base` scope.
 
 [cols="8,3,4,9"]
 |===

@@ -32,6 +32,8 @@ import org.awaitility.Awaitility;
 import org.eclipse.microprofile.metrics.Counter;
 import org.eclipse.microprofile.metrics.MetricID;
 import org.eclipse.microprofile.metrics.MetricRegistry;
+import org.eclipse.microprofile.metrics.MetricRegistry.Type;
+import org.eclipse.microprofile.metrics.annotation.RegistryType;
 import org.eclipse.microprofile.reactive.messaging.Message;
 import org.eclipse.microprofile.reactive.messaging.spi.Connector;
 import org.eclipse.microprofile.reactive.messaging.tck.ArchiveExtender;
@@ -66,6 +68,7 @@ public class MetricsTest {
     private TestConnector testConnector;
     
     @Inject
+    @RegistryType(type = Type.BASE)
     private MetricRegistry metricRegistry;
     
     @Inject
