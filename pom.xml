@@ -312,7 +312,7 @@
                         <headerSection>
                             <key>COPYRIGHT_DATE</key>
                             <defaultValue>${current.year}</defaultValue>
-                            <ensureMatch>(\d{4}[,\-] ?)?\d{4}</ensureMatch>
+                            <ensureMatch>(\d{4}, ?)?\d{4}</ensureMatch>
                         </headerSection>
                     </headerSections>
                     <properties>
@@ -320,7 +320,15 @@
                     </properties>
                     <mapping>
                         <asciidoc>DOUBLESLASH_STYLE</asciidoc>
+                        <adoc>DOUBLESLASH_STYLE</adoc>
                     </mapping>
+                    <excludes>
+                        <exclude>LICENSE</exclude>
+                        <exclude>NOTICE</exclude>
+                        <exclude>.gitattributes</exclude>
+                        <exclude>**/bnd.bnd</exclude>
+                        <exclude>**/.checkstyle</exclude>
+                    </excludes>
                 </configuration>
                 <executions>
                     <execution>
