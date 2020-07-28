@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Copyright (c) 2018-2019 Contributors to the Eclipse Foundation
+    Copyright (c) 2018, 2020 Contributors to the Eclipse Foundation
 
     See the NOTICE file(s) distributed with this work for additional
     information regarding copyright ownership.
@@ -284,14 +284,38 @@
             </plugin>
 
             <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>3.2.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>timestamp-property</goal>
+                        </goals>
+                        <configuration>
+                            <name>current.year</name>
+                            <pattern>yyyy</pattern>
+                            <locale>en_US</locale>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
                 <groupId>com.mycila</groupId>
                 <artifactId>license-maven-plugin</artifactId>
                 <version>3.0</version>
                 <configuration>
                     <aggregate>true</aggregate>
                     <header>src/license/license.txt</header>
+                    <headerSections>
+                        <headerSection>
+                            <key>COPYRIGHT_DATE</key>
+                            <defaultValue>${current.year}</defaultValue>
+                            <ensureMatch>(\d{4}[,\-] ?)?\d{4}</ensureMatch>
+                        </headerSection>
+                    </headerSections>
                     <properties>
-                        <year>2019</year>
                         <owner>Eclipse MicroProfile</owner>
                     </properties>
                     <mapping>
