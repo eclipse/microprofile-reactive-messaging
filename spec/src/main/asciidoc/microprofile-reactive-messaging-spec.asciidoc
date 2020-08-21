@@ -28,6 +28,7 @@
 :toc: left
 :toclevels: 4
 :sectnumlevels: 4
+:imagesdir: images
 ifdef::backend-pdf[]
 :pagenums:
 endif::[]
