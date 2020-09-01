@@ -1,4 +1,4 @@
-Copyright (c) ${project.inceptionYear}-${year} Contributors to the Eclipse Foundation
+Copyright (c) COPYRIGHT_DATE Contributors to the Eclipse Foundation
 
 See the NOTICE file(s) distributed with this work for additional
 information regarding copyright ownership.
