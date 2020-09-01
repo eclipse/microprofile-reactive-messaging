@@ -138,10 +138,12 @@ public class VerifierForPublisherBean {
         assertThat(counters.get("publisher-builder-payload")).hasValue(1);
 
         int limit = 10;
-        assertThat(counters.get("generator-payload")).hasValue(limit);
-        assertThat(counters.get("generator-message")).hasValue(limit);
-        assertThat(counters.get("generator-payload-async")).hasValueBetween(limit, limit + 1);
-        assertThat(counters.get("generator-message-async")).hasValueBetween(limit, limit + 1);
+        // Check for (value >= limit) because while publishers must _eventually_ stop when cancelled,
+        // the spec doesn't say how quickly they must stop.
+        assertThat(counters.get("generator-payload")).hasValueGreaterThanOrEqualTo(limit);
+        assertThat(counters.get("generator-message")).hasValueGreaterThanOrEqualTo(limit);
+        assertThat(counters.get("generator-payload-async")).hasValueGreaterThanOrEqualTo(limit);
+        assertThat(counters.get("generator-message-async")).hasValueGreaterThanOrEqualTo(limit);
     }
 
 }
