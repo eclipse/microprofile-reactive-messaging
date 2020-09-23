@@ -65,7 +65,7 @@ Reactive Messaging application components are addressable recipients which await
 
 Messages are represented by the `org.eclipse.microprofile.reactive.messaging.Message` class. 
 This interface is intentionally kept minimal. The aim is that _connectors_ will provide their own implementations with additional metadata that is relevant to that connector.
-For instance, a `KafkaMessage` would provide access to the _topic_ and _partition_.
+For instance, a `KafkaRecord` would provide access to the _topic_ and _partition_.
 
 The `org.eclipse.microprofile.reactive.messaging.Message#getPayload` method retrieves the wrapped payload. 
 The `org.eclipse.microprofile.reactive.messaging.Message#ack` method acknowledges the message.
