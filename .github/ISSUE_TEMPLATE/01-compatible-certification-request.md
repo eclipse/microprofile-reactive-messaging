@@ -1,7 +1,7 @@
 ---
 [Implementation Name]: Compatible Certification Request
 about: Start a request for a compatible certification 
-title: 'MicroProfile OpenTracing [Version] Compatible Certification Request'
+title: 'MicroProfile Reactive Messaging [Version] Compatible Certification Request'
 labels: 'Certification :trophy:'
 assignees: ''
 
