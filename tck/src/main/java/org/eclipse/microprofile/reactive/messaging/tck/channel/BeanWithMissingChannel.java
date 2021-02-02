@@ -22,14 +22,13 @@ import javax.inject.Inject;
 
 import org.eclipse.microprofile.reactive.messaging.Channel;
 import org.eclipse.microprofile.reactive.messaging.Emitter;
-import org.eclipse.microprofile.reactive.messaging.Message;
 
 public class BeanWithMissingChannel {
     @Inject
     @Channel("missing")
-    private Emitter<Message<String>> emitter;
+    private Emitter<String> emitter;
 
-    public Emitter<Message<String>> emitter() {
+    public Emitter<String> emitter() {
         return emitter;
     }
 }
