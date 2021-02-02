@@ -73,12 +73,27 @@ For instance, a `KafkaMessage` would provide access to the _topic_ and _partitio
 
 The `org.eclipse.microprofile.reactive.messaging.Message#getPayload` method retrieves the wrapped payload.
 The `org.eclipse.microprofile.reactive.messaging.Message#ack` method acknowledges the message.
-Note that the `ack` method is asynchronous as acknowledgement is generally an asynchronous process.
+The `org.eclipse.microprofile.reactive.messaging.Message#nack` method reports a negative acknowledgement.
+Note that the `ack` and `nack` methods are asynchronous as acknowledgement is generally an asynchronous process.
 
 _Plain_ messages are created using:
 
 * `org.eclipse.microprofile.reactive.messaging.Message#of(T)` - wraps the given payload, no acknowledgement
 * `org.eclipse.microprofile.reactive.messaging.Message#of(T, java.util.function.Supplier<java.util.concurrent.CompletionStage<java.lang.Void>>)` - wraps the given payload and provides the acknowledgment logic
+* `org.eclipse.microprofile.reactive.messaging.Message#of(Supplier<CompletionStage<Void>> ack, Function<Throwable, CompletionStage<Void>> nack)` - wraps the given payload and provides the acknowledgment and negative acknowledgment logic
+
+
+You can also create new `Message` instances by copying the content from an original message using the `withX` methods:
+
+[source, java]
+----
+// Create a new message with a new payload, but using the ack and nack functions from `message`
+Message<T> newMessage = message.withPayload(newPayload);
+// Create a new message with a new ack and nack logic, but using the original payload
+Message<T> another = message
+    .withNack(...)
+    .withAck(...);
+----
 
 ==== Message consumption with @Incoming
 
@@ -149,11 +164,12 @@ A method can combine the `@Incoming` and `@Outgoing` annotation and will then ac
 @Incoming("my-incoming-channel")                            // <1>
 @Outgoing("my-outgoing-channel")                            // <2>
 public Message<String> process(Message<String> message) {
-  return Message.of(message.getPayload().toUpperCase());
+  return message.withPayload(message.getPayload().toUpperCase());  // <3>
 }
 ----
 1. The incoming channel
 2. The outgoing channel
+3. Use the `withPayload` method to preserve the `ack` and `nack` functions
 
 Having the same channel appear in the `@Outgoing` and `@Incoming` annotations of a processor is not supported and will result in an error during deployment.
 
@@ -663,11 +679,18 @@ public PublisherBuilder<Message<I>, Message<O>> process() {
 
 NOTE: Implementations must support implementations of the `Message` interface.
 
-=== Message acknowledgement
+=== Message acknowledgement and negative acknowledgement
 
 Acknowledgement is an important part of message processing.
-Messages are either acknowledged explicitly, or implicitly by the implementation.
-All messages must be acknowledged.
+Acknowlegement indicates that a message has been processed correctly.
+A negative-acknoledgement indicates that a message was not processed correctly.
+
+Messages are either acknowledged (positively or negatively) explicitly, or implicitly by the implementation.
+
+All messages must be acknowledged either positively or negatively.
+What happens when a message is acknowledged depends on the source of the message, often on the connector.
+
+=== Positive acknowledgement
 
 Acknowledgement for the `@Incoming` messages is controlled by the `org.eclipse.microprofile.reactive.messaging.Acknowledgment` annotation.
 The annotation allows configuring the acknowledgement strategy among:
@@ -1062,6 +1085,85 @@ public Message<O> process(Message<I> msg) {
 The implementation is responsible for enforcing the acknowledgement strategy defined by the user when the `@Acknowledgement` policy is used.
 If the annotation is not used, the default policy must be enforced.
 
+=== Negative acknowledgement
+
+Negative acknowledgement indicates a processing failure.
+As for the `POST_PROCESSING` positive acknowledgement strategy, a _nack_ is propagated from a message to its source if the messages are chained.
+When the _nack_ reaches the top of the chain, the source, generally a connector, can handle the failure and act accordingly.
+Typically, sending the invalid message to a dead-letter-queue or retrying the delivery are common strategies.
+
+Negative acknowledgement happens automatically if a method annotated with `@Incoming` receives a single payload and uses `POST_PROCESSING` acknowledgement and throws an exception.
+The incoming message is _nacked_ and the thrown exception is passed as reason.
+The following method would automatically trigger a `nack` if the incoming payload is `b`:
+
+[source, java]
+----
+@Incoming("data")
+@Outgoing("out")
+public String process(String s) {  // <1>
+    if (s.equalsIgnoreCase("b")) {
+        throw new IllegalArgumentException("b"); // <2>
+    }
+    return s.toUpperCase();
+}
+----
+1. `POST_PROCESSING` is the default strategy for this signature
+2. throwing an exception _nacks_ the incoming message
+
+If a method handles payload asynchronously (returns a `CompletionStage`), the incoming message is nacked if:
+
+* the method throws an exception
+* the produced `CompletionStage` is completed exceptionally
+
+[source, java]
+----
+@Incoming("data")
+@Outgoing("out")
+public CompletionStage<String> process(String s) {   // <1>
+    if (s.equalsIgnoreCase("b")) {
+        throw new IllegalArgumentException("b");     // <2>
+    }
+
+    if (s.equalsIgnoreCase("f")) {
+        return null;                                // <3>
+    }
+
+    if (s.equalsIgnoreCase("c")) {
+        CompletableFuture<String> cf = new CompletableFuture<>();
+        cf.completeExceptionally(new IllegalArgumentException("c"));  // <4>
+        return cf;
+    }
+    return CompletableFuture.completedFuture(s.toUpperCase());
+}
+----
+1. `POST_PROCESSING` is the default strategy for this signature
+2. throwing an exception _nacks_ the incoming message
+3. returning `null` nacks the incoming message, as it's illegal to return `null` as `CompletionStage`
+4. returning a `CompletionStage` failed exceptionally also nacks the incoming message
+
+If the method receives a single `Message`, the user is responsible for calling the `nack` function:
+
+[source, java]
+----
+@Incoming("data")
+@Outgoing("out")
+public Message<String> process(Message<String> m) {  // <1>
+    String s = m.getPayload();
+    if (s.equalsIgnoreCase("b")) {
+        // we cannot fail, we must nack explicitly.
+        m.nack(new IllegalArgumentException("b"));  // <2>
+        return null;
+    }
+    return m.withPayload(s.toUpperCase());
+}
+----
+1. `MANUAL` is the default strategy for this signature
+2. throwing an exception would not _nack_ the message, as it may have already been explicitly _acked_ or _nacked_.
+Before the exception happens, the user must call the `nack` method.
+
+Methods using the `NONE` acknowledgement strategy do not _nack_ the incoming message.
+Methods using the `PRE_PROCESSING` acknowledgement strategy, the incoming message is not _nacked_ either, as it was already acknowledged.
+
 === Connector
 
 Reactive Messaging connects matching `@Incoming` and `@Outgoing` stream elements running inside the same application.
@@ -1195,10 +1297,12 @@ The configuration passed to the `IncomingConnectorFactory` and `OutgoingConnecto
 
 ==== Acknowledgement
 
-The connector is responsible for the acknowledgment of the incoming and outgoing messages:
+The connector is responsible for the acknowledgment (positive or negative) of the incoming and outgoing messages:
 
 * An incoming connector must only acknowledge the received message when the produced `org.eclipse.microprofile.reactive.messaging.Message` is acknowledged.
+* An incoming connector must handle received negative acknowledgment.
 * An outgoing connector must acknowledge the incoming `org.eclipse.microprofile.reactive.messaging.Message` once it has successfully dispatched the message.
+* An outgoing connector must acknowledge negatively the incoming `org.eclipse.microprofile.reactive.messaging.Message` if it cannot be dispatched.
 
 == Metrics
 
@@ -1268,8 +1372,12 @@ For a payload type `X`, the following types can be injected:
 
 == Publishing messages to a channel from imperative code
 
-Traditionally, the reactive world and imperative world are separated and operate in parallel. Reactive Messaging deals with streams of data in the reactive world, while the imperative world is pretty much point to point and synchronous communication. However, imperative programme sometimes needs to connect to reactive streams so that responses can be emitted to a destination service.
-Bridging the two worlds is very valuable thing to do, so that one microservice can use technologies from both environments. For an instance, a JAX-RS resource might want to publish messages to a Reactive Messaging channel. This section is about enabling imperative code to publish messages to a Reactive Messaging channel, so that it can be consumed by a consumer.
+Traditionally, the reactive world and imperative world are separated and operate in parallel.
+Reactive Messaging deals with streams of data in the reactive world, while the imperative world is pretty much point to point and synchronous communication.
+However, imperative programme sometimes needs to connect to reactive streams so that responses can be emitted to a destination service.
+Bridging the two worlds is very valuable thing to do, so that one microservice can use technologies from both environments.
+For an instance, a JAX-RS resource might want to publish messages to a Reactive Messaging channel.
+This section is about enabling imperative code to publish messages to a Reactive Messaging channel, so that it can be consumed by a consumer.
 
 You can inject an `Emitter` and use it to send either payloads (`X`) or messages (`Message<X>`) to a channel as demonstrated below.
 
@@ -1285,6 +1393,10 @@ public void publishMessage() {
 }
 ----
 
+When sending payload, the `send` method returns a `CompletionStage`.
+This `CompletionStage` is completed when the emitted message is acknowledged.
+If the processing of the emitter message fails, the returned `CompletionStage` is completed exceptionally.
+
 [source, java]
 ----
 @Inject
@@ -1299,7 +1411,11 @@ public void run() {
 
 ----
 
-When injecting an `Emitter` (e.g. `@Inject Emitter`), you must specify the target channel name using the `@Channel` qualifier. You can then configure how the back pressure is handled via `@OnOverflow` annotation, for the situation where emitting messages/payloads faster than the consumption of the messages.
+When sending a `Message`, the `send` message does not return `CompletionStage`.
+However, you can create a `Message` configured with custom `ack` and `nack` functions.
+
+When injecting an `Emitter` (e.g. `@Inject Emitter<T>`), you must specify the target channel name using the `@Channel` qualifier.
+You can then configure how the back pressure is handled via `@OnOverflow` annotation, for the situation where emitting messages/payloads faster than the consumption of the messages.
 
 [source, java]
 ----

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020 Contributors to the Eclipse Foundation
+ * Copyright (c) 2021 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -43,7 +43,7 @@ import java.util.concurrent.CompletionStage;
  * messages are sent using the `Emitter` when a downstream subscriber hasn't requested
  * more messages.
  *
- * @param <T> type of payload 
+ * @param <T> type of payload
  */
 public interface Emitter<T> {
 
@@ -55,6 +55,7 @@ public interface Emitter<T> {
      *
      * @param msg the <em>thing</em> to send, must not be {@code null}
      * @return the {@code CompletionStage}, which will be completed when the message for this payload is acknowledged.
+     *         If the emitted message is nacked, the produced completion stage is completed exceptionally.
      * @throws IllegalStateException if the channel has been cancelled or terminated or if an overflow strategy of
      *                               {@link OnOverflow.Strategy#THROW_EXCEPTION THROW_EXCEPTION} or {@link OnOverflow.Strategy#BUFFER BUFFER} is
      *                               configured and the emitter overflows.
@@ -63,7 +64,7 @@ public interface Emitter<T> {
 
     /**
      * Sends a message to the channel.
-     * 
+     *
      * @param <M> the <em>Message</em> type
      * @param msg the <em>Message</em> to send, must not be {@code null}
      * @throws IllegalStateException if the channel has been cancelled or terminated or if an overflow strategy of
@@ -73,7 +74,7 @@ public interface Emitter<T> {
     <M extends Message<? extends T>> void send(M msg);
 
     /**
-     * Sends the completion event to the channel indicating that no other events will be sent afterward. 
+     * Sends the completion event to the channel indicating that no other events will be sent afterward.
      */
     void complete();
 
@@ -90,7 +91,7 @@ public interface Emitter<T> {
     boolean isCancelled();
 
     /**
-     * @return {@code true} if one or more subscribers request messages from the corresponding channel where the emitter connects to, 
+     * @return {@code true} if one or more subscribers request messages from the corresponding channel where the emitter connects to,
      * return {@code false} otherwise.
      */
     boolean hasRequests();
