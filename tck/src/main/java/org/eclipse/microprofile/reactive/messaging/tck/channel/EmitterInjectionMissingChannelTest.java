@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020 Contributors to the Eclipse Foundation
+ * Copyright (c) 2021 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -18,29 +18,43 @@
  */
 package org.eclipse.microprofile.reactive.messaging.tck.channel;
 
-import javax.inject.Inject;
-
-import org.eclipse.microprofile.reactive.messaging.Message;
-import org.eclipse.microprofile.reactive.messaging.tck.TckBase;
+import org.eclipse.microprofile.reactive.messaging.tck.ArchiveExtender;
+import org.jboss.arquillian.container.test.api.Deployer;
 import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.container.test.api.ShouldThrowException;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.Archive;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import javax.enterprise.inject.spi.DeploymentException;
+import java.util.ServiceLoader;
 
 
-public class EmitterInjectionMissingChannelTest extends TckBase {
-    private @Inject BeanWithMissingChannel bean;
-    
-    @Deployment
+@RunWith(Arquillian.class)
+public class EmitterInjectionMissingChannelTest {
+
+    @Deployment(managed = false, name = "missing-emitter")
+    @ShouldThrowException(value = DeploymentException.class, testable = true)
     public static Archive<JavaArchive> deployment() {
-        return getBaseArchive()
-            .addClasses( BeanWithMissingChannel.class);
+        JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
+            .addClasses(BeanWithMissingChannel.class, ArchiveExtender.class)
+            .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+
+        ServiceLoader.load(ArchiveExtender.class).iterator().forEachRemaining(ext -> ext.extend(archive));
+        return archive;
     }
 
-    @Test (expected = IllegalStateException.class)
-    public void testWithMissingChannel() {
-        bean.emitter().send(Message.of("foo"));
+    @ArquillianResource
+    private Deployer deployer;
 
+    @Test
+    public void testMissingEmitter() {
+        deployer.deploy("missing-emitter");
     }
-    
+
 }
