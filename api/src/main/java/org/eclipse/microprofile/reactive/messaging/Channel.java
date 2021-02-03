@@ -56,8 +56,8 @@ import javax.inject.Qualifier;
  * emitter.send("a");
  * </code>
  * </pre>
- * A subscriber for the above channel must be found by the time a message is emitted to the channel. 
- * Otherwise, {@code IllegalStateException} must be thrown.
+ * A subscriber for the above channel must be found when the application starts.
+ * Otherwise, {@link javax.enterprise.inject.spi.DeploymentException} must be thrown.
  */
 @Qualifier
 @Retention(RetentionPolicy.RUNTIME)
