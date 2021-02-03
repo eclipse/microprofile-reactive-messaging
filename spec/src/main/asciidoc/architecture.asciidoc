@@ -55,6 +55,10 @@ They allows implementing multi-step processing where several _beans_ from the sa
 * Channels can be _connected_ to remote brokers or various message transport layers such as Apache Kafka or to an AMQP broker.
 These channels are managed by _connectors_.
 
+If a component receives messages from a channel, we call this channel an _upstream_ channel.
+If a component produces messages to a channel, we call this channel a _downstream_ channel.
+Messages flow from upstream to downstream until it reaches a final consumer.
+
 ==== Message
 
 At the core of the Reactive Messaging specification is the concept of _message_.
@@ -1353,10 +1357,22 @@ Since the `@Channel("myChannel")` is used to produce messages, a consumer with t
 
 When the application starts, the Reactive Messaging implementation:
 
-* connect the methods annotated with `@Incoming` and `@Outgoing,` `Emitters,` channels and connectors
+* connect the methods annotated with `@Incoming`, `@Outgoing`, `Emitter`, `@Channel` and connectors
 * verify the validity of the resulting graph
 
-If the implementation cannot find a matching _upstream_ or _downstream_ channel for one of the components, a `DeploymentException` must be thrown when the application starts.
-The implementation must also throw a `DeploymentException` if components are illegally connected to multiple upstreams or downstreams.
-If the implementation detects a missing connector, a `DeploymentException` must also be thrown.
+Implementations must throw a `DeploymentException` when the application starts for any of the following conditions:
+
+* A method with `@Incoming` has no _upstream_ channel
+* A method with `@Outgoing` has no _downstream_ channel
+* A method with `@Incoming` has multiple _upstream_ channels
+* A method with `@Outgoing` has multiple _downstream_ channels
+* An `Emitter` has no _downstream_ channel
+* An `Emitter` has multiple _downstream_ channels
+* An injected `@Channel` has no _upstream_ channel
+* An injected `@Channel` has multiple _upstream_ channels
+* The application configures a missing connector
+* An incoming connector has no _downstream_ channels
+* An incoming connector has multiple _downstream_ channels
+* An outgoing connector has no _upstream_ channels
+* An outgoing connector has multiple _upstream_ channels
 

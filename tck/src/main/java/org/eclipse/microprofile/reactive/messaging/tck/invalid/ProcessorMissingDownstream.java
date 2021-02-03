@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018, 2019 Contributors to the Eclipse Foundation
+ * Copyright (c) 2021 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.eclipse.microprofile.reactive.messaging.tck.connector;
+package org.eclipse.microprofile.reactive.messaging.tck.invalid;
 
 import org.eclipse.microprofile.reactive.messaging.Incoming;
 import org.eclipse.microprofile.reactive.messaging.Outgoing;
@@ -24,17 +24,17 @@ import org.eclipse.microprofile.reactive.messaging.Outgoing;
 import javax.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
-public class MyProcessor {
+public class ProcessorMissingDownstream {
 
-    @Incoming("dummy-source")
-    @Outgoing("dummy-sink")
-    public String process(String s) {
-        return s.toUpperCase();
+    @Incoming("in")
+    @Outgoing("missing")
+    public String consume(String x) {
+        return x;
     }
 
-    @Incoming("dummy-source-2")
-    public void consume(String s) {
-
+    @Outgoing("in")
+    public String generate() {
+        return "Hello";
     }
 
 }
