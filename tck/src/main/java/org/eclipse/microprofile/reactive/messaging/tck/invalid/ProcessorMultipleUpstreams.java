@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018, 2019 Contributors to the Eclipse Foundation
+ * Copyright (c) 2021 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -16,24 +16,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.eclipse.microprofile.reactive.messaging.tck.connector;
+package org.eclipse.microprofile.reactive.messaging.tck.invalid;
 
+import org.eclipse.microprofile.reactive.messaging.Channel;
+import org.eclipse.microprofile.reactive.messaging.Emitter;
 import org.eclipse.microprofile.reactive.messaging.Incoming;
 import org.eclipse.microprofile.reactive.messaging.Outgoing;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 
 @ApplicationScoped
-public class MyProcessor {
+public class ProcessorMultipleUpstreams {
 
-    @Incoming("dummy-source")
-    @Outgoing("dummy-sink")
-    public String process(String s) {
-        return s.toUpperCase();
+    @Outgoing("many")
+    public String generate() {
+        return "Hello";
     }
 
-    @Incoming("dummy-source-2")
-    public void consume(String s) {
+    @SuppressWarnings("unused")
+    private @Inject @Channel("many") Emitter<String> emitter;
+
+    @Incoming("many")
+    @Outgoing("out")
+    public String consume(String x) {
+        return x;
+    }
+
+    @Incoming("out")
+    public void sink(String s) {
 
     }
 

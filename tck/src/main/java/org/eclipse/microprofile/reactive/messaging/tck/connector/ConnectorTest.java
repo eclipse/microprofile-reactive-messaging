@@ -50,7 +50,7 @@ public class ConnectorTest {
     public static Archive<JavaArchive> deployment() {
         JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
             .addClasses(DummyConnector.class, MyProcessor.class, ArchiveExtender.class)
-            .addAsManifestResource(MissingConnectorTest.class.getResource("connector-config.properties"), "microprofile-config.properties")
+            .addAsManifestResource(ConnectorTest.class.getResource("connector-config.properties"), "microprofile-config.properties")
             .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
 
         ServiceLoader.load(ArchiveExtender.class).iterator().forEachRemaining(ext -> ext.extend(archive));
@@ -65,12 +65,11 @@ public class ConnectorTest {
         assertThat(connector.elements()).containsExactly("A", "B", "C", "D", "E", "F", "G", "H", "I", "J");
 
         // We expect configurations for dummy-source and dummy-sink.
-        // We may also get a configuration for dummy-source-2 which is configured but not connected to anything
         assertThat(connector.getReceivedConfigurations()).hasSizeBetween(2, 3).allSatisfy(config -> {
             assertThat(config.getValue("common-A", String.class)).isEqualTo("Value-A");
             assertThat(config.getValue("common-B", String.class)).isEqualTo("Value-B");
         });
-        
+
         assertThat(connector.getReceivedConfigurations())
             .extracting(c -> c.getValue(ConnectorFactory.CHANNEL_NAME_ATTRIBUTE, String.class))
             .contains("dummy-source", "dummy-sink");
