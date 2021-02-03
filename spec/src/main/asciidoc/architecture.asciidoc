@@ -21,8 +21,8 @@
 [[reactivemessagingarchitecture]]
 == Architecture
 
-The Reactive Messaging specification defines a development model for declaring CDI _beans_ producing, consuming and processing messages. 
-The communication between these components uses Reactive Streams. 
+The Reactive Messaging specification defines a development model for declaring CDI _beans_ producing, consuming and processing messages.
+The communication between these components uses Reactive Streams.
 
 This specification relies on https://github.com/eclipse/microprofile-reactive-streams-operators[Eclipse MicroProfile Reactive Streams Operators] and http://cdi-spec.org/[CDI].
 
@@ -38,8 +38,8 @@ These messages can be wholly _internal_ to the application or can be sent and re
 
 image::overall.png[Overall architecture]
 
-Application's beans contain methods annotated with `@Incoming` and `@Outgoing` annotations. 
-A method with an `@Incoming` annotation consumes messages from a _channel_. 
+Application's beans contain methods annotated with `@Incoming` and `@Outgoing` annotations.
+A method with an `@Incoming` annotation consumes messages from a _channel_.
 A method with an `@Outgoing` annotation publishes messages to a _channel_.
 A method with both an `@Incoming` and an `@Outgoing` annotation is a message processor, it consumes messages from a _channel_, does some transformation to them, and publishes messages to another _channel_.
 
@@ -50,24 +50,24 @@ Channels are opaque `Strings`.
 
 There are two types of channel:
 
-* Internal channels are local to the application. 
+* Internal channels are local to the application.
 They allows implementing multi-step processing where several _beans_ from the same application form a chain of processing.
 * Channels can be _connected_ to remote brokers or various message transport layers such as Apache Kafka or to an AMQP broker.
 These channels are managed by _connectors_.
 
 ==== Message
 
-At the core of the Reactive Messaging specification is the concept of _message_. 
+At the core of the Reactive Messaging specification is the concept of _message_.
 A _message_  is an envelope wrapping a _payload_.
 A message is sent to a specific channel and, when received and processed successfully, _acknowledged_.
 
-Reactive Messaging application components are addressable recipients which await the arrival of messages on a channel and react to them, otherwise lying dormant. 
+Reactive Messaging application components are addressable recipients which await the arrival of messages on a channel and react to them, otherwise lying dormant.
 
-Messages are represented by the `org.eclipse.microprofile.reactive.messaging.Message` class. 
+Messages are represented by the `org.eclipse.microprofile.reactive.messaging.Message` class.
 This interface is intentionally kept minimal. The aim is that _connectors_ will provide their own implementations with additional metadata that is relevant to that connector.
 For instance, a `KafkaMessage` would provide access to the _topic_ and _partition_.
 
-The `org.eclipse.microprofile.reactive.messaging.Message#getPayload` method retrieves the wrapped payload. 
+The `org.eclipse.microprofile.reactive.messaging.Message#getPayload` method retrieves the wrapped payload.
 The `org.eclipse.microprofile.reactive.messaging.Message#ack` method acknowledges the message.
 Note that the `ack` method is asynchronous as acknowledgement is generally an asynchronous process.
 
@@ -106,7 +106,7 @@ However, the user may decide to consume a specific subclass of `Message` (e.g. `
 
 [source,java]
 ----
-@Incoming("my-kafka-topic")               
+@Incoming("my-kafka-topic")
 public CompletionStage<Void> consume(KafkaMessage<String> message) {    // <1>
   return message.ack();
 }
@@ -134,7 +134,7 @@ This is detailed in the next section.
 A method annotated with `@Outgoing` is a Reactive Streams _publisher_ and so publishes messages according to the requests it receives.
 The downstream `@Incoming` method or outgoing connector with a matching channel name will be linked to this publisher. Only a single method can
 be annotated with `@Outgoing` for a particular channel name. Having the same channel name in more than one `@Outgoing` annotated method is not
-supported and will result in an error during deployment. 
+supported and will result in an error during deployment.
 
 ===== Method consuming and producing
 
@@ -144,7 +144,7 @@ A method can combine the `@Incoming` and `@Outgoing` annotation and will then ac
 ----
 @Incoming("my-incoming-channel")                            // <1>
 @Outgoing("my-outgoing-channel")                            // <2>
-public Message<String> process(Message<String> message) { 
+public Message<String> process(Message<String> message) {
   return Message.of(message.getPayload().toUpperCase());
 }
 ----
@@ -226,7 +226,7 @@ public class ApplicationScopeBeans {
 }
 ----
 
-Implementations can provide support for other scopes. 
+Implementations can provide support for other scopes.
 However the behavior is not defined.
 
 === Supported method signatures
@@ -236,13 +236,14 @@ The signature of message stream methods can have a number of different distinct 
 This section lists the methods signatures that must be supported by the Reactive Messaging implementation.
 Implementations must validate that the stream shape matches the `@Outgoing` and `@Incoming` annotations, if they don't, a CDI definition exception should be raised to the CDI container during initialization.
 
-It's important to remember that users must not call these methods directly. 
+It's important to remember that users must not call these methods directly.
 They are invoked by the Reactive Messaging implementation following the Reactive Streams protocol.
 
 Also the method must be implemented in a non-blocking fashion.
 For blocking transformations, asynchronous variants can be used.
 
 NOTE: _assembly_ time is when the Reactive Messaging implementation initializes itself and creates the different bean instances and connects them together.
+If the implementation cannot find a incoming of outgoing channel, a `DeploymentException` must be thrown when the application starts.
 
 NOTE: In the following lists, `Message` can be an implementation of the `Message` interface.
 
@@ -257,16 +258,16 @@ NOTE: In the following lists, `Message` can be an implementation of the `Message
 |
 [source, java]
 ----
-@Outgoing("name") 
+@Outgoing("name")
 Publisher<Message<O>> method()
 ----
-| Returns a stream of `Message` associated with the channel `name`. 
+| Returns a stream of `Message` associated with the channel `name`.
 | Method called once at assembly time.
 
 |
 [source, java]
 ----
-@Outgoing("channel") 
+@Outgoing("channel")
 Publisher<O> method()
 ----
 | Returns a stream of _payload_ of type `O` associated with the channel `channel`. Produced payloads are mapped to `Message<O>` by the Reactive Messaging implementation.
@@ -275,16 +276,16 @@ Publisher<O> method()
 |
 [source, java]
 ----
-@Outgoing("channel") 
+@Outgoing("channel")
 PublisherBuilder<Message<O>> method()
 ----
-| Returns a stream of `Message` associated with the channel `channel`. 
+| Returns a stream of `Message` associated with the channel `channel`.
 | Method called once at assembly time.
 
 |
 [source, java]
 ----
-@Outgoing("channel") 
+@Outgoing("channel")
 PublisherBuilder<O> method()
 ----
 | Returns a stream of _payload_ associated with the channel `channel`. Produced payloads are mapped to `Message<O>` by the Reactive Messaging implementation.
@@ -293,10 +294,10 @@ PublisherBuilder<O> method()
 |
 [source, java]
 ----
-@Outgoing("channel") 
+@Outgoing("channel")
 Message<O> method()
 ----
-| Produces an infinite stream of `Message` associated with the channel `channel`. 
+| Produces an infinite stream of `Message` associated with the channel `channel`.
 |	This method is called for each _request_ made by the subscriber.
 
 |
@@ -320,7 +321,7 @@ CompletionStage<Message<O>> method()
 |
 [source, java]
 ----
-@Outgoing("channel") 
+@Outgoing("channel")
 CompletionStage<O> method()
 ----
 | Produces an infinite stream of _payload_ associated with the channel `channel`. Produced payloads are mapped to `Message<O>` by the Reactive Messaging implementation. The result is a `CompletionStage`. The method should not be called by the reactive messaging implementation until the `CompletionStage` returned previously is completed.
@@ -361,11 +362,11 @@ The payload is automatically extracted from the inflight messages using `Message
 |
 [source,java]
 ----
-@Incoming("channel") 
+@Incoming("channel")
 SubscriberBuilder<Message<I>, Void> method()
 ----
 | Returns a `SubscriberBuilder` that receives the `Message` objects transiting on the channel `channel`.
-| The method is called only once at assembly time to retrieve a `SubscriberBuilder` that is used to build a `CompletionSubscriber` that is subscribed to the matching channel. 
+| The method is called only once at assembly time to retrieve a `SubscriberBuilder` that is used to build a `CompletionSubscriber` that is subscribed to the matching channel.
 
 |
 [source,java]
@@ -375,7 +376,7 @@ SubscriberBuilder<I, Void> method()
 ----
 | Returns a `SubscriberBuilder` that is used to build a `CompletionSubscriber<I>`` that receives the _payload_ of each `Message`.
 The payload is automatically extracted from the inflight messages using `Message.getPayload()`.
-| The method is called only once at assembly time to retrieve a `SubscriberBuilder` that is used to build a `CompletionSubscriber` that is subscribed to the matching channel. 
+| The method is called only once at assembly time to retrieve a `SubscriberBuilder` that is used to build a `CompletionSubscriber` that is subscribed to the matching channel.
 
 |
 [source,java]
@@ -384,7 +385,7 @@ The payload is automatically extracted from the inflight messages using `Message
 void method(I payload)
 ----
 | Consumes the _payload_.
-| This method is called for every `Message<I>` instance transiting on the channel `channel`. 
+| This method is called for every `Message<I>` instance transiting on the channel `channel`.
 The payload is automatically extracted from the inflight messages using `Message.getPayload()`.
 The user method is never called concurrently and so must return before being called with the next payload.
 
@@ -394,24 +395,24 @@ The user method is never called concurrently and so must return before being cal
 @Incoming("channel")
 CompletionStage<Void> method(Message<I> msg)
 ----
-| Consumes the `Message` 
-| This method is called for every `Message<I>` instance transiting on the channel `channel`. 
+| Consumes the `Message`
+| This method is called for every `Message<I>` instance transiting on the channel `channel`.
 The user method is never called concurrently. The reactive messaging implementation must wait until the completion of the previously returned `CompletionStage` before calling the method again with the next `Message`.
 Note that `@Incoming("channel") void method(Message<I> msg)` is not allowed as message acknowledgement is asynchronous.
 
 |
 [source,java]
 ----
-@Incoming("channel") 
+@Incoming("channel")
 CompletionStage<?> method(I payload)
 ----
 | Consumes the _payload_ asynchronously
-| This method is called for every `Message<I>` instance transiting on the channel `channel`. 
+| This method is called for every `Message<I>` instance transiting on the channel `channel`.
 The payload is automatically extracted from the inflight messages using `Message.getPayload()`.
 The user method is never called concurrently. The reactive messaging implementation must wait until the completion of the previously returned `CompletionStage` before calling the method again with the next _payload_.
 
 |===
-	
+
 ==== Methods processing data
 
 [cols="2a,1,1",options="header"]
@@ -420,7 +421,7 @@ The user method is never called concurrently. The reactive messaging implementat
 |Behavior
 |Invocation
 
-| 
+|
 [source,java]
 ----
 @Incoming("in")
@@ -430,11 +431,11 @@ Processor<Message<I>, Message<O>> method()
 | Returns a Reactive Streams processor consuming incoming `Message` instances and produces `Message` instances.
 | This method is called once; at assembly time.
 
-| 
+|
 [source,java]
 ----
 @Incoming("in")
-@Outgoing("out") 
+@Outgoing("out")
 Processor<I, O> method();
 ----
 | Returns a Reactive Streams processor consuming incoming _payload_ instances and produces _payload_ instances.
@@ -444,7 +445,7 @@ Processor<I, O> method();
 [source,java]
 ----
 @Incoming("in")
-@Outgoing("out") 
+@Outgoing("out")
 ProcessorBuilder<Message<I>, Message<O>> method();
 ----
 | Returns a `ProcessorBuilder` consuming incoming `Message` instances and produces `Message` instances.
@@ -454,7 +455,7 @@ ProcessorBuilder<Message<I>, Message<O>> method();
 [source,java]
 ----
 @Incoming("in")
-@Outgoing("out") 
+@Outgoing("out")
 ProcessorBuilder<I, O> method();
 ----
 | Returns a Reactive Streams processor that consuming incoming _payload_ instances and produces _payload_ instances.
@@ -464,7 +465,7 @@ ProcessorBuilder<I, O> method();
 [source,java]
 ----
 @Incoming("in")
-@Outgoing("out") 
+@Outgoing("out")
 Publisher<Message<O>> method(Message<I> msg)
 ----
 | Returns a Reactive Streams `Publisher` for each incoming `Message`.
@@ -477,7 +478,7 @@ The _flattening_ follows the same semantics as the `flatMap` operator from the M
 [source,java]
 ----
 @Incoming("in")
-@Outgoing("out") 
+@Outgoing("out")
 Publisher<O> method(I payload)
 ----
 | Returns a Reactive Streams `Publisher` for each incoming _payload_.
@@ -491,7 +492,7 @@ The Reactive Messaging implementation must create new `Message` instances for ea
 [source,java]
 ----
 @Incoming("in")
-@Outgoing("out") 
+@Outgoing("out")
 PublisherBuilder<Message<O>> method(Message<I> msg)
 ----
 | Returns a `PublisherBuilder` for each incoming `Message`.
@@ -504,7 +505,7 @@ The _flattening_ follows the same semantics as the `flatMap` operator from the M
 [source,java]
 ----
 @Incoming("in")
-@Outgoing("out") 
+@Outgoing("out")
 PublisherBuilder<O> method(I payload)
 ----
 | Returns a `PublisherBuilder` for each incoming _payload_.
@@ -519,7 +520,7 @@ The Reactive Messaging implementation must create new `Message` instances for ea
 [source,java]
 ----
 @Incoming("in")
-@Outgoing("out") 
+@Outgoing("out")
 Message<O> method(Message<I> msg)
 ----
 | Returns a `Message` for each incoming `Message`.
@@ -529,7 +530,7 @@ Message<O> method(Message<I> msg)
 [source,java]
 ----
 @Incoming("in")
-@Outgoing("out") 
+@Outgoing("out")
 O method(I payload)
 ----
 | Returns a _payload_ for each incoming _payload.
@@ -540,7 +541,7 @@ The Reactive Messaging implementation is responsible for unwrapping the _payload
 [source,java]
 ----
 @Incoming("in")
-@Outgoing("out") 
+@Outgoing("out")
 CompletionStage<Message<O>> method(Message<I> msg)
 ----
 | Produces a `Message` for each incoming `Message`. This method returns a `CompletionStage` that can redeem the `Message` instance asynchronously. The returned `CompletionStage` must not be completed with `null`.
@@ -549,7 +550,7 @@ CompletionStage<Message<O>> method(Message<I> msg)
 [source,java]
 ----
 @Incoming("in")
-@Outgoing("out") 
+@Outgoing("out")
 CompletionStage<O> method(I payload)
 ----
 | Produces a _payload_ for each incoming _payload_. This method returns a `CompletionStage` that can redeem the _payload_ instance asynchronously. The returned `CompletionStage` must not be completed with `null`.
@@ -559,7 +560,7 @@ CompletionStage<O> method(I payload)
 [source,java]
 ----
 @Incoming("in")
-@Outgoing("out") 
+@Outgoing("out")
 Publisher<Message<O>> method(Publisher<Message<I>> pub)
 ----
 | Applies a transformation to the incoming stream of `Message`. This method is used to manipulate streams and apply stream transformations.
@@ -569,7 +570,7 @@ Publisher<Message<O>> method(Publisher<Message<I>> pub)
 [source,java]
 ----
 @Incoming("in")
-@Outgoing("out") 
+@Outgoing("out")
 PublisherBuilder<Message<O>> method(PublisherBuilder<Message<I>> pub)
 ----
 | Applies a transformation to the stream represented by the `PublisherBuilder` of `Message`. This method is used to manipulate streams and apply stream transformations.
@@ -579,7 +580,7 @@ PublisherBuilder<Message<O>> method(PublisherBuilder<Message<I>> pub)
 [source,java]
 ----
 @Incoming("in")
-@Outgoing("out") 
+@Outgoing("out")
 Publisher<O> method(Publisher<I> pub)
 ----
 | Applies a transformation to the incoming streams of _payloads_.  This method is used to manipulate streams and apply stream transformations.
@@ -589,7 +590,7 @@ Publisher<O> method(Publisher<I> pub)
 [source,java]
 ----
 @Incoming("in")
-@Outgoing("out") 
+@Outgoing("out")
 PublisherBuilder<O> method(PublisherBuilder<I> pub)
 ----
 | Applies a transformation to the stream represented by the `PublisherBuilder` of _payloads_. This method is used to manipulate streams and apply stream transformations.
@@ -610,7 +611,7 @@ public Message<O> process(Message<I> msg) {
 }
 ----
 
-In the above example, the stream is both a publishing and subscribing stream, with a 1:1 mapping of incoming to outgoing messages. 
+In the above example, the stream is both a publishing and subscribing stream, with a 1:1 mapping of incoming to outgoing messages.
 Asynchronous processing may also be used, by returning a `CompletionStage`:
 
 [source, java]
@@ -622,7 +623,7 @@ public CompletionStage<Message<O>> process(Message<I> msg) {
 }
 ----
 
-If the method is not `@Outgoing` annotated, then the returned value is ignored - however, note that for asynchronous methods, the returned `CompletionStage` is still important for determining when message processing has completed successfully, for the purposes of message acknowledgement. 
+If the method is not `@Outgoing` annotated, then the returned value is ignored - however, note that for asynchronous methods, the returned `CompletionStage` is still important for determining when message processing has completed successfully, for the purposes of message acknowledgement.
 When there is no `@Outgoing` annotation, `void` may also be returned.
 
 In addition to `Message`, implementations must allow:
@@ -641,7 +642,7 @@ For more power, developers may use Reactive Streams instances. Reactive Streams 
 * `org.reactivestreams.Subscriber`
 * `org.reactivestreams.Processor`
 
-Implementations may optionally support other types, such as JDK9 Flow publishers, subscribers and processors, or other representations of Reactive Streams. 
+Implementations may optionally support other types, such as JDK9 Flow publishers, subscribers and processors, or other representations of Reactive Streams.
 Application developers are recommended to use the MicroProfile Reactive Streams Operators _builders_ in order to allow for the highest level of portability.
 
 For example, here's a message processor:
@@ -664,7 +665,7 @@ Acknowledgement is an important part of message processing.
 Messages are either acknowledged explicitly, or implicitly by the implementation.
 All messages must be acknowledged.
 
-Acknowledgement for the `@Incoming` messages is controlled by the `org.eclipse.microprofile.reactive.messaging.Acknowledgment` annotation. 
+Acknowledgement for the `@Incoming` messages is controlled by the `org.eclipse.microprofile.reactive.messaging.Acknowledgment` annotation.
 The annotation allows configuring the acknowledgement strategy among:
 
 * `MANUAL` - the user is responsible for the acknowledgement, by calling the `Message#ack()` method, so the Reactive Messaging implementation does not apply implicit acknowledgement
@@ -728,13 +729,13 @@ Subscriber<Message<I>> method()
 @Incoming("channel")
 Subscriber<I> method()
 ----
-| Post-Processing	
+| Post-Processing
 | None, Pre-Processing, Post-Processing (when the `onNext` method returns)
 
 |
 [source,java]
 ----
-@Incoming("channel") 
+@Incoming("channel")
 SubscriberBuilder<Message<I>, Void> method()
 ----
 | Manual
@@ -747,7 +748,7 @@ SubscriberBuilder<Message<I>, Void> method()
 @Incoming("channel")
 SubscriberBuilder<I, Void> method()
 ----
-| Post-Processing	
+| Post-Processing
 | None, Pre-Processing, Post-Processing (when the `onNext` method returns)
 
 |
@@ -756,7 +757,7 @@ SubscriberBuilder<I, Void> method()
 @Incoming("channel")
 void method(I payload)
 ----
-| Post-Processing	
+| Post-Processing
 | None, Pre-Processing, Post-Processing (when the method returns)
 
 |
@@ -771,13 +772,13 @@ CompletionStage<?> method(Message<I> msg)
 |
 [source,java]
 ----
-@Incoming("channel") 
+@Incoming("channel")
 CompletionStage<?> method(I payload)
 ----
-| Post-Processing	
+| Post-Processing
 | None, Pre-Processing, Post-Processing (when the returned `CompletionStage` is completed)
 
-| 
+|
 [source,java]
 ----
 @Incoming("in")
@@ -787,11 +788,11 @@ Processor<Message<I>, Message<O>> method()
 | Manual
 | None, Pre-Processing, Manual
 
-| 
+|
 [source,java]
 ----
 @Incoming("in")
-@Outgoing("out") 
+@Outgoing("out")
 Processor<I, O> method();
 ----
 | Pre-Processing
@@ -802,7 +803,7 @@ Post-Processing can be optionally supported by implementations, however it requi
 [source,java]
 ----
 @Incoming("in")
-@Outgoing("out") 
+@Outgoing("out")
 ProcessorBuilder<Message<I>, Message<O>> method();
 ----
 | Manual
@@ -812,7 +813,7 @@ ProcessorBuilder<Message<I>, Message<O>> method();
 [source,java]
 ----
 @Incoming("in")
-@Outgoing("out") 
+@Outgoing("out")
 ProcessorBuilder<I, O> method();
 ----
 | Pre-Processing
@@ -823,7 +824,7 @@ Post-Processing can be optionally supported by implementations, however it requi
 [source,java]
 ----
 @Incoming("in")
-@Outgoing("out") 
+@Outgoing("out")
 Publisher<Message<O>> method(Message<I> msg)
 ----
 | Manual
@@ -833,7 +834,7 @@ Publisher<Message<O>> method(Message<I> msg)
 [source,java]
 ----
 @Incoming("in")
-@Outgoing("out") 
+@Outgoing("out")
 Publisher<O> method(I payload)
 ----
 | Pre-Processing
@@ -843,7 +844,7 @@ Publisher<O> method(I payload)
 [source,java]
 ----
 @Incoming("in")
-@Outgoing("out") 
+@Outgoing("out")
 PublisherBuilder<Message<O>> method(Message<I> msg)
 ----
 | Manual
@@ -853,7 +854,7 @@ PublisherBuilder<Message<O>> method(Message<I> msg)
 [source,java]
 ----
 @Incoming("in")
-@Outgoing("out") 
+@Outgoing("out")
 PublisherBuilder<O> method(I payload)
 ----
 | Pre-Processing
@@ -864,7 +865,7 @@ PublisherBuilder<O> method(I payload)
 [source,java]
 ----
 @Incoming("in")
-@Outgoing("out") 
+@Outgoing("out")
 Message<O> method(Message<I> msg)
 ----
 | Manual
@@ -874,7 +875,7 @@ Message<O> method(Message<I> msg)
 [source,java]
 ----
 @Incoming("in")
-@Outgoing("out") 
+@Outgoing("out")
 O method(I payload)
 ----
 | Post-Processing
@@ -904,7 +905,7 @@ CompletionStage<O> method(I payload)
 [source,java]
 ----
 @Incoming("in")
-@Outgoing("out") 
+@Outgoing("out")
 Publisher<Message<O>> method(Publisher<Message<I>> pub)
 ----
 | Manual
@@ -914,7 +915,7 @@ Publisher<Message<O>> method(Publisher<Message<I>> pub)
 [source,java]
 ----
 @Incoming("in")
-@Outgoing("out") 
+@Outgoing("out")
 PublisherBuilder<Message<O>> method(PublisherBuilder<Message<I>> pub)
 ----
 | Manual
@@ -924,7 +925,7 @@ PublisherBuilder<Message<O>> method(PublisherBuilder<Message<I>> pub)
 [source,java]
 ----
 @Incoming("in")
-@Outgoing("out") 
+@Outgoing("out")
 Publisher<O> method(Publisher<I> pub)
 ----
 | Pre-Processing
@@ -934,7 +935,7 @@ Publisher<O> method(Publisher<I> pub)
 [source,java]
 ----
 @Incoming("in")
-@Outgoing("out") 
+@Outgoing("out")
 PublisherBuilder<O> method(PublisherBuilder<I> pub)
 ----
 | Pre-Processing
@@ -946,8 +947,8 @@ Invalid acknowledgement policies must be detected and a `DeploymentException` ra
 
 ==== Acknowledgement Examples
 
-Transiting data may be wrapped in a `Message`, which can be used to supply metadata, and also allows messages to be acknowledged. 
-The contract for acknowledging messages is anything that accepts a `Message` is required to acknowledge it. 
+Transiting data may be wrapped in a `Message`, which can be used to supply metadata, and also allows messages to be acknowledged.
+The contract for acknowledging messages is anything that accepts a `Message` is required to acknowledge it.
 So, if the application receives an incoming message wrapped in `Message`, it is responsible for invoking `Message.ack()`, and if the application publish an outgoing message wrapped in `Message`, then the spec implementation is responsible for invoking `Message.ack()`.
 
 For example, the following application code is incorrect, since it accepts a message wrapped in `Message`, but does not acknowledge the messages:
@@ -1048,7 +1049,7 @@ The following snippet is particularly useful for processing messages that are al
 ----
 @Incoming("in")
 @Outgoing("out")
-@Acknowledgment(Acknowledgment.Strategy.MANUAL) // Default strategy 
+@Acknowledgment(Acknowledgment.Strategy.MANUAL) // Default strategy
 public Message<O> process(Message<I> msg) {
   return Message.of(convert(msg.getPayload()), msg::ack);
 }
@@ -1066,7 +1067,7 @@ This bridging to an external messaging technology is done using a reactive messa
 
 ==== Connector concepts
 
-Each _connector_ is responsible for a specific technology. 
+Each _connector_ is responsible for a specific technology.
 A connector can:
 
 * act as a _Publisher_, meaning it retrieves or receives messages from an external messaging technology and publishes them to a reactive stream.
@@ -1084,8 +1085,8 @@ A _connector_ is implemented as a CDI Bean, generally _application_ scoped imple
 
 NOTE: Depending on the integrated technology, the _connector_ can implement one of the interface or both.
 
-The bean is a factory called by the Reactive Messaging implementation to create `PublisherBuilder` or `SubscriberBuilder` objects. 
-These objects are then connected to methods annotated with `@Incoming` or `@Outgoing`. 
+The bean is a factory called by the Reactive Messaging implementation to create `PublisherBuilder` or `SubscriberBuilder` objects.
+These objects are then connected to methods annotated with `@Incoming` or `@Outgoing`.
 
 Beans implementing the `IncomingConnectorFactory` or `OutgoingConnectorFactory` must use the `org.eclipse.microprofile.reactive.messaging.spi.Connector` qualifier.
 This qualifier defined the name associated with the connector.
@@ -1138,26 +1139,26 @@ If an attribute appears for both a channel and its relevant connector, the chann
 In the example below, the `acme.kafka` default value for `bootstrap.servers` is overridden for `my-channel` to be `9096`.
 
 The following snippet gives an example for a hypothetical Kafka connector:
- 
+
 [source]
 ----
  mp.messaging.incoming.my-channel.connector=acme.kafka
  mp.messaging.incoming.my-channel.bootstrap.servers=localhost:9096
  mp.messaging.incoming.my-channel.topic=my-topic
  mp.messaging.connector.acme.kafka.bootstrap.servers=localhost:9092
----- 
+----
 
-For properties that have a `mp.messaging.incoming.` or `mp.messaging.outgoing` prefix, 
+For properties that have a `mp.messaging.incoming.` or `mp.messaging.outgoing` prefix,
 this prefix is stripped off the property name and the remainder of the property name
 up to the first occurrence of `.` is treated as the channel name. Channel names may not
 include the `.` character.
 
 For properties that have a `mp.messaging.connector.` prefix, this prefix is stripped off the property name and
 the longest remaining prefix that matches any configured `connector`
-is treated as a connector name. 
+is treated as a connector name.
 The remainder of the property name, minus the expected initial `.` separator,  is taken
 as the name of an attribute for this connector. For example `bootstrap.servers` appears as a
-default attribute for all channels that use the `acme.kafka` connector. 
+default attribute for all channels that use the `acme.kafka` connector.
 
 The Reactive Messaging implementation:
 
@@ -1172,7 +1173,7 @@ If the configuration had contained a `mp.messaging.outgoing.my-channel...` entry
 ----
 bootstrap.servers=localhost:9096
 topic=my-topic
----- 
+----
 +
 6. Calls the `PublisherBuilder<? extends Message> getPublisherBuilder(Config config)` method with the created `Config` object. If the configuration is invalid, the connector can throw:
 +
@@ -1188,7 +1189,7 @@ The configuration passed to the `IncomingConnectorFactory` and `OutgoingConnecto
 * `channel-name` attribute indicating the name of the channel being configured,
 * `connector` attribute must match the name given to the `@Connector` qualifier.
 
-==== Acknowledgement 
+==== Acknowledgement
 
 The connector is responsible for the acknowledgment of the incoming and outgoing messages:
 
@@ -1263,7 +1264,7 @@ For a payload type `X`, the following types can be injected:
 
 == Publishing messages to a channel from imperative code
 
-Traditionally, the reactive world and imperative world are separated and operate in parallel. Reactive Messaging deals with streams of data in the reactive world, while the imperative world is pretty much point to point and synchronous communication. However, imperative programme sometimes needs to connect to reactive streams so that responses can be emitted to a destination service. 
+Traditionally, the reactive world and imperative world are separated and operate in parallel. Reactive Messaging deals with streams of data in the reactive world, while the imperative world is pretty much point to point and synchronous communication. However, imperative programme sometimes needs to connect to reactive streams so that responses can be emitted to a destination service.
 Bridging the two worlds is very valuable thing to do, so that one microservice can use technologies from both environments. For an instance, a JAX-RS resource might want to publish messages to a Reactive Messaging channel. This section is about enabling imperative code to publish messages to a Reactive Messaging channel, so that it can be consumed by a consumer.
 
 
@@ -1311,7 +1312,7 @@ public void publishMessage() {
 }
 ----
 
-In the above snippet, the buffer size is set to 300 elements. If `@OnOverflow` is absent, the buffer strategy `OnOverflow.Strategy.BUFFER` will be used. 
+In the above snippet, the buffer size is set to 300 elements. If `@OnOverflow` is absent, the buffer strategy `OnOverflow.Strategy.BUFFER` will be used.
 
 If the `bufferSize` is not specified, the size will be the value of the config property `mp.messaging.emitter.default-buffer-size`.
 If the property does not exist, the default value will be 128 elements. If the buffer is full, an error will be propagated.
@@ -1347,5 +1348,15 @@ Emitter<String> emitter;
 ----
 
 Since the `@Channel("myChannel")` is used to produce messages, a consumer with the `@Incoming("myChannel")` should be specified to consume the messages transiting on the channel _myChannel_.
-An `IllegalStateException` will be thrown if no consumer is found by the time a message is emitted to the channel.
+
+== Assembly and validation
+
+When the application starts, the Reactive Messaging implementation:
+
+* connect the methods annotated with `@Incoming` and `@Outgoing,` `Emitters,` channels and connectors
+* verify the validity of the resulting graph
+
+If the implementation cannot find a matching _upstream_ or _downstream_ channel for one of the components, a `DeploymentException` must be thrown when the application starts.
+The implementation must also throw a `DeploymentException` if components are illegally connected to multiple upstreams or downstreams.
+If the implementation detects a missing connector, a `DeploymentException` must also be thrown.
 
