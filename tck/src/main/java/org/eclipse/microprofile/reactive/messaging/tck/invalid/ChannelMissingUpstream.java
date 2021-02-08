@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020 Contributors to the Eclipse Foundation
+ * Copyright (c) 2021 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -16,19 +16,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.eclipse.microprofile.reactive.messaging.tck.channel;
-
-import javax.inject.Inject;
+package org.eclipse.microprofile.reactive.messaging.tck.invalid;
 
 import org.eclipse.microprofile.reactive.messaging.Channel;
-import org.eclipse.microprofile.reactive.messaging.Emitter;
+import org.reactivestreams.Publisher;
 
-public class BeanWithMissingChannel {
-    @Inject
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+
+@ApplicationScoped
+public class ChannelMissingUpstream {
+
+    @SuppressWarnings("unused")
+    private @Inject
     @Channel("missing")
-    private Emitter<String> emitter;
+    Publisher<String> missing;
 
-    public Emitter<String> emitter() {
-        return emitter;
-    }
 }

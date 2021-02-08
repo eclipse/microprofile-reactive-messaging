@@ -34,13 +34,13 @@ public class ChannelInjectionDifferentFlavourSameChannelTest extends TckBase {
     @Deployment
     public static Archive<JavaArchive> deployment() {
         return getBaseArchive()
-            .addClasses(SourceBean.class, BeanInjectedWithDifferentFlavorsOfTheSameChannel.class);
+            .addClasses(BeanInjectedWithDifferentFlavorsOfTheSameChannel.class);
     }
 
     private @Inject BeanInjectedWithDifferentFlavorsOfTheSameChannel beanInjectedWithDifferentFlavorsOfTheSameChannel;
     @Test
     public void testMultipleFieldInjection() {
-        
+
         assertThat(beanInjectedWithDifferentFlavorsOfTheSameChannel.consume()).hasSize(6);
     }
 

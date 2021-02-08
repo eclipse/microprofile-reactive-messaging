@@ -24,8 +24,10 @@ import java.util.Map;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import io.reactivex.Flowable;
 import org.eclipse.microprofile.reactive.messaging.Channel;
 import org.eclipse.microprofile.reactive.messaging.Message;
+import org.eclipse.microprofile.reactive.messaging.Outgoing;
 import org.eclipse.microprofile.reactive.streams.operators.PublisherBuilder;
 import org.reactivestreams.Publisher;
 
@@ -35,32 +37,61 @@ import org.reactivestreams.Publisher;
 public class BeanInjectedWithDifferentFlavorsOfTheSameChannel {
 
 
+    @Outgoing("hello-1")
+    public Publisher<String> hello1() {
+        return Flowable.fromArray("h", "e", "l", "l", "o");
+    }
+
+    @Outgoing("hello-2")
+    public Publisher<String> hello2() {
+        return Flowable.fromArray("h", "e", "l", "l", "o");
+    }
+
+    @Outgoing("hello-3")
+    public Publisher<String> hello3() {
+        return Flowable.fromArray("h", "e", "l", "l", "o");
+    }
+
+    @Outgoing("hello-4")
+    public Publisher<String> hello4() {
+        return Flowable.fromArray("h", "e", "l", "l", "o");
+    }
+
+    @Outgoing("hello-5")
+    public Publisher<String> hello5() {
+        return Flowable.fromArray("h", "e", "l", "l", "o");
+    }
+
+    @Outgoing("hello-6")
+    public Publisher<String> hello6() {
+        return Flowable.fromArray("h", "e", "l", "l", "o");
+    }
+
     @Inject
-    @Channel("hello")
+    @Channel("hello-1")
     private Publisher<Message<String>> field1;
 
     @Inject
-    @Channel("hello")
+    @Channel("hello-2")
     private Publisher<Message> field2;
 
 
     @Inject
-    @Channel("hello")
+    @Channel("hello-3")
     private PublisherBuilder<Message> field3;
 
     @Inject
-    @Channel("hello")
+    @Channel("hello-4")
     private PublisherBuilder<Message<String>> field4;
 
     @Inject
-    @Channel("hello")
+    @Channel("hello-5")
     private PublisherBuilder<String> field5;
 
     @Inject
-    @Channel("hello")
+    @Channel("hello-6")
     private Publisher<String> field6;
 
-  
 
     public Map<String, String> consume() {
         Map<String, String> map = new LinkedHashMap<>();
@@ -69,7 +100,7 @@ public class BeanInjectedWithDifferentFlavorsOfTheSameChannel {
         map.put("3", field3.toString());
         map.put("4", field4.toString());
         map.put("5", field5.toString());
-        map.put("6", field6.toString());        
+        map.put("6", field6.toString());
         return map;
     }
 
