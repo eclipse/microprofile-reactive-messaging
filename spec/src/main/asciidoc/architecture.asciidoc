@@ -1271,8 +1271,6 @@ For a payload type `X`, the following types can be injected:
 Traditionally, the reactive world and imperative world are separated and operate in parallel. Reactive Messaging deals with streams of data in the reactive world, while the imperative world is pretty much point to point and synchronous communication. However, imperative programme sometimes needs to connect to reactive streams so that responses can be emitted to a destination service.
 Bridging the two worlds is very valuable thing to do, so that one microservice can use technologies from both environments. For an instance, a JAX-RS resource might want to publish messages to a Reactive Messaging channel. This section is about enabling imperative code to publish messages to a Reactive Messaging channel, so that it can be consumed by a consumer.
 
-
-
 You can inject an `Emitter` and use it to send either payloads (`X`) or messages (`Message<X>`) to a channel as demonstrated below.
 
 [source, java]
@@ -1291,7 +1289,7 @@ public void publishMessage() {
 ----
 @Inject
 @Channel("foo")
-private Emitter<Message<String>> emitter;
+private Emitter<String> emitter;
 
 public void run() {
     emitter.send(Message.of("a"));
