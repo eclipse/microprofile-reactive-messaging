@@ -54,6 +54,7 @@
             <groupId>org.eclipse.microprofile.reactive.messaging</groupId>
             <artifactId>microprofile-reactive-messaging-api</artifactId>
             <version>${project.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -67,22 +68,25 @@
         <dependency>
             <groupId>org.eclipse.microprofile.reactive-streams-operators</groupId>
             <artifactId>microprofile-reactive-streams-operators-api</artifactId>
+            <scope>provided</scope>
         </dependency>
-
+        
         <dependency>
-            <groupId>javax.enterprise</groupId>
-            <artifactId>cdi-api</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>javax.el</groupId>
-                    <artifactId>javax.el-api</artifactId>
-                </exclusion>
-            </exclusions>
+            <groupId>org.eclipse.microprofile.config</groupId>
+            <artifactId>microprofile-config-api</artifactId>
+            <scope>provided</scope>
         </dependency>
+        
         <dependency>
-            <groupId>javax.annotation</groupId>
-            <artifactId>javax.annotation-api</artifactId>
-            <version>1.3.2</version>
+            <groupId>jakarta.enterprise</groupId>
+            <artifactId>jakarta.enterprise.cdi-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>jakarta.annotation</groupId>
+            <artifactId>jakarta.annotation-api</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
