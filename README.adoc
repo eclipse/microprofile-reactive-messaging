@@ -30,6 +30,7 @@ The following implementations are available:
 
 * https://github.com/lightbend/microprofile-reactive-messaging[Lightbend Alpakka]
 * https://www.smallrye.io/smallrye-reactive-messaging[SmallRye Reactive Messaging]
+* https://openliberty.io/downloads/#runtime_releases[Open Liberty 19.0.0.9+] https://openliberty.io/blog/2019/09/13/microprofile-reactive-messaging-19009.html#mpreactive[usage] (via SmallRye Reactive Messaging)
 
 == Building
 
