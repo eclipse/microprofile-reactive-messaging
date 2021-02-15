@@ -1295,6 +1295,33 @@ The configuration passed to the `IncomingConnectorFactory` and `OutgoingConnecto
 * `channel-name` attribute indicating the name of the channel being configured,
 * `connector` attribute must match the name given to the `@Connector` qualifier.
 
+==== Connector attribute
+
+To help tools (IDEs, documentation generator) to extract the configuration of each connector, the specification provides the `org.eclipse.microprofile.reactive.messaging.spi.ConnectorAttribute` annotation for implementations to create a good ecosystem with the tools.
+However, the support for this SPI is not mandatory.
+
+When used, each attribute supported by the connector should be documented using this annotation.
+The following snippet provides an example of a connector using the annotation:
+
+[source, java]
+----
+@ConnectorAttribute(name = "bootstrap.servers", alias = "kafka.bootstrap.servers", type = "string",
+   defaultValue = "localhost:9092", direction = Direction.INCOMING_AND_OUTGOING,
+    description = "...")
+@ConnectorAttribute(name = "topic", type = "string", direction = Direction.INCOMING_AND_OUTGOING,
+    description = "...")
+@ConnectorAttribute(name = "value-deserialization-failure-handler", type = "string", direction = Direction.INCOMING,
+    description = "...")
+@ConnectorAttribute(name = "merge", direction = OUTGOING, type = "boolean", defaultValue = "false",
+    description = "...")
+@Connector("my-connector")
+public class MyConnector implements  IncomingConnectorFactory, OutgoingConnectorFactory {
+  // ...
+}
+----
+
+As a result, tools can extract the supported attributes and improve the user experience.
+
 ==== Acknowledgement
 
 The connector is responsible for the acknowledgment (positive or negative) of the incoming and outgoing messages:
