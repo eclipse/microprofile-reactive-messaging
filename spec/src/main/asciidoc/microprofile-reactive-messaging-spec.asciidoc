@@ -42,3 +42,5 @@ include::license-efsl.adoc[]
 
 include::rationale.asciidoc[]
 include::architecture.asciidoc[]
+
+include::release_notes.asciidoc[]

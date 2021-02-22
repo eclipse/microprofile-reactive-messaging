@@ -1,0 +1,42 @@
+//
+// Copyright (c) 2021 Contributors to the Eclipse Foundation
+//
+// See the NOTICE file(s) distributed with this work for additional
+// information regarding copyright ownership.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// You may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
+[[release_notes_20]]
+== Release Notes for MicroProfile Reactive Messaging 2.0
+
+A full list of changes delivered in the 2.0 release can be found at link:https://github.com/eclipse/microprofile-reactive-messaging/milestone/1?closed=1[MicroProfile Reactive Messaging 2.0 Milestone].
+
+=== Functional Changes
+- Add support for unmanaged stream injection using `@Inject @Channel(...)` (link:https://github.com/eclipse/microprofile-reactive-messaging/issues/3[#3])
+- Add support for emitters allowing emitting messages from _imperative_ code (link:https://github.com/eclipse/microprofile-reactive-messaging/issues/70[#70])
+- Add support for metrics (link:https://github.com/eclipse/microprofile-reactive-messaging/issues/31[#31])
+- Add support for negative acknowledgement (link:https://github.com/eclipse/microprofile-reactive-messaging/issues/98[#98])
+- Update default acknowledgement strategy when dealing with `Message` (link:https://github.com/eclipse/microprofile-reactive-messaging/pull/97[#97])
+- Move metrics to the base scope (link:https://github.com/eclipse/microprofile-reactive-messaging/issues/93[#93])
+- Assembly validation on application start (link:https://github.com/eclipse/microprofile-reactive-messaging/pull/119[#119])
+- Add `@ConnectorAttribute` to allow connector configuration discovery (link:https://github.com/eclipse/microprofile-reactive-messaging/issues/94[#94])
+- Add negative acknowledgement support (link:https://github.com/eclipse/microprofile-reactive-messaging/issues/98[#98]])
+
+=== Incompatible Changes
+
+- Spec dependencies marked as "provided" (link:https://github.com/eclipse/microprofile-reactive-messaging/issues/88[#88])
+
+=== Other Changes
+- Update to Jakarta EE8 APIs for MP 4.0 (link:https://github.com/eclipse/microprofile-reactive-messaging/issues/75[75])
+
