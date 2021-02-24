@@ -94,8 +94,8 @@ public class ChannelRegister {
         private final TestSubscriber<PAYLOAD> subscriber;
 
         public Channel() {
-            publisher = new TestPublisher<>(100, TimeUnit.MILLISECONDS);
-            subscriber = new TestSubscriber<>(100, TimeUnit.MILLISECONDS);
+            publisher = new TestPublisher<>(HealthBase.TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
+            subscriber = new TestSubscriber<>(HealthBase.TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
         }
 
         /**

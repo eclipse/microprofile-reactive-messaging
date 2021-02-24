@@ -42,8 +42,8 @@ class HealthAssertions {
         try {
             HttpURLConnection con = (HttpURLConnection) new URL(url).openConnection();
             con.setRequestMethod("GET");
-            con.setConnectTimeout(5000);
-            con.setReadTimeout(5000);
+            con.setConnectTimeout(HealthBase.TIMEOUT_MILLIS);
+            con.setReadTimeout(HealthBase.TIMEOUT_MILLIS);
 
             con.connect();
             HealthAssertions healthAssertions = new HealthAssertions();

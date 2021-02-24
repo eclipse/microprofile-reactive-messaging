@@ -29,6 +29,8 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 
 public class HealthBase {
 
+    public static final int TIMEOUT_MILLIS = 5000;
+
     public static final String ALL_EXCLUDED_CHANNEL = "excluded-channel";
     public static final String LIVE_EXCLUDED_CHANNEL = "live-excluded-channel";
     public static final String READY_EXCLUDED_CHANNEL = "ready-excluded-channel";
