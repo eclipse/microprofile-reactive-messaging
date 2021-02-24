@@ -1331,6 +1331,27 @@ The connector is responsible for the acknowledgment (positive or negative) of th
 * An outgoing connector must acknowledge the incoming `org.eclipse.microprofile.reactive.messaging.Message` once it has successfully dispatched the message.
 * An outgoing connector must acknowledge negatively the incoming `org.eclipse.microprofile.reactive.messaging.Message` if it cannot be dispatched.
 
+== Health
+
+When MicroProfile Reactive Messaging is used in an environment where MicroProfile Health is enabled, implicit readiness and liveness checks are produced.
+
+=== Readiness
+Readiness check `messaging` gets UP only when subscribers of all messaging channels are subscribed to theirs respective publishers and `onSubscribe` signal is detected on all channels.
+
+=== Liveness
+
+Liveness check `messaging` gets DOWN only when `cancel` or `onError` signals are detected on any of the messaging channels.
+
+=== Excluding channels
+
+For channels which are not desired to be checked for liveness or readiness, exclusion is configurable with `mp.health.live.exclude-channel` or `mp.health.live.exclude-channel` config keys.
+
+[source, properties]
+----
+mp.health.live.exclude-channel=<channel-name>
+mp.health.ready.exclude-channel=<channel-name>
+----
+
 == Metrics
 
 When MicroProfile Reactive Messaging is used in an environment where MicroProfile Metrics is enabled, the Reactive Messaging implementation automatically produces metrics.
