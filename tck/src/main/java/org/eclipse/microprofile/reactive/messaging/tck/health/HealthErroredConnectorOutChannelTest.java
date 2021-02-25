@@ -28,6 +28,24 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+/**
+ * Failed connector channel scenario:
+ * <ul>
+ * <li>1. Assert {@code /health/ready} is DOWN as onSubscribe has not been issued on any channel yet</li>
+ * <li>2. Assert {@code /health/live} is UP as not onError nor cancel signal has not been issued on any channel</li>
+ * <li>3. Send onSubscribe signal to one of the channels</li>
+ * <li>4. Assert {@code /health/ready} is DOWN as onSubscribe has not been issued on ALL the channels yet</li>
+ * <li>5. Send onSubscribe signal all of the channels</li>
+ * <li>6. Assert {@code /health/ready} is UP as onSubscribe has been issued on ALL the channels</li>
+ * <li>7. Assert {@code /health/live} is UP as not onError nor cancel signal has not been issued on any channel</li>
+ * <li>8. Send onError signal to channel with subscriber provided by connector</li>
+ * <li>9. Assert {@code /health/live} is DOWN as onError signal has been issued on one channel</li>
+ * <li>10. Assert {@code /health/ready} is still UP</li>
+ * <li>11. Send onError signal to all the other channels</li>
+ * <li>12. Assert {@code /health/live} is still DOWN</li>
+ * <li>13. Assert {@code /health/ready} is still UP</li>
+ * </ul>
+ */
 @RunWith(Arquillian.class)
 public class HealthErroredConnectorOutChannelTest extends HealthBase {
 

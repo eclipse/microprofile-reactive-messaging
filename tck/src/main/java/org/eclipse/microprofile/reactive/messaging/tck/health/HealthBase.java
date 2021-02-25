@@ -19,12 +19,15 @@
 package org.eclipse.microprofile.reactive.messaging.tck.health;
 
 import java.net.URI;
+import java.util.ServiceLoader;
 
+import org.eclipse.microprofile.reactive.messaging.tck.ArchiveExtender;
 import org.eclipse.microprofile.reactive.messaging.tck.metrics.ConfigAsset;
 import org.eclipse.microprofile.reactive.messaging.tck.metrics.TestConnector;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
+import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 
 public class HealthBase {
@@ -38,17 +41,26 @@ public class HealthBase {
     public static final String CHANNEL_CONNECTOR_OUT = "channel-connector-out";
     public static final String CHANNEL_INNER = "inner-channel";
 
-    protected static WebArchive prepareArchive(){
+    protected static WebArchive prepareArchive(Class<?>... classes) {
         ConfigAsset config = new ConfigAsset()
             .put("mp.messaging.incoming.channel-connector-in.connector", TestConnector.ID)
             .put("mp.messaging.outgoing.channel-connector-out.connector", TestConnector.ID)
-            .put("mp.health.ready.exclude-channel", READY_EXCLUDED_CHANNEL + "," + ALL_EXCLUDED_CHANNEL)
-            .put("mp.health.live.exclude-channel", LIVE_EXCLUDED_CHANNEL + "," + ALL_EXCLUDED_CHANNEL);
+            .put("mp.messaging.health.ready.exclude", READY_EXCLUDED_CHANNEL + "," + ALL_EXCLUDED_CHANNEL)
+            .put("mp.messaging.health.live.exclude", LIVE_EXCLUDED_CHANNEL + "," + ALL_EXCLUDED_CHANNEL);
 
-        return ShrinkWrap.create(WebArchive.class, HealthExclusionTest.class.getName() + ".war")
-            .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
-            .addAsResource(config, "META-INF/microprofile-config.properties")
-            .addClasses(HealthTestBean.class, HealthTestConnector.class, ChannelRegister.class);
+        JavaArchive testJar = ShrinkWrap
+            .create(JavaArchive.class, "healthTest.jar")
+            .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml")
+            .addAsManifestResource(config, "microprofile-config.properties")
+            .addClasses(HealthTestBean.class, HealthTestConnector.class, ChannelRegister.class)
+            .addClasses(classes)
+            .as(JavaArchive.class);
+
+        ServiceLoader.load(ArchiveExtender.class).iterator().forEachRemaining(ext -> ext.extend(testJar));
+
+        return ShrinkWrap
+            .create(WebArchive.class, "healthTest.war")
+            .addAsLibrary(testJar);
     }
 
     @ArquillianResource

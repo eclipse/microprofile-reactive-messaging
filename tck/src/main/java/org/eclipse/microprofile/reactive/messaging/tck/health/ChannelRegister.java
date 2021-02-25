@@ -29,12 +29,23 @@ import javax.enterprise.context.ApplicationScoped;
 
 import org.junit.Assert;
 
+/**
+ * Helper bean for keeping references of all the messaging channels
+ * used in the health test scenario.
+ */
 @ApplicationScoped
 public class ChannelRegister {
 
     private final Map<String, Channel<?>> channelMap = new HashMap<>();
     private final ReentrantLock mapLock = new ReentrantLock();
 
+    /**
+     * Return representation of messaging channel by its name.
+     *
+     * @param channelName name of the messaging channel
+     * @param <P>         payload type of the channel
+     * @return the channel with references to its publisher and subscriber
+     */
     @SuppressWarnings("unchecked")
     <P> Channel<P> get(String channelName) {
         try {
@@ -47,6 +58,11 @@ public class ChannelRegister {
         }
     }
 
+    /**
+     * Return all the channels used in the health test scenario.
+     *
+     * @return all the channels
+     */
     Collection<Channel<?>> getAllChannels() {
         try {
             mapLock.lock();
@@ -89,6 +105,10 @@ public class ChannelRegister {
         getAllChannels().forEach(Channel::cancel);
     }
 
+    /**
+     * Represents a messaging channel used in the health test scenario.
+     * @param <PAYLOAD> type of the channel's payload
+     */
     public static class Channel<PAYLOAD> {
         private final TestPublisher<PAYLOAD> publisher;
         private final TestSubscriber<PAYLOAD> subscriber;

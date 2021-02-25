@@ -28,15 +28,35 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+/**
+ * Channel excluded from liveness check scenario:
+ * <ul>
+ * <li>1. Assert {@code /health/ready} is DOWN as onSubscribe has not been issued on any channel yet</li>
+ * <li>2. Send onSubscribe signal all channels except the one excluded from liveness check</li>
+ * <li>3. Assert {@code /health/ready} is DOWN as onSubscribe has not been issued
+ * on all the channels, the one is excluded only from liveness</li>
+ * <li>4. Send onSubscribe signal to remaining channel</li>
+ * <li>5. Assert {@code /health/ready} is UP as onSubscribe has been sent to all channels</li>
+ * <li>6. Assert {@code /health/live} is UP as not onError nor cancel signal has been issued on any channel</li>
+ * <li>7. Send onError signal to excluded channel</li>
+ * <li>8. Assert {@code /health/live} is UP as onError signal has been issued only on excluded channel</li>
+ * <li>9. Send onError signal to one of the not excluded channels</li>
+ * <li>10. Assert {@code /health/live} is DOWN as onError signal has been issued</li>
+ * <li>11. Assert {@code /health/ready} is still UP</li>
+ * <li>12. Send onError signal to the remaining channels</li>
+ * <li>13. Assert {@code /health/live} is still DOWN</li>
+ * <li>14. Assert {@code /health/ready} is still UP</li>
+ * </ul>
+ */
 @RunWith(Arquillian.class)
 public class HealthLiveExclusionTest extends HealthBase{
 
     @Inject
     private ChannelRegister channelRegister;
 
-    @Deployment(name = "HealthLiveExclusionTest")
+    @Deployment
     public static WebArchive deployment() {
-        return prepareArchive().addClass(HealthLiveExcludedTestBean.class);
+        return prepareArchive(HealthLiveExcludedTestBean.class);
     }
 
     @Test

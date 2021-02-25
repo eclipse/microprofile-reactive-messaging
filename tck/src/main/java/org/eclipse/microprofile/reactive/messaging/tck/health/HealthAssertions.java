@@ -33,11 +33,20 @@ import javax.json.JsonValue;
 
 import static org.junit.Assert.assertEquals;
 
+/**
+ * Health check response representation with ability to assert it's state.
+ */
 class HealthAssertions {
 
     private int responseCode;
     private JsonObject jsonResponse;
 
+    /**
+     * Connect health endpoint and download response to be able to assert it later.
+     *
+     * @param url of the health check endpoint
+     * @return new instance of the health assertions
+     */
     static HealthAssertions create(String url) {
         try {
             HttpURLConnection con = (HttpURLConnection) new URL(url).openConnection();
@@ -64,21 +73,54 @@ class HealthAssertions {
         }
     }
 
-    HealthAssertions assertResponseCode(int expected){
+    /**
+     * Assert health check to have desired HTTP status code.
+     *
+     * @param expectedStatus 200 or 503
+     * @return this health response assertion
+     */
+    HealthAssertions assertResponseCode(int expected) {
         assertEquals(expected, this.responseCode);
         return this;
     }
 
+    /**
+     * Assert health check to have HTTP status code 200.
+     *
+     * @return this health response assertion
+     */
     HealthAssertions assertResponseCodeUp(){
         assertResponseCode(200);
         return this;
     }
 
+    /**
+     * Assert health check to have HTTP status code 503.
+     *
+     * @return this health response assertion
+     */
     HealthAssertions assertResponseCodeDown(){
         assertResponseCode(503);
         return this;
     }
 
+    /**
+     * Assert messaging check to have desired status.
+     * <pre>{@code
+     * {
+     *   "status": "UP",
+     *   "checks": [
+     *     {
+     *       "name": "messaging",
+     *       "status": "EXPECTED_STATUS"
+     *     }
+     *   ]
+     * }
+     * }</pre>
+     *
+     * @param expectedStatus UP or DOWN
+     * @return this health response assertion
+     */
     HealthAssertions assertMessagingStatus(String expectedStatus){
         JsonArray checks = this.jsonResponse.getJsonArray("checks");
         List<JsonObject> messagingObjects = checks.stream()
@@ -91,12 +133,46 @@ class HealthAssertions {
         return this;
     }
 
+    /**
+     * Assert messaging check to have desired status UP.
+     * <pre>{@code
+     * {
+     *   "status": "UP",
+     *   "checks": [
+     *     {
+     *       "name": "messaging",
+     *       "status": "UP"
+     *     }
+     *   ]
+     * }
+     * }</pre>
+     *
+     * @param expectedStatus UP or DOWN
+     * @return this health response assertion
+     */
     HealthAssertions assertMessagingStatusUp(){
         assertMessagingStatus("UP");
         return this;
     }
 
-    HealthAssertions assertMessagingStatusDown(){
+    /**
+     * Assert messaging check to have desired status DOWN.
+     * <pre>{@code
+     * {
+     *   "status": "DOWN",
+     *   "checks": [
+     *     {
+     *       "name": "messaging",
+     *       "status": "DOWN"
+     *     }
+     *   ]
+     * }
+     * }</pre>
+     *
+     * @param expectedStatus UP or DOWN
+     * @return this health response assertion
+     */
+    HealthAssertions assertMessagingStatusDown() {
         assertMessagingStatus("DOWN");
         return this;
     }

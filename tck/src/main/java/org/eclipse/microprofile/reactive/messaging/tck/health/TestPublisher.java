@@ -32,7 +32,7 @@ import org.reactivestreams.Subscription;
  * Simple manual publisher with guarded state, not thread safe, sequential non-concurrent calls are expected.
  * @param <PAYLOAD> payload type
  */
-public class TestPublisher<PAYLOAD> implements Publisher<PAYLOAD> {
+class TestPublisher<PAYLOAD> implements Publisher<PAYLOAD> {
 
     private final CompletableFuture<Subscriber<? super PAYLOAD>> subscriberFuture = new CompletableFuture<>();
     private final CompletableFuture<Void> cancelFuture = new CompletableFuture<>();
@@ -41,11 +41,36 @@ public class TestPublisher<PAYLOAD> implements Publisher<PAYLOAD> {
     private final AtomicReference<State> state = new AtomicReference<>(State.INIT);
 
     private enum State {
-        INIT, READY, FAILED, CANCELLED, COMPLETED
+        /**
+         * Initial state until {@link TestPublisher#ready()} is called.
+         */
+        INIT,
+        /**
+         * After {@link TestPublisher#ready()} is called until {@link TestPublisher#fail(Throwable)} or
+         * {@link TestPublisher#complete()} is invoked or cancel signal is received from downstream.
+         */
+        READY,
+        /**
+         * After {@link TestPublisher#fail(Throwable)} is invoked.
+         */
+        FAILED,
+        /**
+         * After cancel signal is received from downstream.
+         */
+        CANCELLED,
+        /**
+         * After {@link TestPublisher#complete()} is invoked.
+         */
+        COMPLETED
     }
 
-
-    public TestPublisher(long timeout, TimeUnit timeUnit) {
+    /**
+     * Create new test publisher with timeout for all blocking operations.
+     *
+     * @param timeout timeout value
+     * @param timeUnit unit for evaluation of timeout value
+     */
+    TestPublisher(long timeout, TimeUnit timeUnit) {
         this.timeout = timeout;
         this.timeUnit = timeUnit;
     }
@@ -55,7 +80,13 @@ public class TestPublisher<PAYLOAD> implements Publisher<PAYLOAD> {
         subscriberFuture.complete(subscriber);
     }
 
-    public TestPublisher<PAYLOAD> ready() {
+    /**
+     * Block until subscriber is available
+     * and send onSubscribe signal to downstream if publisher is in {@link State#INIT INIT} state, or do nothing.
+     *
+     * @return this test publisher
+     */
+    TestPublisher<PAYLOAD> ready() {
         if (state.compareAndSet(State.INIT, State.READY)) {
             awaitSubscriber().onSubscribe(new Subscription() {
                 @Override
@@ -75,26 +106,38 @@ public class TestPublisher<PAYLOAD> implements Publisher<PAYLOAD> {
         return this;
     }
 
-    public TestPublisher<PAYLOAD> emit(PAYLOAD payload) {
-        awaitSubscriber().onNext(payload);
-        return this;
-    }
-
-    public TestPublisher<PAYLOAD> fail(Throwable t) {
+    /**
+     * Block until subscriber is available
+     * and send onError signal to downstream if publisher is in {@link State#READY READY} state, or do nothing.
+     *
+     * @return this test publisher
+     */
+    TestPublisher<PAYLOAD> fail(Throwable t) {
         if (state.compareAndSet(State.READY, State.FAILED)) {
             awaitSubscriber().onError(t);
         }
         return this;
     }
 
-    public TestPublisher<PAYLOAD> complete() {
+    /**
+     * Block until subscriber is available
+     * and send onComplete signal to downstream if publisher is in {@link State#READY READY} state, or do nothing.
+     *
+     * @return this test publisher
+     */
+    TestPublisher<PAYLOAD> complete() {
         if (state.compareAndSet(State.READY, State.COMPLETED)) {
             awaitSubscriber().onComplete();
         }
         return this;
     }
 
-    public TestPublisher<PAYLOAD> awaitCancel() {
+    /**
+     * Block until cancel signal is received from the subscriber.
+     *
+     * @return this test publisher
+     */
+    TestPublisher<PAYLOAD> awaitCancel() {
         try {
             cancelFuture.get(timeout, timeUnit);
             return this;
@@ -104,6 +147,12 @@ public class TestPublisher<PAYLOAD> implements Publisher<PAYLOAD> {
         }
     }
 
+    /**
+     * Wait for a subscriber,
+     * block till {@link TestPublisher#subscribe(org.reactivestreams.Subscriber) subscribe} method is invoked.
+     *
+     * @return subscriber of this publisher
+     */
     private Subscriber<? super PAYLOAD> awaitSubscriber() {
         try {
             return subscriberFuture.get(timeout, timeUnit);
