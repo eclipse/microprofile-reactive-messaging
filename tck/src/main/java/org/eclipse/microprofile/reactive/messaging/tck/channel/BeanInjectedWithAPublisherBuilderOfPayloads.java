@@ -38,6 +38,10 @@ public class BeanInjectedWithAPublisherBuilderOfPayloads {
     @Channel("hello")
     private PublisherBuilder<String> field;
 
+    public BeanInjectedWithAPublisherBuilderOfPayloads() {
+        this.constructor = null;
+    }
+
     @Inject
     public BeanInjectedWithAPublisherBuilderOfPayloads(@Channel("bonjour") PublisherBuilder<String> constructor) {
         this.constructor = constructor;

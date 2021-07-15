@@ -39,6 +39,10 @@ public class BeanInjectedWithAPublisherOfMessages {
     @Channel("hello")
     private Publisher<Message<String>> field;
 
+    public BeanInjectedWithAPublisherOfMessages() {
+        this.constructor = null;
+    }
+
     @Inject
     public BeanInjectedWithAPublisherOfMessages(@Channel("bonjour") Publisher<Message<String>> constructor) {
         this.constructor = constructor;
