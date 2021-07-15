@@ -34,13 +34,13 @@ public class EmitterInjectionMessageBeanWithPayloadsWithAckTest extends TckBase 
     @Deployment
     public static Archive<JavaArchive> deployment() {
         return getBaseArchive()
-            .addClasses(MyMessageBeanEmittingPayloadsWithAck.class);
+            .addClasses(MyMessageBeanEmittingPayloadsWithAck.class, MyMessageBean.class);
     }
 
     private @Inject MyMessageBeanEmittingPayloadsWithAck myMessageBeanEmittingPayloadsWithAck;
     @Test
     public void testMyMessageBeanWithPayloadsAndAck() {
-        
+
         myMessageBeanEmittingPayloadsWithAck.run();
         assertThat(myMessageBeanEmittingPayloadsWithAck.emitter()).isNotNull();
         assertThat(myMessageBeanEmittingPayloadsWithAck.list()).containsExactly("a", "b", "c");
