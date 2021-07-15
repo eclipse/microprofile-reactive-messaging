@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2018, 2020 Contributors to the Eclipse Foundation
+// Copyright (c) 2018, 2021 Contributors to the Eclipse Foundation
 //
 // See the NOTICE file(s) distributed with this work for additional
 // information regarding copyright ownership.
@@ -1330,6 +1330,44 @@ The connector is responsible for the acknowledgment (positive or negative) of th
 * An incoming connector must handle received negative acknowledgment.
 * An outgoing connector must acknowledge the incoming `org.eclipse.microprofile.reactive.messaging.Message` once it has successfully dispatched the message.
 * An outgoing connector must acknowledge negatively the incoming `org.eclipse.microprofile.reactive.messaging.Message` if it cannot be dispatched.
+
+== Health
+
+When MicroProfile Reactive Messaging is used in an environment where MicroProfile Health is enabled, implicit readiness
+and liveness checks `messaging` are produced.
+
+[source, json]
+----
+{
+  "status": "UP",
+  "checks": [
+    {
+      "name": "messaging",
+      "status": "UP"
+    }
+  ]
+}
+----
+
+=== Readiness
+State of the readiness check `messaging` is DOWN until subscribers of all messaging channels are subscribed to their
+respective publishers and `onSubscribe` signal is detected on all channels.
+
+=== Liveness
+
+State of the liveness check `messaging` is UP until `cancel` or `onError` signals are detected on any of the messaging
+channels.
+
+=== Excluding channels
+
+For channels which are not desired to be checked for liveness or readiness, exclusion is configurable with
+`mp.messaging.health.live.exclude` or `mp.messaging.health.ready.exclude` config keys.
+
+[source, properties]
+----
+mp.messaging.health.live.exclude=<channel-name>,<channel-name>
+mp.messaging.health.ready.exclude=<channel-name>,<channel-name>
+----
 
 == Metrics
 
