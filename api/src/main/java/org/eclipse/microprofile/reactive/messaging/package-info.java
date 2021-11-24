@@ -32,7 +32,7 @@
  * interfaces directly, or container specific implementations of streams.
  * <p>
  * Here is an example use of this API:
- * 
+ *
  * <pre>
  *   &#64;ApplicationScoped
  *   public class EmailPublisher {
@@ -54,5 +54,5 @@
  * </pre>
  */
 
-@org.osgi.annotation.versioning.Version("1.1")
+@org.osgi.annotation.versioning.Version("3.0")
 package org.eclipse.microprofile.reactive.messaging;
