@@ -18,13 +18,14 @@
  */
 package org.eclipse.microprofile.reactive.messaging;
 
+
+import org.eclipse.microprofile.reactive.streams.operators.ProcessorBuilder;
+import org.eclipse.microprofile.reactive.streams.operators.SubscriberBuilder;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
-import org.eclipse.microprofile.reactive.streams.operators.ProcessorBuilder;
-import org.eclipse.microprofile.reactive.streams.operators.SubscriberBuilder;
 
 /**
  * Used to signify a subscriber to incoming messages.
@@ -46,26 +47,27 @@ import org.eclipse.microprofile.reactive.streams.operators.SubscriberBuilder;
  * <p>
  * The type of the message accepted by the subscriber may be wrapped in {@link Message}, or a subclass of it. All
  * messaging providers must support {@code Message}, but messaging providers may also provide subclasses of
- * {@code Message} in order to expose message transport specific features. Use of these sub classes will result in a non
- * portable application. If the chosen messaging provider does not support the selected message wrapper, a deployment
- * exception will be raised before the container is initialized.
+ * {@code Message} in order to expose message transport specific features. Use of these sub classes will result in
+ * a non portable application. If the chosen messaging provider does not support the selected message wrapper, a
+ * deployment exception will be raised before the container is initialized.
  * </p>
  * <p>
  * If the incoming message is wrapped in a {@code Message} wrapper, then it is the responsibility of the subscriber to
- * acknowledge messages. This can either by done by invoking {@link Message#ack()} directly, or if using a method shape
- * that has an output value (such as the processor shapes, or methods that return a value), and if the output value also
- * is also wrapped in a {@code Message}, by passing the {@code ack} callback to the emitted {@code Message} so that the
- * container can ack it.
+ * acknowledge messages. This can either by done by invoking {@link Message#ack()} directly, or if using a method
+ * shape that has an output value (such as the processor shapes, or methods that return a value), and if the output
+ * value also is also wrapped in a {@code Message}, by passing the {@code ack} callback to the emitted {@code Message}
+ * so that the container can ack it.
  * </p>
  * <p>
  * If the incoming message is not wrapped, then the container is responsible for automatically acknowledging messages.
- * When the ack is done depends on the shape of the method - for subscriber shapes, it may either be done before or
- * after passing a message to the subscriber (note that it doesn't matter which, since compliant Reactive Streams
+ * When the ack is done depends on the shape of the method - for subscriber shapes, it may either be done before or after
+ * passing a message to the subscriber (note that it doesn't matter which, since compliant Reactive Streams
  * implementations don't allow throwing exceptions directly from the subscriber). For processor shapes, it should be
- * when the processor emits an element. In this case, it is assumed, and the application must ensure, that there is a
- * 1:1 correlation of elements consumed and emitted by the processor, and that ordering is maintained. For shapes that
- * return a {@code CompletionStage}, it should be when that completion stage is redeemed. For methods that accept a
- * single parameter and then return void or a value, it should be done after the method is invoked successfully.
+ * when the processor emits an element. In this case, it is assumed, and the application must ensure, that there is
+ * a 1:1 correlation of elements consumed and emitted by the processor, and that ordering is maintained. For shapes
+ * that return a {@code CompletionStage}, it should be when that completion stage is redeemed. For methods that
+ * accept a single parameter and then return void or a value, it should be done after the method is invoked
+ * successfully.
  * </p>
  * <p>
  * If there is an output value, and it is wrapped, then it is the containers responsibility to invoke

@@ -27,6 +27,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+
 /**
  * Configures the back pressure policy on an injected {@link Emitter}:
  *
@@ -51,8 +52,9 @@ public @interface OnOverflow {
      */
     enum Strategy {
         /**
-         * Buffers <strong>all</strong> values until the downstream consumes it. This creates a buffer with the size
-         * specified by {@link #bufferSize()} if present. Otherwise, the size will be the value of the config property
+         * Buffers <strong>all</strong> values until the downstream consumes it.
+         * This creates a buffer with the size specified by {@link #bufferSize()} if present.
+         * Otherwise, the size will be the value of the config property
          * <strong>mp.messaging.emitter.default-buffer-size</strong>.
          * <p>
          * If the buffer is full, an {@link IllegalStateException} will be thrown by the {@code Emitter.send} method.
@@ -60,14 +62,13 @@ public @interface OnOverflow {
         BUFFER,
 
         /**
-         * Buffers <strong>all</strong> values until the downstream consumes it. This creates an unbounded buffer so the
-         * application may run out of memory if values are continually added faster than they are consumed.
+         * Buffers <strong>all</strong> values until the downstream consumes it.
+         * This creates an unbounded buffer so the application may run out of memory if values are continually added faster than they are consumed.
          */
         UNBOUNDED_BUFFER,
 
         /**
-         * Causes an {@link IllegalStateException} to be thrown by the {@code Emitter.send} method if the downstream
-         * can't keep up.
+         * Causes an {@link IllegalStateException} to be thrown by the {@code Emitter.send} method if the downstream can't keep up.
          */
         THROW_EXCEPTION,
 
@@ -78,8 +79,8 @@ public @interface OnOverflow {
         DROP,
 
         /**
-         * Sends an error signal to the downstream subscriber in the case where it can't keep up. This terminates the
-         * reactive stream so no more values will be published.
+         * Sends an error signal to the downstream subscriber in the case where it can't keep up.
+         * This terminates the reactive stream so no more values will be published.
          */
         FAIL,
 
@@ -101,9 +102,9 @@ public @interface OnOverflow {
     Strategy value();
 
     /**
-     * @return the size of the buffer when {@link Strategy#BUFFER} is used. If not set and if the
-     *         {@link Strategy#BUFFER} strategy is used, the buffer size will be defaulted to the value of the config
-     *         property mp.messaging.emitter.defult-buffer-size.
+     * @return the size of the buffer when {@link Strategy#BUFFER} is used. If not set and if the {@link Strategy#BUFFER}
+     *         strategy is used, the buffer size will be defaulted to the value of the config property
+     *         mp.messaging.emitter.defult-buffer-size.
      */
     long bufferSize() default 0;
 

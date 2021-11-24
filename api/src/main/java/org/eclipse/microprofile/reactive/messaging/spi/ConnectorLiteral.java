@@ -32,8 +32,7 @@ public final class ConnectorLiteral extends AnnotationLiteral<Connector> impleme
     /**
      * Creates a new instance of {@link ConnectorLiteral}.
      *
-     * @param value
-     *            the name of the connector, must not be {@code null}, must not be {@code blank}
+     * @param value the name of the connector, must not be {@code null}, must not be {@code blank}
      * @return the {@link ConnectorLiteral} instance.
      */
     public static Connector of(String value) {
@@ -41,11 +40,10 @@ public final class ConnectorLiteral extends AnnotationLiteral<Connector> impleme
     }
 
     /**
-     * Creates a new instance of {@link ConnectorLiteral}. Users should use the {@link #of(String)} method to create
-     * instances.
+     * Creates a new instance of {@link ConnectorLiteral}.
+     * Users should use the {@link #of(String)} method to create instances.
      *
-     * @param value
-     *            the value.
+     * @param value the value.
      */
     private ConnectorLiteral(String value) {
         this.value = value;
@@ -58,3 +56,4 @@ public final class ConnectorLiteral extends AnnotationLiteral<Connector> impleme
         return value;
     }
 }
+

@@ -32,7 +32,6 @@
  * interfaces directly, or container specific implementations of streams.
  * <p>
  * Here is an example use of this API:
- *
  * <pre>
  *   &#64;ApplicationScoped
  *   public class EmailPublisher {
