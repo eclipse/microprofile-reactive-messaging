@@ -230,6 +230,7 @@
                         <configuration>
                             <name>currentYear</name>
                             <pattern>yyyy</pattern>
+                            <locale>en_US</locale>
                         </configuration>
                     </execution>
                 </executions>
