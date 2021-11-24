@@ -59,7 +59,7 @@ import java.util.NoSuchElementException;
  * <pre>
  * &#64;Incoming("my-channel")
  * public void consume(String s) {
- *     // ...
+ *      // ...
  * }
  * </pre>
  * <p>
@@ -74,7 +74,7 @@ import java.util.NoSuchElementException;
  * In the previous configuration, the reactive messaging implementation would need to find the
  * {@link IncomingConnectorFactory} qualified using the {@link Connector} qualifier with the value
  * {@code acme.kafka} class to create the {@code my-channel} channel. Note that if the
- * connector cannot be found, the deployment must be failed with a {@link javax.enterprise.inject.spi.DeploymentException}.
+ * connector cannot be found, the deployment must be failed with a {@link jakarta.enterprise.inject.spi.DeploymentException}.
  * <p>
  * The {@link #getPublisherBuilder(Config)} is called for every channel that needs to be created. The {@link Config} object
  * passed to the method contains a subset of the global configuration, and with the prefixes removed. So for the previous
@@ -110,7 +110,7 @@ public interface IncomingConnectorFactory extends ConnectorFactory {
      * subscription occurs.
      *
      * @param config the configuration, must not be {@code null}, must contain the {@link #CHANNEL_NAME_ATTRIBUTE}
-     *            attribute.
+     *               attribute.
      * @return the created {@link PublisherBuilder}, will not be {@code null}.
      * @throws IllegalArgumentException if the configuration is invalid.
      * @throws NoSuchElementException   if the configuration does not contain an expected attribute.

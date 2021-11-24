@@ -26,20 +26,20 @@ import java.lang.annotation.RetentionPolicy;
  *
  * Reactive Messaging proposes four acknowledgement strategies:
  * <ul>
- * <li><code>MANUAL</code>: the acknowledgement (positive or negative) is up to the user. This is the default strategy
+ *     <li><code>MANUAL</code>: the acknowledgement (positive or negative) is up to the user. This is the default strategy
  *     for methods ingesting or producing {@link Message}.
  *     </li>
  *     <li><code>POST_PROCESSING</code>: acknowledges the incoming message once the produced message is acknowledged.
  *     This is the default strategy for methods ingesting or producing single payloads.</li>
- * <li><code>PRE_PROCESSING</code>: acknowledges the incoming messages before calling the method.</li>
- * <li><code>NONE</code>: do not apply any acknowledgement.</li>
+ *     <li><code>PRE_PROCESSING</code>: acknowledges the incoming messages before calling the method.</li>
+ *     <li><code>NONE</code>: do not apply any acknowledgement.</li>
  * </ul>
  *
  * The set of supported acknowledgment policies depends on the method signature. The following list gives the supported
  * strategies for some common use cases.
  *
  * <ul>
- * <li><code> @Incoming("channel") void method(I payload)</code>: Post-processing (default), Pre-processing, None</li>
+ *     <li><code> @Incoming("channel") void method(I payload)</code>: Post-processing (default), Pre-processing, None</li>
  *     <li><code> @Incoming("channel") CompletionStage&lt;?&gt; method(I payload)</code>: Post-processing (default), Pre-processing, None</li>
  *     <li><code> @Incoming("in") @Outgoing("out") Message&lt;O&gt; method(Message&lt;I&gt; msg)</code>: , Manual (default), Pre-processing, None</li>
  *     <li><code> @Incoming("in") @Outgoing("out") O method(I payload)</code>: Post-Processing (default), Pre-processing, None</li>
@@ -325,40 +325,40 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Acknowledgment {
 
-    enum Strategy {
+  enum Strategy {
 
-        /**
-         * Acknowledgment managed by the user code. No automatic acknowledgment is performed. This strategy is only
-         * supported by methods consuming {@link Message} instances.
-         */
-        MANUAL,
+    /**
+     * Acknowledgment managed by the user code. No automatic acknowledgment is performed. This strategy is only
+     * supported by methods consuming {@link Message} instances.
+     */
+    MANUAL,
 
-        /**
-         * Acknowledgment performed automatically before the processing of the message by the user code.
-         */
-        PRE_PROCESSING,
+    /**
+     * Acknowledgment performed automatically before the processing of the message by the user code.
+     */
+    PRE_PROCESSING,
 
-        /**
+    /**
      * Acknowledgment performed automatically once the message has been processed.
      * When {@code POST_PROCESSING} is used, the incoming message is acknowledged when the produced message is
      * acknowledged.
-         *
-         * Notice that this mode is not supported for all signatures. When supported, it's the default policy.
-         *
-         */
-        POST_PROCESSING,
+     *
+     * Notice that this mode is not supported for all signatures. When supported, it's the default policy.
+     *
+     */
+    POST_PROCESSING,
 
-        /**
+   /**
     * No acknowledgment is performed, neither implicitly or explicitly.
     * It means that the incoming messages are going to be acknowledged in a different location or using a different
     * mechanism.
-         */
-        NONE
-    }
+    */
+    NONE
+  }
 
     /**
      * @return the acknowledgement policy.
      */
-    Strategy value();
+  Strategy value();
 
 }

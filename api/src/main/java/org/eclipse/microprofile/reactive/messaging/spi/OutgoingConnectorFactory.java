@@ -57,7 +57,7 @@ import java.util.NoSuchElementException;
  * <pre>
  * &#64;Outgoing("my-channel")
  * public CompletionStage&lt;String&gt; produce(String s) {
- *     // ...
+ *      // ...
  * }
  * </pre>
  * <p>
@@ -73,7 +73,7 @@ import java.util.NoSuchElementException;
  * In the previous configuration, the reactive messaging implementation would need to find the
  * {@link OutgoingConnectorFactory} implementation qualified with the {@link Connector} qualifier with the value
  * {@code acme.kafka} to create the {@code my-channel} <em>subscriber</em>. Note that if
- * the connector cannot be found, the deployment must be failed with a {@link javax.enterprise.inject.spi.DeploymentException}.
+ * the connector cannot be found, the deployment must be failed with a {@link jakarta.enterprise.inject.spi.DeploymentException}.
  * <p>
  * The {@link #getSubscriberBuilder(Config)} is called for every <em>channel</em> that needs to be created. The
  * {@link Config} object passed to the method contains a subset of the global configuration, and with the prefixes removed.

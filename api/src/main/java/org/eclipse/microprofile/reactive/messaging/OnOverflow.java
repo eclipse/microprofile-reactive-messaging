@@ -44,7 +44,7 @@ import java.lang.annotation.Target;
  * When not used, a {@link OnOverflow.Strategy#BUFFER} strategy is used with a buffer limited to 128 elements.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({METHOD, CONSTRUCTOR, FIELD, PARAMETER})
+@Target({ METHOD, CONSTRUCTOR, FIELD, PARAMETER })
 public @interface OnOverflow {
 
     /**

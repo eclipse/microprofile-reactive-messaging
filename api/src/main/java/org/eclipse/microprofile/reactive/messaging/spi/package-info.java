@@ -29,13 +29,13 @@
  * <ul>
  *     <li>a source of messages - it retrieves messages and injects them into the Reactive Messaging application. To
  *     manage this direction, the connector implementation must implement the
- * {@link org.eclipse.microprofile.reactive.messaging.spi.IncomingConnectorFactory} interface.</li>
- * <li>a sink of messages - it forwards messages emitted by the Reactive Messaging application to the managed
- * technology. To achieve this, the connector implementation must implement the
- * {@link org.eclipse.microprofile.reactive.messaging.spi.OutgoingConnectorFactory} interface.</li>
+ *     {@link org.eclipse.microprofile.reactive.messaging.spi.IncomingConnectorFactory} interface.</li>
+ *     <li>a sink of messages - it forwards messages emitted by the Reactive Messaging application to the managed
+ *     technology. To achieve this, the connector implementation must implement the
+ *     {@link org.eclipse.microprofile.reactive.messaging.spi.OutgoingConnectorFactory} interface.</li>
  * </ul>
  *
- * Connectors are implemented as CDI beans and identified using the
+ * Connectors are  implemented as CDI beans and identified using the
  * {@link org.eclipse.microprofile.reactive.messaging.spi.Connector} qualifier. Connectors receive the channel
  * configuration matching their {@link Connector} name.
  */

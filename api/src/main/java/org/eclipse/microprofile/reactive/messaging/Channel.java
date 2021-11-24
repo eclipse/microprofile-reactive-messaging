@@ -60,7 +60,7 @@ import jakarta.inject.Qualifier;
  */
 @Qualifier
 @Retention(RetentionPolicy.RUNTIME)
-@Target({METHOD, CONSTRUCTOR, FIELD, PARAMETER})
+@Target({ METHOD, CONSTRUCTOR, FIELD, PARAMETER })
 public @interface Channel {
 
     /**

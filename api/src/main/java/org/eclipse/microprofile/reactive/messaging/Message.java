@@ -73,12 +73,12 @@ public interface Message<T> {
      * @param payload The payload.
      * @param ack The ack function, this will be invoked when the returned messages {@link #ack()} method is invoked.
      * @param nack The negative-ack function, this will be invoked when the returned messages {@link #nack(Throwable)}
-     *            method is invoked.
+     *        method is invoked.
      * @param <T> the type of payload
      * @return A message with the given payload, ack and nack functions.
      */
     static <T> Message<T> of(T payload,
-            Supplier<CompletionStage<Void>> ack, Function<Throwable, CompletionStage<Void>> nack) {
+                             Supplier<CompletionStage<Void>> ack, Function<Throwable, CompletionStage<Void>> nack) {
         return new Message<T>() {
             @Override
             public T getPayload() {
@@ -140,7 +140,7 @@ public interface Message<T> {
      * Acknowledge this message.
      *
      * @return a completion stage completed when the message is acknowledged. If the acknowledgement fails, the
-     *         completion stage propagates the failure.
+     * completion stage propagates the failure.
      */
     default CompletionStage<Void> ack() {
         return CompletableFuture.completedFuture(null);
@@ -204,10 +204,12 @@ public interface Message<T> {
         }
         try {
             return unwrapType.cast(this);
-        } catch (ClassCastException e) {
-            throw new IllegalArgumentException("Cannot unwrap an instance of " + this.getClass().getName()
-                    + " to " + unwrapType.getName(), e);
         }
+        catch (ClassCastException e) {
+            throw new IllegalArgumentException("Cannot unwrap an instance of " + this.getClass().getName()
+                + " to " + unwrapType.getName(), e);
+        }
+
 
     }
 }
