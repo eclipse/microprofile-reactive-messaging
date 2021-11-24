@@ -176,8 +176,7 @@ public interface Message<T> {
         Function<Throwable, CompletionStage<Void>> nack = getNack();
         if (nack == null) {
             return CompletableFuture.completedFuture(null);
-        }
-        else {
+        } else {
             return nack.apply(reason);
         }
     }
@@ -204,8 +203,7 @@ public interface Message<T> {
         }
         try {
             return unwrapType.cast(this);
-        }
-        catch (ClassCastException e) {
+        } catch (ClassCastException e) {
             throw new IllegalArgumentException("Cannot unwrap an instance of " + this.getClass().getName()
                 + " to " + unwrapType.getName(), e);
         }
