@@ -84,8 +84,7 @@ public class TestConnector implements IncomingConnectorFactory, OutgoingConnecto
         Message<String> result = null;
         try {
             result = queue.poll(5, SECONDS);
-        }
-        catch (InterruptedException e) {
+        } catch (InterruptedException e) {
             fail("Interrupted while waiting for messages");
         }
 

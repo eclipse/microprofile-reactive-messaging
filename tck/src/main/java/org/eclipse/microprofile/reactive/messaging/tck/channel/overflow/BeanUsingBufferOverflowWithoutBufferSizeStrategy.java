@@ -73,8 +73,7 @@ public class BeanUsingBufferOverflowWithoutBufferSizeStrategy {
         try {
             emitter.send(item);
             accepted.add(item);
-        }
-        catch (IllegalStateException e) {
+        } catch (IllegalStateException e) {
             rejected.add(item);
         }
     }

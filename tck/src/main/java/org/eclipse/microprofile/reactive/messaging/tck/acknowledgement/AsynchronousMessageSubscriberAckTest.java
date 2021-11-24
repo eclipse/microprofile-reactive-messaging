@@ -145,8 +145,7 @@ public class AsynchronousMessageSubscriberAckTest extends TckBase {
                     CompletableFuture<Void> future = new CompletableFuture<>();
                     future.completeExceptionally(new IllegalArgumentException("b"));
                     return future;
-                }
-                else if (s.equalsIgnoreCase("h")) {
+                } else if (s.equalsIgnoreCase("h")) {
                     throw new IllegalStateException("h");
                 }
             }

@@ -54,8 +54,7 @@ public class MyBeanEmittingDataAfterTerminationWithError {
         emitter.error(new Exception("BOOM"));
         try {
             emitter.send("c");
-        }
-        catch (final IllegalStateException e) {
+        } catch (final IllegalStateException e) {
             caught = true;
         }
     }

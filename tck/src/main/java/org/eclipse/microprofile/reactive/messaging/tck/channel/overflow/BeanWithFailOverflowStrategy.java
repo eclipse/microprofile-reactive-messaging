@@ -74,8 +74,7 @@ public class BeanWithFailOverflowStrategy {
             emitter.send("2");
             emitter.send("3");
             emitter.complete();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             callerException = e;
         }
     }
@@ -86,8 +85,7 @@ public class BeanWithFailOverflowStrategy {
                 for (int i = 1; i < 1000; i++) {
                     emitter.send("" + i);
                 }
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 callerException = e;
             }
         }).start();

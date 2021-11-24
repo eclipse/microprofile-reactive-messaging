@@ -87,8 +87,7 @@ public class BeanUsingThrowExceptionStrategy {
         try {
             emitter.send(item);
             accepted.add(item);
-        }
-        catch (IllegalStateException e) {
+        } catch (IllegalStateException e) {
             rejected.add(item);
         }
     }
@@ -99,8 +98,7 @@ public class BeanUsingThrowExceptionStrategy {
         return values.via(ReactiveStreams.<String>builder().flatMapCompletionStage(s -> CompletableFuture.supplyAsync(()-> {
             try {
                 Thread.sleep(1000);
-            }
-            catch (InterruptedException ignored) {
+            } catch (InterruptedException ignored) {
                 Thread.currentThread().interrupt();
             }
             return s;

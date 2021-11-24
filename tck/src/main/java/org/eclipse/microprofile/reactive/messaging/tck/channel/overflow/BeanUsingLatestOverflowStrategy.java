@@ -82,8 +82,7 @@ public class BeanUsingLatestOverflowStrategy {
             emitter.send("2");
             emitter.send("3");
             emitter.complete();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             callerException = e;
         }
     }
@@ -94,11 +93,9 @@ public class BeanUsingLatestOverflowStrategy {
                 for (int i = 1; i < 1000; i++) {
                     emitter.send("" + i);
                 }
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 callerException = e;
-            }
-            finally {
+            } finally {
                 done = true;
             }
         }).start();
@@ -111,8 +108,7 @@ public class BeanUsingLatestOverflowStrategy {
         return values.via(ReactiveStreams.<String>builder().flatMapCompletionStage(s -> CompletableFuture.supplyAsync(()-> {
             try {
                 Thread.sleep(1000);
-            }
-            catch (InterruptedException ignored) {
+            } catch (InterruptedException ignored) {
                 Thread.currentThread().interrupt();
             }
             return s;

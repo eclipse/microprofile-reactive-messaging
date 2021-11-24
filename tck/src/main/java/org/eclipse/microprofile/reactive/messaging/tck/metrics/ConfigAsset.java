@@ -41,8 +41,7 @@ public class ConfigAsset implements Asset {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             properties.store(out, "Config generated with ConfigAsset");
             return new ByteArrayInputStream(out.toByteArray());
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }

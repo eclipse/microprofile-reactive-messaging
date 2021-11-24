@@ -68,8 +68,7 @@ public class MyBeanEmittingPayloadsWithAck {
 
         if (!"c".equals(s.getPayload())) {
             return s.ack();
-        }
-        else {
+        } else {
             return new CompletableFuture<>();
 
         }

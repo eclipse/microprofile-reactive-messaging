@@ -59,15 +59,13 @@ public class MyBeanEmittingNull {
         emitter.send("b");
         try {
             emitter.send((String) null);
-        }
-        catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             caughtNullPayload = true;
         }
 
         try {
             emitter.send((Message<String>) null);
-        }
-        catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             caughtNullMessage = true;
         }
         emitter.send("c");

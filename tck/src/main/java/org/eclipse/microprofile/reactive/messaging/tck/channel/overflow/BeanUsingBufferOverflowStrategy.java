@@ -89,8 +89,7 @@ public class BeanUsingBufferOverflowStrategy {
         try {
             emitter.send(item);
             accepted.add(item);
-        }
-        catch (IllegalStateException e) {
+        } catch (IllegalStateException e) {
             rejected.add(item);
         }
     }
@@ -101,8 +100,7 @@ public class BeanUsingBufferOverflowStrategy {
         return values.via(ReactiveStreams.<String>builder().flatMapCompletionStage(s -> CompletableFuture.supplyAsync(()-> {
             try {
                 Thread.sleep(1);
-            }
-            catch (InterruptedException ignored) {
+            } catch (InterruptedException ignored) {
                 Thread.currentThread().interrupt();
             }
             return s;

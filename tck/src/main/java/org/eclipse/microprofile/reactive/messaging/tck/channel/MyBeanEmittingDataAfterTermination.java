@@ -54,8 +54,7 @@ public class MyBeanEmittingDataAfterTermination {
         emitter.complete();
         try {
             emitter.send("c");
-        }
-        catch (final IllegalStateException e) {
+        } catch (final IllegalStateException e) {
             caught = true;
         }
     }

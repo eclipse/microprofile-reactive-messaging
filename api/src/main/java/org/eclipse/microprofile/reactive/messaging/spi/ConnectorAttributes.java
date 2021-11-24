@@ -26,8 +26,8 @@ import java.lang.annotation.Target;
 /**
  * This class is used to allow multiple {@link ConnectorAttribute} declarations.
  *
- * This class should not be used directly. Instead, multiple {@link ConnectorAttribute} should be used on the
- * class annotated with {@link Connector}.
+ * This class should not be used directly. Instead, multiple {@link ConnectorAttribute} should be used on the class
+ * annotated with {@link Connector}.
  */
 @Retention(RetentionPolicy.CLASS)
 @Target(ElementType.TYPE)
