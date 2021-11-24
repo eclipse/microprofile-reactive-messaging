@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020 Contributors to the Eclipse Foundation
+ * Copyright (c) 2020, 2021 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -23,7 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.stream.IntStream;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.eclipse.microprofile.reactive.messaging.tck.TckBase;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -49,19 +49,19 @@ public class DefaultOverflowStrategyOverflowWithoutBufferSizeTest extends TckBas
 
     @Test
     public void testOverflow() {
-        
+
         bean.tryEmitThousand();
 
         assertThat(bean.accepted().size() + bean.rejected().size()).isEqualTo(1000);
         assertThat(bean.rejected()).isNotEmpty();
-        
+
         // Buffer size is 5, so first 5 items should always be accepted
         assertThat(bean.accepted()).containsAll(IntStream.range(0, 5).mapToObj(Integer::toString).collect(toList()));
-        
+
         // Later items should be rejected as the subscriber never requests any items
         // Allow a little leeway for buffering in the reactive streams implementation
         assertThat(bean.rejected()).containsAll(IntStream.range(7, 1000).mapToObj(Integer::toString).collect(toList()));
-        
+
         assertThat(bean.failure()).isNull();
     }
 }

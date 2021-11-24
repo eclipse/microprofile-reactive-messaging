@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018, 2019 Contributors to the Eclipse Foundation
+ * Copyright (c) 2018, 2021 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.reactive.messaging.Message;
@@ -43,9 +43,9 @@ import io.reactivex.FlowableEmitter;
 @ApplicationScoped
 @Connector(TestConnector.ID)
 public class TestConnector implements IncomingConnectorFactory, OutgoingConnectorFactory {
-    
+
     public static final String ID = "test-connector";
-    
+
     private Map<String, FlowableEmitter<Message<String>>> incomingEmitters = new HashMap<>();
     private Map<String, LinkedBlockingQueue<Message<String>>> outgoingQueues = new HashMap<>();
 
@@ -63,24 +63,24 @@ public class TestConnector implements IncomingConnectorFactory, OutgoingConnecto
         Flowable<Message<String>> flowable = Flowable.create((e) -> incomingEmitters.put(channel, e), BackpressureStrategy.BUFFER);
         return ReactiveStreams.fromPublisher(flowable);
     }
-    
+
     public void send(String channel, Message<String> message) {
         FlowableEmitter<Message<String>> emitter = incomingEmitters.get(channel);
-        
+
         if (emitter == null) {
             throw new RuntimeException("No such incoming channel registered: " + channel);
         }
-        
+
         emitter.onNext(message);
     }
-    
+
     public Message<String> get(String channel) {
         LinkedBlockingQueue<Message<String>> queue = outgoingQueues.get(channel);
-        
+
         if (queue == null) {
             throw new RuntimeException("No such outgoing channel registered: " + channel);
         }
-        
+
         Message<String> result = null;
         try {
             result = queue.poll(5, SECONDS);
@@ -88,12 +88,12 @@ public class TestConnector implements IncomingConnectorFactory, OutgoingConnecto
         catch (InterruptedException e) {
             fail("Interrupted while waiting for messages");
         }
-        
+
         if (result == null) {
             fail("Timed out waiting for messages");
         }
-        
+
         return result;
     }
-    
+
 }

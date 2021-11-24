@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018, 2019 Contributors to the Eclipse Foundation
+ * Copyright (c) 2018, 2021 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -43,11 +43,11 @@ import java.util.NoSuchElementException;
  * </pre>
  * <p>
  * The configuration keys are structured as follows: {@code mp.messaging.[incoming|outgoing].channel-name.attribute} or
- * {@code mp.messaging.[connector].connector-name.attribute}. 
+ * {@code mp.messaging.[connector].connector-name.attribute}.
  * Channel names are not expected to contain {@code .} so the first occurrence of a {@code .} in the channel-name portion
  * of a property terminates the channel name and precedes the attribute name.
  * For connector attributes, the longest string, inclusive of {@code .}s, that matches a loadable
- * connector is used as a {@code connector-name}. The remainder, after a {@code .} separator, is the attribute name.  
+ * connector is used as a {@code connector-name}. The remainder, after a {@code .} separator, is the attribute name.
  * Configuration keys that begin
  * {@code mp.messaging.incoming} are not used for {@link OutgoingConnectorFactory} configuration.
  * <p>
@@ -63,17 +63,17 @@ import java.util.NoSuchElementException;
  * <p>
  * The set of attributes depend on the connector and transport layer (For example, bootstrap.servers is Kafka specific).
  * The {@code connector} attribute indicates the name of the connector.
- * It will be matched to the value returned by the {@link Connector} qualifier 
+ * It will be matched to the value returned by the {@link Connector} qualifier
  * used on the relevant {@link OutgoingConnectorFactory} bean implementation.
  * This is how a reactive messaging implementation looks for the specific {@link OutgoingConnectorFactory} required for
- * a channel. 
+ * a channel.
  * Any {@code mp.messaging.connector} attributes for the channel's connector are also included in the set
  * of relevant attributes. Where an attribute is present for both a channel and its connector the value of the channel
  * specific attribute will take precedence.
  * In the previous configuration, the reactive messaging implementation would need to find the
  * {@link OutgoingConnectorFactory} implementation qualified with the {@link Connector} qualifier with the value
  * {@code acme.kafka} to create the {@code my-channel} <em>subscriber</em>. Note that if
- * the connector cannot be found, the deployment must be failed with a {@link javax.enterprise.inject.spi.DeploymentException}.
+ * the connector cannot be found, the deployment must be failed with a {@link jakarta.enterprise.inject.spi.DeploymentException}.
  * <p>
  * The {@link #getSubscriberBuilder(Config)} is called for every <em>channel</em> that needs to be created. The
  * {@link Config} object passed to the method contains a subset of the global configuration, and with the prefixes removed.

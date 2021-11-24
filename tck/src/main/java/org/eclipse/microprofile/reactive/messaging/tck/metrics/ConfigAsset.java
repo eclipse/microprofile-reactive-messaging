@@ -27,9 +27,9 @@ import java.util.Properties;
 import org.jboss.shrinkwrap.api.asset.Asset;
 
 public class ConfigAsset implements Asset {
-    
+
     private Properties properties = new Properties();
-    
+
     public ConfigAsset put(String key, String value) {
         properties.put(key, value);
         return this;

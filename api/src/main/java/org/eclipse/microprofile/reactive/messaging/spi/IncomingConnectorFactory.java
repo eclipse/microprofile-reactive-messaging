@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018, 2019 Contributors to the Eclipse Foundation
+ * Copyright (c) 2018, 2021 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -40,7 +40,7 @@ import java.util.NoSuchElementException;
  * ...
  * </pre>
  * <p>
- * The configuration keys are structured as follows: {@code mp.messaging.[incoming|outgoing].channel-name.attribute} or 
+ * The configuration keys are structured as follows: {@code mp.messaging.[incoming|outgoing].channel-name.attribute} or
  * {@code mp.messaging.[connector].connector-name.attribute}.
  * Channel names are not expected to contain {@code .} so the first occurrence of a {@code .} in the {@code channel-name}
  * portion of a property terminates the channel name and precedes the attribute name.
@@ -74,7 +74,7 @@ import java.util.NoSuchElementException;
  * In the previous configuration, the reactive messaging implementation would need to find the
  * {@link IncomingConnectorFactory} qualified using the {@link Connector} qualifier with the value
  * {@code acme.kafka} class to create the {@code my-channel} channel. Note that if the
- * connector cannot be found, the deployment must be failed with a {@link javax.enterprise.inject.spi.DeploymentException}.
+ * connector cannot be found, the deployment must be failed with a {@link jakarta.enterprise.inject.spi.DeploymentException}.
  * <p>
  * The {@link #getPublisherBuilder(Config)} is called for every channel that needs to be created. The {@link Config} object
  * passed to the method contains a subset of the global configuration, and with the prefixes removed. So for the previous
@@ -93,7 +93,7 @@ import java.util.NoSuchElementException;
  * <p>
  * If the configuration is invalid, the {@link #getPublisherBuilder(Config)} method must throw an
  * {@link IllegalArgumentException}, caught by the reactive messaging implementation and failing the deployment by
- * throwing a {@link javax.enterprise.inject.spi.DeploymentException} wrapping the exception.
+ * throwing a {@link jakarta.enterprise.inject.spi.DeploymentException} wrapping the exception.
  * <p>
  * Note that a Reactive Messaging implementation must support the configuration format described here. Implementations
  * are free to provide additional support for other approaches.

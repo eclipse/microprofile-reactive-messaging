@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020 Contributors to the Eclipse Foundation
+ * Copyright (c) 2020, 2021 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -24,7 +24,7 @@ import static org.awaitility.Awaitility.await;
 
 import java.util.stream.IntStream;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.eclipse.microprofile.reactive.messaging.tck.TckBase;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -43,19 +43,19 @@ public class BufferOverflowStrategyOverflowTest extends TckBase {
 
     @Inject
     private BeanUsingBufferOverflowStrategy bean;
-    
+
 
     @Test
     public void testOverflow() {
-        
+
         bean.tryEmitThousand();
 
         assertThat(bean.accepted().size() + bean.rejected().size()).isEqualTo(1000);
         assertThat(bean.rejected()).isNotEmpty();
-        
+
         // Buffer size is 300, so first 300 items should always be accepted
         assertThat(bean.accepted()).containsAll(IntStream.range(0, 300).mapToObj(Integer::toString).collect(toList()));
-        
+
         await().until(() -> bean.output().size() == bean.accepted().size());
         assertThat(bean.accepted()).containsExactlyElementsOf(bean.accepted());
         assertThat(bean.failure()).isNull();

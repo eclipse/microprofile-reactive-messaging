@@ -20,7 +20,7 @@ package org.eclipse.microprofile.reactive.messaging.tck.channel;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.eclipse.microprofile.reactive.messaging.tck.TckBase;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -37,11 +37,11 @@ public class EmitterInjectionAfterTerminatingWithErrorTest extends TckBase {
             .addClasses(MyBeanEmittingDataAfterTerminationWithError.class);
     }
 
-    
-    private @Inject MyBeanEmittingDataAfterTerminationWithError myBeanEmittingDataAfterTerminationWithError;    
+
+    private @Inject MyBeanEmittingDataAfterTerminationWithError myBeanEmittingDataAfterTerminationWithError;
     @Test
     public void testTerminationWithError() {
- 
+
         myBeanEmittingDataAfterTerminationWithError.run();
         assertThat(myBeanEmittingDataAfterTerminationWithError.emitter()).isNotNull();
         assertThat(myBeanEmittingDataAfterTerminationWithError.list()).containsExactly("a", "b");
@@ -50,6 +50,6 @@ public class EmitterInjectionAfterTerminatingWithErrorTest extends TckBase {
         assertThat(myBeanEmittingDataAfterTerminationWithError.isCaught()).isTrue();
     }
 
-    
+
 
 }

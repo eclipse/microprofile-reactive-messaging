@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020 Contributors to the Eclipse Foundation
+ * Copyright (c) 2020, 2021 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -19,7 +19,7 @@
 package org.eclipse.microprofile.reactive.messaging.tck.channel;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.eclipse.microprofile.reactive.messaging.tck.TckBase;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -37,13 +37,13 @@ public class ChannelInjectionPublisherBuilderMessageTest extends TckBase {
             .addClasses(SourceBean.class, BeanInjectedWithAPublisherBuilderOfMessages.class);
     }
 
-    
+
 
     private @Inject BeanInjectedWithAPublisherBuilderOfMessages beanInjectedWithAPublisherBuilderOfMessages;
 
     @Test
     public void testInjectionOfPublisherBuilderOfMessages() {
-        
+
         assertThat(beanInjectedWithAPublisherBuilderOfMessages.consume()).containsExactlyInAnyOrder
         ("B", "O", "N", "J", "O", "U", "R", "h", "e", "l", "l", "o");
     }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020 Contributors to the Eclipse Foundation
+ * Copyright (c) 2020, 2021 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -21,8 +21,8 @@ package org.eclipse.microprofile.reactive.messaging.tck.channel.overflow;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 import org.eclipse.microprofile.reactive.messaging.Channel;
 import org.eclipse.microprofile.reactive.messaging.Emitter;
@@ -68,7 +68,7 @@ public class BeanUsingBufferOverflowWithoutBufferSizeStrategy {
             tryEmit(Integer.toString(i));
         }
     }
-    
+
     private void tryEmit(String item) {
         try {
             emitter.send(item);
@@ -86,12 +86,12 @@ public class BeanUsingBufferOverflowWithoutBufferSizeStrategy {
 
             @Override
             public void onSubscribe(Subscription s) {
-                
+
             }
 
             @Override
             public void onNext(String t) {
-                
+
             }
 
             @Override
@@ -101,12 +101,12 @@ public class BeanUsingBufferOverflowWithoutBufferSizeStrategy {
 
             @Override
             public void onComplete() {
-                
+
             }
 
        };
     }
 
-  
+
 
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020 Contributors to the Eclipse Foundation
+ * Copyright (c) 2020, 2021 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -24,9 +24,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import javax.annotation.PreDestroy;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
+import jakarta.annotation.PreDestroy;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 import org.eclipse.microprofile.reactive.messaging.Channel;
 import org.eclipse.microprofile.reactive.messaging.Emitter;
@@ -43,12 +43,12 @@ public class BeanUsingLatestOverflowStrategy {
 
 
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
-  
+
     @PreDestroy
     public void terminate() {
         executor.shutdown();
-    } 
-    
+    }
+
     @Inject
     @Channel("hello")
     @OnOverflow(value = OnOverflow.Strategy.LATEST)
@@ -82,7 +82,7 @@ public class BeanUsingLatestOverflowStrategy {
             emitter.send("2");
             emitter.send("3");
             emitter.complete();
-        } 
+        }
         catch (Exception e) {
             callerException = e;
         }
@@ -94,10 +94,10 @@ public class BeanUsingLatestOverflowStrategy {
                 for (int i = 1; i < 1000; i++) {
                     emitter.send("" + i);
                 }
-            } 
+            }
             catch (Exception e) {
                 callerException = e;
-            } 
+            }
             finally {
                 done = true;
             }
@@ -107,17 +107,17 @@ public class BeanUsingLatestOverflowStrategy {
     @Incoming("hello")
     @Outgoing("out")
     public PublisherBuilder<String> consume(final PublisherBuilder<String> values) {
-        
+
         return values.via(ReactiveStreams.<String>builder().flatMapCompletionStage(s -> CompletableFuture.supplyAsync(()-> {
             try {
-                Thread.sleep(1000); 
-            } 
+                Thread.sleep(1000);
+            }
             catch (InterruptedException ignored) {
                 Thread.currentThread().interrupt();
             }
             return s;
         }, executor))).onError(err -> downstreamFailure = err);
-            
+
     }
 
     @Incoming("out")

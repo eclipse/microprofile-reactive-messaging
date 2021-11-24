@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020 Contributors to the Eclipse Foundation
+ * Copyright (c) 2020, 2021 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -24,9 +24,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import javax.annotation.PreDestroy;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
+import jakarta.annotation.PreDestroy;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 import org.eclipse.microprofile.reactive.messaging.Channel;
 import org.eclipse.microprofile.reactive.messaging.Emitter;
@@ -40,12 +40,12 @@ import org.eclipse.microprofile.reactive.streams.operators.ReactiveStreams;
 public class BeanWithFailOverflowStrategy {
 
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
-  
+
     @PreDestroy
     public void terminate() {
         executor.shutdown();
-    } 
-    
+    }
+
     @Inject
     @Channel("hello")
     @OnOverflow(value = OnOverflow.Strategy.FAIL)
@@ -74,7 +74,7 @@ public class BeanWithFailOverflowStrategy {
             emitter.send("2");
             emitter.send("3");
             emitter.complete();
-        } 
+        }
         catch (Exception e) {
             callerException = e;
         }
@@ -86,7 +86,7 @@ public class BeanWithFailOverflowStrategy {
                 for (int i = 1; i < 1000; i++) {
                     emitter.send("" + i);
                 }
-            } 
+            }
             catch (Exception e) {
                 callerException = e;
             }
@@ -98,7 +98,7 @@ public class BeanWithFailOverflowStrategy {
     public PublisherBuilder<String> consume(final PublisherBuilder<String> values) {
         return values.via(ReactiveStreams.<String>builder().flatMapCompletionStage(s -> CompletableFuture.supplyAsync(()-> s, executor)))
         .onError(err -> downstreamFailure = err);
-        
+
     }
 
     @Incoming("out")

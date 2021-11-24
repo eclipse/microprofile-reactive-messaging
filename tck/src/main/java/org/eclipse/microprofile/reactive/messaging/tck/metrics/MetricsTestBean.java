@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018, 2019 Contributors to the Eclipse Foundation
+ * Copyright (c) 2018, 2021 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 
 import org.eclipse.microprofile.reactive.messaging.Acknowledgment;
 import org.eclipse.microprofile.reactive.messaging.Acknowledgment.Strategy;
@@ -38,10 +38,10 @@ public class MetricsTestBean {
     public static final String CONNECTOR_IN = "channel-connector-in";
     public static final String CONNECTOR_PROCESS = "channel-connector-process";
     public static final String CONNECTOR_OUT = "channel-connector-out";
-    
+
     public static final String CHANNEL_APP_A = "channel-app-a";
     public static final String CHANNEL_APP_B = "channel-app-b";
-    
+
     private AtomicInteger inAppMessagesReceived = new AtomicInteger(0);
 
     @Incoming(CONNECTOR_IN)
@@ -49,7 +49,7 @@ public class MetricsTestBean {
     public String simpleMapping(String a) {
         return a + "-test";
     }
-    
+
     @Incoming(CONNECTOR_PROCESS)
     @Outgoing(CONNECTOR_OUT)
     @Acknowledgment(Strategy.PRE_PROCESSING)
@@ -60,12 +60,12 @@ public class MetricsTestBean {
         }
         return ReactiveStreams.fromIterable(messages);
     }
-    
+
     @Outgoing(CHANNEL_APP_A)
     public PublisherBuilder<String> produce() {
         return ReactiveStreams.of("test-a", "test-b", "test-c");
     }
-    
+
     @Incoming(CHANNEL_APP_A)
     @Outgoing(CHANNEL_APP_B)
     public PublisherBuilder<String> split(String input) {
@@ -75,7 +75,7 @@ public class MetricsTestBean {
         }
         return ReactiveStreams.fromIterable(messages);
     }
-    
+
     @Incoming(CHANNEL_APP_B)
     public void receive(String input) {
         inAppMessagesReceived.incrementAndGet();

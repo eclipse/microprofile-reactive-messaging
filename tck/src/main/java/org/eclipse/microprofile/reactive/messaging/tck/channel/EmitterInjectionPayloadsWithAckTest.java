@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020 Contributors to the Eclipse Foundation
+ * Copyright (c) 2020, 2021 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -24,7 +24,7 @@ import static org.awaitility.Awaitility.await;
 import java.util.List;
 import java.util.concurrent.CompletionStage;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.eclipse.microprofile.reactive.messaging.tck.TckBase;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -44,7 +44,7 @@ public class EmitterInjectionPayloadsWithAckTest extends TckBase {
     private @Inject MyBeanEmittingPayloadsWithAck myBeanEmittingPayloadsWithAck;
     @Test
     public void testWithPayloadsAndAck() {
-        
+
         myBeanEmittingPayloadsWithAck.run();
         List<CompletionStage<Void>> cs = myBeanEmittingPayloadsWithAck.getCompletionStage();
         assertThat(myBeanEmittingPayloadsWithAck.emitter()).isNotNull();
