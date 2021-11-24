@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2018, 2019 Contributors to the Eclipse Foundation
+// Copyright (c) 2018, 2021 Contributors to the Eclipse Foundation
 //
 // See the NOTICE file(s) distributed with this work for additional
 // information regarding copyright ownership.
@@ -25,20 +25,20 @@ State-of-the-art systems must be able to adapt themselves to emerging needs and 
 Leading-edge applications are capable of dynamic and adaptive capabilities aiming to provide _responsive_ systems.
 While microservices aim to offer this agility, HTTP-based connecting tissue tends to fail to provide the required runtime adaptations, especially when facing failures.
 
-Asynchronous communication allows temporal decoupling of services in a microservice based architecture. 
+Asynchronous communication allows temporal decoupling of services in a microservice based architecture.
 This temporal decoupling is necessary if communication is to be enabled to occur regardless of when the parties involved in the communication are running, whether they are loaded or overloaded, and whether they are successfully processing messages or failing.
 
-In contrast, synchronous communication couples services together, binding their uptime, failure, and handling of the load to each other. 
-In a chain of synchronous interactions, the entire conversation can only be successful if all parties in the chain are responsive - if they are all running, processing messages successfully, and not overloaded. 
+In contrast, synchronous communication couples services together, binding their uptime, failure, and handling of the load to each other.
+In a chain of synchronous interactions, the entire conversation can only be successful if all parties in the chain are responsive - if they are all running, processing messages successfully, and not overloaded.
 If just one party has a problem, all effectively exhibit the same problem.
 Therefore, systems of microservices relying on synchronous HTTP or relying on synchronous protocols tend to be _fragile_, and failures limit their availability.
-Indeed, in a microservice-based architecture, temporal coupling results in a fragile system, with resilience and scaling properties that are worse than a monolith, hence, it is essential for microservice based architectures to embrace asynchronous communication as much as possible. 
+Indeed, in a microservice-based architecture, temporal coupling results in a fragile system, with resilience and scaling properties that are worse than a monolith, hence, it is essential for microservice based architectures to embrace asynchronous communication as much as possible.
 
 The role of the MicroProfile Reactive Messaging specification is to deliver a way to build systems of microservices promoting both location transparency and temporal decoupling, enforcing asynchronous communication between the different parts of the system.
 
 === Reactive Systems
 
-https://www.reactivemanifesto.org/[Reactive Systems] provide an architecture style to deliver _responsive_ systems. 
+https://www.reactivemanifesto.org/[Reactive Systems] provide an architecture style to deliver _responsive_ systems.
 By infusing asynchronous messaging passing at the core of the system, applications enforcing the reactive system's characteristics are inherently resilient and become more elastic by scaling up and down the number of message consumers.
 
 image::reactive-system.png[Reactive System Characteristics, 400, 400]
@@ -54,10 +54,10 @@ The MicroProfile Reactive Messaging specification aims to deliver applications e
 
 === On JMS and Message Driven Beans
 
-Java EE offers JMS and Message Driven Beans for handling asynchronous communication; however, there are some problems with these specifications:
+Jakarta EE offers JMS and Message Driven Beans for handling asynchronous communication; however, there are some problems with these specifications:
 
 * Both are designed for a technology landscape where messaging was typically on the edge of the system to hand control of a transaction from one system to another; consequently, these technologies can appear heavyweight when used between microservices.
-* It is assumed in their design that consistency is handled using distributed transactions. 
+* It is assumed in their design that consistency is handled using distributed transactions.
 However, many message brokers, popular in microservice deployments, such as Apache Kafka, Amazon Kinesis and Azure Event Hubs, do not support XA transactions, rather, message acknowledgment is handled using offsets with at least once delivery guarantees.
 * They do not have support for asynchronous IO; it is assumed that message processing is done on a single thread, however, many modern specifications are moving to asynchronous IO.
 
@@ -68,13 +68,13 @@ Hence a lighter weight, reactive solution to messaging is desirable for MicroPro
 MicroProfile Reactive Messaging aims to provide a way to connect event-driven microservices.
 The key characteristics of the specification make it versatile and suitable for building different types of architecture and applications.
 
-First, asynchronous interactions with different services and resources can be implemented using Reactive Messaging. 
+First, asynchronous interactions with different services and resources can be implemented using Reactive Messaging.
 Typically, asynchronous database drivers can be used in conjunction with Reactive Messaging to read and write into a data store in a non-blocking and asynchronous manner.
 
-When building microservices, the CQRS and event-sourcing patterns provide an answer to the data sharing between microservices. 
+When building microservices, the CQRS and event-sourcing patterns provide an answer to the data sharing between microservices.
 Reactive Messaging can also be used as the foundation to CQRS and Event-Sourcing mechanism, as these patterns embrace message-passing as core communication pattern.
 
-IOT applications, dealing with events from various devices, and data streaming applications can also be implemented using Reactive Messaging. 
+IOT applications, dealing with events from various devices, and data streaming applications can also be implemented using Reactive Messaging.
 The application receives events or messages, process them, transform them, and may forward them to another microservices.
 It allows for more fluid architecture for building data-centric applications.
 

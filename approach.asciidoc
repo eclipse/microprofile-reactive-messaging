@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2018, 2019 Contributors to the Eclipse Foundation
+// Copyright (c) 2018, 2021 Contributors to the Eclipse Foundation
 //
 // See the NOTICE file(s) distributed with this work for additional
 // information regarding copyright ownership.
@@ -58,7 +58,7 @@ Just considering the above API, there are a number of problems with this:
 
 * Any monitoring solutions that want to trace the flow of control through this API need to be explicitly aware of the API and what it does, so they can explicitly instrument it to carry correlation identifiers. Otherwise, explicit propagation of monitoring structures is required.
 
-And that’s just the problems with one possible trivial API for asynchronous programming. In order to safely provide asynchronous programming features, high level, generally applicable patterns and components are needed to ensure compatibility, correct error propagation, backpressure propagation, thread safety, and clean code when using these features. Unfortunately, there already exist APIs in Java EE (such as JSR 356 WebSockets) that suffer from many of these problems (and I should point out that APIs like JSR 356 were created before standard solutions to these problems existed, so they shouldn’t be blamed for this). It’s important that going forward, we ensure that these same problems aren’t reintroduced.
+And that’s just the problems with one possible trivial API for asynchronous programming. In order to safely provide asynchronous programming features, high level, generally applicable patterns and components are needed to ensure compatibility, correct error propagation, backpressure propagation, thread safety, and clean code when using these features. Unfortunately, there already exist APIs in Jakarta EE (such as JSR 356 WebSockets) that suffer from many of these problems (and I should point out that APIs like JSR 356 were created before standard solutions to these problems existed, so they shouldn’t be blamed for this). It’s important that going forward, we ensure that these same problems aren’t reintroduced.
 
 In general, there are two different types of operations that we want to do when doing asynchronous programming. The first is an operation that produces exactly one value or signals, or fails. Examples of such operations include:
 
