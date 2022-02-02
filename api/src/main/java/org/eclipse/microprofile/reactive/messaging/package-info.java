@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2018, 2020 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
@@ -16,6 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 /**
  * The MicroProfile Reactive Messaging API.
  * <p>
@@ -28,10 +29,11 @@
  * repeat failures.
  * <p>
  * The application should use Reactive Streams to provide the message stream handlers. Generally, use of
- * {@link org.eclipse.microprofile.reactive.streams} builders should be used in preference to either Reactive Streams
+ * {@code org.eclipse.microprofile.reactive.streams} builders should be used in preference to either Reactive Streams
  * interfaces directly, or container specific implementations of streams.
  * <p>
  * Here is an example use of this API:
+ *
  * <pre>
  *   &#64;ApplicationScoped
  *   public class EmailPublisher {
@@ -53,5 +55,5 @@
  * </pre>
  */
 
-@org.osgi.annotation.versioning.Version("3.0")
+@org.osgi.annotation.versioning.Version("2.0")
 package org.eclipse.microprofile.reactive.messaging;

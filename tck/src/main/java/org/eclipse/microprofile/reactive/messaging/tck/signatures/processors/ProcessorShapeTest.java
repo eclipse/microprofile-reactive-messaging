@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2018, 2021 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
@@ -28,42 +28,41 @@ import jakarta.inject.Inject;
 
 public class ProcessorShapeTest extends TckBase {
 
+    @Deployment
+    public static Archive<JavaArchive> deployment() {
+        return getBaseArchive()
+                .addClasses(ProcessorBean.class, PublisherBean.class, DirectProcessorBean.class, TransformerBean.class);
+    }
 
-  @Deployment
-  public static Archive<JavaArchive> deployment() {
-    return getBaseArchive()
-      .addClasses(ProcessorBean.class, PublisherBean.class, DirectProcessorBean.class, TransformerBean.class);
-  }
+    @Inject
+    private ProcessorBean beanContainingMethodReturningProcessors;
 
-  @Inject
-  private ProcessorBean beanContainingMethodReturningProcessors;
+    @Inject
+    private PublisherBean beanContainingMethodReturningPublishers;
 
-  @Inject
-  private PublisherBean beanContainingMethodReturningPublishers;
+    @Inject
+    private DirectProcessorBean beanManipulatingSingleElements;
 
-  @Inject
-  private DirectProcessorBean beanManipulatingSingleElements;
+    @Inject
+    private TransformerBean beanTransformingStreams;
 
-  @Inject
-  private TransformerBean beanTransformingStreams;
+    @Test
+    public void verifySignaturesReturningProcessors() {
+        beanContainingMethodReturningProcessors.verify();
+    }
 
-  @Test
-  public void verifySignaturesReturningProcessors() {
-    beanContainingMethodReturningProcessors.verify();
-  }
+    @Test
+    public void verifySignaturesReturningPublishers() {
+        beanContainingMethodReturningPublishers.verify();
+    }
 
-  @Test
-  public void verifySignaturesReturningPublishers() {
-    beanContainingMethodReturningPublishers.verify();
-  }
+    @Test
+    public void verifySignaturesConsumingSingleElement() {
+        beanManipulatingSingleElements.verify();
+    }
 
-  @Test
-  public void verifySignaturesConsumingSingleElement() {
-    beanManipulatingSingleElements.verify();
-  }
-
-  @Test
-  public void verifySignatureConsumingAndProducingStreams() {
-    beanTransformingStreams.verify();
-  }
+    @Test
+    public void verifySignatureConsumingAndProducingStreams() {
+        beanTransformingStreams.verify();
+    }
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2018, 2021 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
@@ -26,13 +26,12 @@ import org.junit.Test;
 
 import jakarta.inject.Inject;
 
-
 public class PublisherShapeTest extends TckBase {
 
     @Deployment
     public static Archive<JavaArchive> deployment() {
         return getBaseArchive()
-            .addClasses(PublisherBean.class, VerifierForPublisherBean.class);
+                .addClasses(PublisherBean.class, VerifierForPublisherBean.class);
     }
 
     @Inject

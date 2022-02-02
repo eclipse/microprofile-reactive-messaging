@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2018, 2021 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
@@ -25,10 +25,9 @@ import jakarta.enterprise.context.ApplicationScoped;
 @ApplicationScoped
 public class SimpleIncomingBean extends ValueCollector {
 
-
-  @Incoming("strings")
-  public void incoming(String s) {
-    values.add(s);
-  }
+    @Incoming("strings")
+    public void incoming(String s) {
+        values.add(s);
+    }
 
 }

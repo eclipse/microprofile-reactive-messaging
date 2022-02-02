@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2018, 2019 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
@@ -18,14 +18,13 @@
  */
 package org.eclipse.microprofile.reactive.messaging;
 
-
-import org.eclipse.microprofile.reactive.streams.operators.ProcessorBuilder;
-import org.eclipse.microprofile.reactive.streams.operators.PublisherBuilder;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import org.eclipse.microprofile.reactive.streams.operators.ProcessorBuilder;
+import org.eclipse.microprofile.reactive.streams.operators.PublisherBuilder;
 
 /**
  * Used to signify a publisher of outgoing messages.
@@ -51,16 +50,15 @@ import java.lang.annotation.Target;
  * <p>
  * The type of the message emitted by the publisher may be wrapped in {@link Message}, or a subclass of it. All
  * messaging providers must support {@code Message}, but messaging providers may also provide subclasses of
- * {@code Message} in order to expose message transport specific features. Use of these sub classes will result in
- * a non portable application. If the chosen messaging provider does not support the selected message wrapper, a
- * deployment exception will be raised before the container is initialized.
+ * {@code Message} in order to expose message transport specific features. Use of these sub classes will result in a non
+ * portable application. If the chosen messaging provider does not support the selected message wrapper, a deployment
+ * exception will be raised before the container is initialized.
  * </p>
  * <p>
  * If the outing message is wrapped in a {@code Message} wrapper, then it is the responsibility of the container to
  * acknowledge messages, by invoking the {@link Message#ack()} method on each message it receives. Containers must be
  * careful to invoke these messages in order, one at a time, unless configured not to through a container specific
- * mechanism. Containers may provide the ability to configure batching of acks, or only acking one in every n
- * messages.
+ * mechanism. Containers may provide the ability to configure batching of acks, or only acking one in every n messages.
  * </p>
  *
  * @see org.eclipse.microprofile.reactive.messaging

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2021 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
@@ -29,8 +29,7 @@ import jakarta.inject.Inject;
 public class EmitterMultipleDownstreams {
 
     @SuppressWarnings("unused")
-    private @Inject @Channel("many")
-    Emitter<String> many;
+    private @Inject @Channel("many") Emitter<String> many;
 
     @Incoming("many")
     public void consume1(String s) {

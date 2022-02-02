@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2020, 2021 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
@@ -45,7 +45,8 @@ import jakarta.inject.Qualifier;
  * <li>PublisherBuilder&lt;X&gt; with X the payload type</li>
  * </ul>
  * <p>
- * When this qualifier is used on an {@link Emitter}, it indicates which channel will receive the emitted values / signals:
+ * When this qualifier is used on an {@link Emitter}, it indicates which channel will receive the emitted values /
+ * signals:
  *
  * <pre>
  * <code>
@@ -55,18 +56,20 @@ import jakarta.inject.Qualifier;
  * emitter.send("a");
  * </code>
  * </pre>
- * A subscriber for the above channel must be found when the application starts.
- * Otherwise, {@link jakarta.enterprise.inject.spi.DeploymentException} must be thrown.
+ *
+ * A subscriber for the above channel must be found when the application starts. Otherwise,
+ * {@link jakarta.enterprise.inject.spi.DeploymentException} must be thrown.
  */
 @Qualifier
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ METHOD, CONSTRUCTOR, FIELD, PARAMETER })
+@Target({METHOD, CONSTRUCTOR, FIELD, PARAMETER})
 public @interface Channel {
 
     /**
      * The name of the channel (indicated in the {@code @Outgoing} annotation.
      *
-     * @return the channel name, mandatory, non-{@code null} and non-blank. It must matches one of the available channels.
+     * @return the channel name, mandatory, non-{@code null} and non-blank. It must matches one of the available
+     *         channels.
      */
     @Nonbinding
     String value();

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2018, 2021 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
@@ -18,6 +18,11 @@
  */
 package org.eclipse.microprofile.reactive.messaging.tck.connector;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
+
+import java.util.ServiceLoader;
+
 import org.eclipse.microprofile.reactive.messaging.spi.ConnectorFactory;
 import org.eclipse.microprofile.reactive.messaging.spi.ConnectorLiteral;
 import org.eclipse.microprofile.reactive.messaging.tck.ArchiveExtender;
@@ -32,12 +37,8 @@ import org.junit.runner.RunWith;
 
 import jakarta.enterprise.inject.spi.BeanManager;
 import jakarta.inject.Inject;
-import java.util.ServiceLoader;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.awaitility.Awaitility.await;
-
-/**
+/*
  * This test deploys a dummy connector to ensure that the implementation creates the instances.
  */
 @RunWith(Arquillian.class)
@@ -49,9 +50,10 @@ public class ConnectorTest {
     @Deployment
     public static Archive<JavaArchive> deployment() {
         JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
-            .addClasses(DummyConnector.class, MyProcessor.class, ArchiveExtender.class)
-            .addAsManifestResource(ConnectorTest.class.getResource("connector-config.properties"), "microprofile-config.properties")
-            .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+                .addClasses(DummyConnector.class, MyProcessor.class, ArchiveExtender.class)
+                .addAsManifestResource(ConnectorTest.class.getResource("connector-config.properties"),
+                        "microprofile-config.properties")
+                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
 
         ServiceLoader.load(ArchiveExtender.class).iterator().forEachRemaining(ext -> ext.extend(archive));
         return archive;
@@ -60,7 +62,7 @@ public class ConnectorTest {
     @Test
     public void checkConnector() {
         DummyConnector connector = manager.createInstance()
-            .select(DummyConnector.class, ConnectorLiteral.of("Dummy")).get();
+                .select(DummyConnector.class, ConnectorLiteral.of("Dummy")).get();
         await().until(() -> connector.elements().size() == 10);
         assertThat(connector.elements()).containsExactly("A", "B", "C", "D", "E", "F", "G", "H", "I", "J");
 
@@ -71,8 +73,8 @@ public class ConnectorTest {
         });
 
         assertThat(connector.getReceivedConfigurations())
-            .extracting(c -> c.getValue(ConnectorFactory.CHANNEL_NAME_ATTRIBUTE, String.class))
-            .contains("dummy-source", "dummy-sink");
+                .extracting(c -> c.getValue(ConnectorFactory.CHANNEL_NAME_ATTRIBUTE, String.class))
+                .contains("dummy-source", "dummy-sink");
     }
 
 }

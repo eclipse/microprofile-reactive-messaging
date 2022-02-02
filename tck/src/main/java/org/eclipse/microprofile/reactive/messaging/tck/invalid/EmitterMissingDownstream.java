@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2021 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
@@ -28,8 +28,6 @@ import jakarta.inject.Inject;
 public class EmitterMissingDownstream {
 
     @SuppressWarnings("unused")
-    private @Inject
-    @Channel("missing")
-    Emitter<String> missing;
+    private @Inject @Channel("missing") Emitter<String> missing;
 
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2018, 2021 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
@@ -26,8 +26,6 @@ import static org.junit.Assert.assertThat;
 import java.util.Map;
 import java.util.ServiceLoader;
 
-import jakarta.inject.Inject;
-
 import org.awaitility.Awaitility;
 import org.eclipse.microprofile.metrics.Counter;
 import org.eclipse.microprofile.metrics.MetricID;
@@ -44,6 +42,8 @@ import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import jakarta.inject.Inject;
 
 @RunWith(Arquillian.class)
 public class MetricsTest {
@@ -106,8 +106,9 @@ public class MetricsTest {
     }
 
     private Counter getMessageCounterForChannel(String channel) {
-        Map<MetricID, Counter> counters = metricRegistry.getCounters((id, m) -> id.getName().equals("mp.messaging.message.count")
-                && id.getTags().getOrDefault("channel", "").equals(channel));
+        Map<MetricID, Counter> counters =
+                metricRegistry.getCounters((id, m) -> id.getName().equals("mp.messaging.message.count")
+                        && id.getTags().getOrDefault("channel", "").equals(channel));
 
         assertThat(counters.entrySet(), hasSize(1));
 

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2020, 2021 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
@@ -19,7 +19,6 @@
 package org.eclipse.microprofile.reactive.messaging.tck.channel;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import jakarta.inject.Inject;
 
 import org.eclipse.microprofile.reactive.messaging.tck.TckBase;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -27,26 +26,23 @@ import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 
-
+import jakarta.inject.Inject;
 
 public class ChannelInjectionPublisherTest extends TckBase {
 
     @Deployment
     public static Archive<JavaArchive> deployment() {
         return getBaseArchive()
-            .addClasses(SourceBean.class, BeanInjectedWithAPublisherOfMessages.class);
+                .addClasses(SourceBean.class, BeanInjectedWithAPublisherOfMessages.class);
     }
 
     private @Inject BeanInjectedWithAPublisherOfMessages beanInjectedWithAPublisherOfMessages;
 
-
     @Test
     public void testInjectionOfPublisherOfMessages() {
 
-        assertThat(beanInjectedWithAPublisherOfMessages.consume()).containsExactlyInAnyOrder
-        ("B", "O", "N", "J", "O", "U", "R", "h", "e", "l", "l", "o");
+        assertThat(beanInjectedWithAPublisherOfMessages.consume()).containsExactlyInAnyOrder("B", "O", "N", "J", "O",
+                "U", "R", "h", "e", "l", "l", "o");
     }
-
-
 
 }

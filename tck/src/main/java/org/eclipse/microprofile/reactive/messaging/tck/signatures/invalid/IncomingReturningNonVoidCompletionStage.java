@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2018, 2021 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
@@ -18,6 +18,8 @@
  */
 package org.eclipse.microprofile.reactive.messaging.tck.signatures.invalid;
 
+import java.util.concurrent.CompletionStage;
+
 import org.eclipse.microprofile.reactive.messaging.Incoming;
 import org.eclipse.microprofile.reactive.messaging.Message;
 import org.eclipse.microprofile.reactive.messaging.Outgoing;
@@ -25,7 +27,6 @@ import org.eclipse.microprofile.reactive.streams.operators.ReactiveStreams;
 import org.reactivestreams.Publisher;
 
 import jakarta.enterprise.context.ApplicationScoped;
-import java.util.concurrent.CompletionStage;
 
 @ApplicationScoped
 public class IncomingReturningNonVoidCompletionStage {

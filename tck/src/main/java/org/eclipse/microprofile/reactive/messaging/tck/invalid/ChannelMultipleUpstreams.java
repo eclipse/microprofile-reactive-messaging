@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2021 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
@@ -29,9 +29,8 @@ import jakarta.inject.Inject;
 @ApplicationScoped
 public class ChannelMultipleUpstreams {
 
-   @SuppressWarnings("unused")
-   private @Inject @Channel("many")
-   Publisher<String> many;
+    @SuppressWarnings("unused")
+    private @Inject @Channel("many") Publisher<String> many;
 
     @Outgoing("many")
     public String generate() {
@@ -39,7 +38,6 @@ public class ChannelMultipleUpstreams {
     }
 
     @SuppressWarnings("unused")
-    private @Inject @Channel("many")
-    Emitter<String> emitter;
+    private @Inject @Channel("many") Emitter<String> emitter;
 
 }

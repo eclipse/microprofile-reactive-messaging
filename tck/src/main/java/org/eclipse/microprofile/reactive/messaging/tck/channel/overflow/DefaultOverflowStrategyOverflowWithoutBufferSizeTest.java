@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2020, 2021 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
@@ -23,8 +23,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.stream.IntStream;
 
-import jakarta.inject.Inject;
-
 import org.eclipse.microprofile.reactive.messaging.tck.TckBase;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.Archive;
@@ -32,17 +30,17 @@ import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 
+import jakarta.inject.Inject;
 
 public class DefaultOverflowStrategyOverflowWithoutBufferSizeTest extends TckBase {
-
 
     @Deployment
     public static Archive<JavaArchive> deployment() {
         return getBaseArchive()
-            .addClasses(BeanUsingBufferOverflowWithoutBufferSizeStrategy.class)
-            .addAsManifestResource(new StringAsset(
-                "mp.messaging.emitter.default-buffer-size=5"),
-                    "microprofile-config.properties");
+                .addClasses(BeanUsingBufferOverflowWithoutBufferSizeStrategy.class)
+                .addAsManifestResource(new StringAsset(
+                        "mp.messaging.emitter.default-buffer-size=5"),
+                        "microprofile-config.properties");
     }
 
     private @Inject BeanUsingBufferOverflowWithoutBufferSizeStrategy bean;

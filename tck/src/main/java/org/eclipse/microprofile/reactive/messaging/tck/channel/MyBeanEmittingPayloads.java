@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2020, 2021 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
@@ -21,12 +21,12 @@ package org.eclipse.microprofile.reactive.messaging.tck.channel;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
-
 import org.eclipse.microprofile.reactive.messaging.Channel;
 import org.eclipse.microprofile.reactive.messaging.Emitter;
 import org.eclipse.microprofile.reactive.messaging.Incoming;
+
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 @ApplicationScoped
 public class MyBeanEmittingPayloads {

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2018, 2021 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
@@ -25,8 +25,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import jakarta.enterprise.context.ApplicationScoped;
-
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.reactive.messaging.Message;
 import org.eclipse.microprofile.reactive.messaging.spi.Connector;
@@ -39,6 +37,7 @@ import org.eclipse.microprofile.reactive.streams.operators.SubscriberBuilder;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.FlowableEmitter;
+import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 @Connector(TestConnector.ID)
@@ -60,7 +59,8 @@ public class TestConnector implements IncomingConnectorFactory, OutgoingConnecto
     @Override
     public PublisherBuilder<? extends Message<String>> getPublisherBuilder(Config config) {
         String channel = config.getValue(CHANNEL_NAME_ATTRIBUTE, String.class);
-        Flowable<Message<String>> flowable = Flowable.create((e) -> incomingEmitters.put(channel, e), BackpressureStrategy.BUFFER);
+        Flowable<Message<String>> flowable =
+                Flowable.create((e) -> incomingEmitters.put(channel, e), BackpressureStrategy.BUFFER);
         return ReactiveStreams.fromPublisher(flowable);
     }
 

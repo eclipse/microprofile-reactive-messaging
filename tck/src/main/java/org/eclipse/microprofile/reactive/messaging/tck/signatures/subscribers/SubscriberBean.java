@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2018, 2021 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
@@ -18,15 +18,10 @@
  */
 package org.eclipse.microprofile.reactive.messaging.tck.signatures.subscribers;
 
-import org.eclipse.microprofile.reactive.messaging.Incoming;
-import org.eclipse.microprofile.reactive.messaging.Message;
-import org.eclipse.microprofile.reactive.messaging.Outgoing;
-import org.eclipse.microprofile.reactive.streams.operators.ReactiveStreams;
-import org.eclipse.microprofile.reactive.streams.operators.SubscriberBuilder;
-import org.reactivestreams.Publisher;
-import org.reactivestreams.Subscriber;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
+import static org.eclipse.microprofile.reactive.messaging.tck.TckBase.EXECUTOR;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -36,9 +31,15 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.awaitility.Awaitility.await;
-import static org.eclipse.microprofile.reactive.messaging.tck.TckBase.EXECUTOR;
+import org.eclipse.microprofile.reactive.messaging.Incoming;
+import org.eclipse.microprofile.reactive.messaging.Message;
+import org.eclipse.microprofile.reactive.messaging.Outgoing;
+import org.eclipse.microprofile.reactive.streams.operators.ReactiveStreams;
+import org.eclipse.microprofile.reactive.streams.operators.SubscriberBuilder;
+import org.reactivestreams.Publisher;
+import org.reactivestreams.Subscriber;
+
+import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class SubscriberBean {
@@ -46,17 +47,16 @@ public class SubscriberBean {
     private Map<String, List<String>> collector = new ConcurrentHashMap<>();
 
     private static final List<String> EXPECTED = Arrays.asList(
-        "1", "1",
-        "2", "2",
-        "3", "3",
-        "4", "4",
-        "5", "5",
-        "6", "6",
-        "7", "7",
-        "8", "8",
-        "9", "9",
-        "10", "10"
-    );
+            "1", "1",
+            "2", "2",
+            "3", "3",
+            "4", "4",
+            "5", "5",
+            "6", "6",
+            "7", "7",
+            "8", "8",
+            "9", "9",
+            "10", "10");
 
     private static Map<String, AtomicInteger> counters = new ConcurrentHashMap<>();
 
@@ -73,7 +73,7 @@ public class SubscriberBean {
     public Subscriber<Message<String>> subscriberOfMessages() {
         increment("subscriber-message");
         return ReactiveStreams.<Message<String>>builder().forEach(m -> add("subscriber-message", m.getPayload()))
-            .build();
+                .build();
     }
 
     @Outgoing("subscriber-builder-message")
@@ -85,7 +85,7 @@ public class SubscriberBean {
     public SubscriberBuilder<Message<String>, Void> subscriberBuilderOfMessages() {
         increment("subscriber-builder-message");
         return ReactiveStreams.<Message<String>>builder()
-            .forEach(m -> add("subscriber-builder-message", m.getPayload()));
+                .forEach(m -> add("subscriber-builder-message", m.getPayload()));
     }
 
     @Outgoing("subscriber-payload")

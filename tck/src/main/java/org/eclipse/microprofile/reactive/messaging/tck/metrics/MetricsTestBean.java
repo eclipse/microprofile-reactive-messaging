@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2018, 2021 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
@@ -22,8 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import jakarta.enterprise.context.ApplicationScoped;
-
 import org.eclipse.microprofile.reactive.messaging.Acknowledgment;
 import org.eclipse.microprofile.reactive.messaging.Acknowledgment.Strategy;
 import org.eclipse.microprofile.reactive.messaging.Incoming;
@@ -31,6 +29,8 @@ import org.eclipse.microprofile.reactive.messaging.Message;
 import org.eclipse.microprofile.reactive.messaging.Outgoing;
 import org.eclipse.microprofile.reactive.streams.operators.PublisherBuilder;
 import org.eclipse.microprofile.reactive.streams.operators.ReactiveStreams;
+
+import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class MetricsTestBean {
@@ -55,7 +55,7 @@ public class MetricsTestBean {
     @Acknowledgment(Strategy.PRE_PROCESSING)
     public PublisherBuilder<Message<String>> split(Message<String> a) {
         List<Message<String>> messages = new ArrayList<>();
-        for (int i = 1; i <=2; i++) {
+        for (int i = 1; i <= 2; i++) {
             messages.add(Message.of(a.getPayload() + "-" + i));
         }
         return ReactiveStreams.fromIterable(messages);
@@ -70,7 +70,7 @@ public class MetricsTestBean {
     @Outgoing(CHANNEL_APP_B)
     public PublisherBuilder<String> split(String input) {
         List<String> messages = new ArrayList<>();
-        for (int i = 1; i <=2; i++) {
+        for (int i = 1; i <= 2; i++) {
             messages.add(input + "-" + i);
         }
         return ReactiveStreams.fromIterable(messages);

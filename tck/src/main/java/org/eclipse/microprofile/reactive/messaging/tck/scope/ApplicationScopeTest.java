@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2018, 2021 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
@@ -18,6 +18,9 @@
  */
 package org.eclipse.microprofile.reactive.messaging.tck.scope;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
+
 import org.eclipse.microprofile.reactive.messaging.tck.TckBase;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.Archive;
@@ -26,25 +29,22 @@ import org.junit.Test;
 
 import jakarta.inject.Inject;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.awaitility.Awaitility.await;
-
 public class ApplicationScopeTest extends TckBase {
 
-  @Deployment
-  public static Archive<JavaArchive> deployment() {
-    return getBaseArchive()
-      .addClasses(ApplicationBeans.class);
-  }
+    @Deployment
+    public static Archive<JavaArchive> deployment() {
+        return getBaseArchive()
+                .addClasses(ApplicationBeans.class);
+    }
 
-  @Inject
-  private ApplicationBeans bean;
+    @Inject
+    private ApplicationBeans bean;
 
-  @Test
-  public void verify() {
-    await().until(() -> bean.getList().size() == 1);
-    assertThat(bean.getList()).containsExactly(1);
-    assertThat(ApplicationBeans.getStaticList()).containsExactly(1);
-  }
+    @Test
+    public void verify() {
+        await().until(() -> bean.getList().size() == 1);
+        assertThat(bean.getList()).containsExactly(1);
+        assertThat(ApplicationBeans.getStaticList()).containsExactly(1);
+    }
 
 }

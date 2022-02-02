@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2021 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
@@ -18,33 +18,30 @@
  */
 package org.eclipse.microprofile.reactive.messaging.spi;
 
+import static java.lang.annotation.ElementType.TYPE;
+
 import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import static java.lang.annotation.ElementType.TYPE;
-
 /**
- * Connector implementor can use this annotation to document attributes supported by their connector.
- * This allows tools (IDE, annotation processors...) to extract that data to provide code completion or documentation
- * generation.
+ * Connector implementor can use this annotation to document attributes supported by their connector. This allows tools
+ * (IDE, annotation processors...) to extract that data to provide code completion or documentation generation.
  *
- * Each attribute is represented by an instance of {@code ConnectorAttribute}.
- * For example:
+ * Each attribute is represented by an instance of {@link ConnectorAttribute}. For example:
  *
  * <pre>
- * {@code
- *  @ConnectorAttribute(name = "bootstrap.servers", alias = "kafka.bootstrap.servers", type = "string",
+ *  &#64;ConnectorAttribute(name = "bootstrap.servers", alias = "kafka.bootstrap.servers", type = "string",
  *      defaultValue = "localhost:9092", direction = Direction.INCOMING_AND_OUTGOING,
  *      description = "...")
- *  @ConnectorAttribute(name = "topic", type = "string", direction = Direction.INCOMING_AND_OUTGOING,
+ *  &#64;ConnectorAttribute(name = "topic", type = "string", direction = Direction.INCOMING_AND_OUTGOING,
  *      description = "...")
- *  @ConnectorAttribute(name = "value-deserialization-failure-handler", type = "string", direction = Direction.INCOMING,
+ *  &#64;ConnectorAttribute(name = "value-deserialization-failure-handler", type = "string", direction = Direction.INCOMING,
  *      description = "...")
- *  @ConnectorAttribute(name = "merge", direction = OUTGOING, type = "boolean", defaultValue = "false",
+ *  &#64;ConnectorAttribute(name = "merge", direction = OUTGOING, type = "boolean", defaultValue = "false",
  *      description = "...")
- *  @Connector("my-connector")
+ *  &#64;Connector("my-connector")
  *  public class MyConnector implements  IncomingConnectorFactory, OutgoingConnectorFactory {
  *    ...
  * }

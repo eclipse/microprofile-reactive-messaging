@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2018, 2019 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
@@ -18,15 +18,15 @@
  */
 package org.eclipse.microprofile.reactive.messaging.tck;
 
+import java.util.ServiceLoader;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.runner.RunWith;
-
-import java.util.ServiceLoader;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 @RunWith(Arquillian.class)
 public abstract class TckBase {
@@ -35,8 +35,8 @@ public abstract class TckBase {
 
     public static JavaArchive getBaseArchive() {
         JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
-            .addClasses(ArchiveExtender.class, TckBase.class)
-            .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+                .addClasses(ArchiveExtender.class, TckBase.class)
+                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
 
         ServiceLoader.load(ArchiveExtender.class).iterator().forEachRemaining(ext -> ext.extend(archive));
 

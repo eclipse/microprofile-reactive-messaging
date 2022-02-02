@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2018, 2019 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
@@ -22,6 +22,6 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 
 public interface ArchiveExtender {
 
-  void extend(JavaArchive archive);
+    void extend(JavaArchive archive);
 
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2018, 2019 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
@@ -17,7 +17,6 @@
  * limitations under the License.
  */
 package org.eclipse.microprofile.reactive.messaging.tck.invalid;
-
 
 import org.eclipse.microprofile.reactive.messaging.Incoming;
 

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2021 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
@@ -34,8 +34,6 @@ public class BeanProducingManyTwice {
     }
 
     @SuppressWarnings("unused")
-    private @Inject
-    @Channel("many")
-    Emitter<String> emitter;
+    private @Inject @Channel("many") Emitter<String> emitter;
 
 }

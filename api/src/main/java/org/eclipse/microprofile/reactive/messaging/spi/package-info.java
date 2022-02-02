@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2018, 2019 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
@@ -20,24 +20,24 @@
 /**
  * The MicroProfile Reactive Messaging API Connector SPI
  * <p>
- * This package provides the SPI to implement {@code connectors}. A {@code connector} can be seen as a Reactive Messaging
- * plug-in to support a specific messaging technology. For example, you can have a Kafka connector to deal with Kafka,
- * an AMQP connector to interact with AMQP brokers and routers and so on. Connector implementation should be
+ * This package provides the SPI to implement {@code connectors}. A {@code connector} can be seen as a Reactive
+ * Messaging plug-in to support a specific messaging technology. For example, you can have a Kafka connector to deal
+ * with Kafka, an AMQP connector to interact with AMQP brokers and routers and so on. Connector implementation should be
  * agnostic to the Reactive Messaging implementation.
  *
  * A connector can be seen as:
  * <ul>
- *     <li>a source of messages - it retrieves messages and injects them into the Reactive Messaging application. To
- *     manage this direction, the connector implementation must implement the
- *     {@link org.eclipse.microprofile.reactive.messaging.spi.IncomingConnectorFactory} interface.</li>
- *     <li>a sink of messages - it forwards messages emitted by the Reactive Messaging application to the managed
- *     technology. To achieve this, the connector implementation must implement the
- *     {@link org.eclipse.microprofile.reactive.messaging.spi.OutgoingConnectorFactory} interface.</li>
+ * <li>a source of messages - it retrieves messages and injects them into the Reactive Messaging application. To manage
+ * this direction, the connector implementation must implement the
+ * {@link org.eclipse.microprofile.reactive.messaging.spi.IncomingConnectorFactory} interface.</li>
+ * <li>a sink of messages - it forwards messages emitted by the Reactive Messaging application to the managed
+ * technology. To achieve this, the connector implementation must implement the
+ * {@link org.eclipse.microprofile.reactive.messaging.spi.OutgoingConnectorFactory} interface.</li>
  * </ul>
  *
- * Connectors are  implemented as CDI beans and identified using the
+ * Connectors are implemented as CDI beans and identified using the
  * {@link org.eclipse.microprofile.reactive.messaging.spi.Connector} qualifier. Connectors receive the channel
- * configuration matching their {@link Connector} name.
+ * configuration matching their {@link org.eclipse.microprofile.reactive.messaging.spi.Connector} name.
  */
-@org.osgi.annotation.versioning.Version("3.0")
+@org.osgi.annotation.versioning.Version("2.0")
 package org.eclipse.microprofile.reactive.messaging.spi;

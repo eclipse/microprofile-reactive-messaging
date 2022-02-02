@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2018, 2019 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
@@ -23,15 +23,14 @@ import org.eclipse.microprofile.reactive.messaging.Outgoing;
 
 public class BeanWithIncompleteChain {
 
+    @Incoming("missing")
+    @Outgoing("data")
+    public String process(String s) {
+        return s;
+    }
 
-  @Incoming("missing")
-  @Outgoing("data")
-  public String process(String s) {
-    return s;
-  }
-
-  @Incoming("data")
-  public void sink(String s) {
-    // Do nothing.
-  }
+    @Incoming("data")
+    public void sink(String s) {
+        // Do nothing.
+    }
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2020, 2021 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
@@ -18,8 +18,6 @@
  */
 package org.eclipse.microprofile.reactive.messaging.tck.channel;
 
-import jakarta.enterprise.context.ApplicationScoped;
-
 import org.eclipse.microprofile.reactive.messaging.Incoming;
 import org.eclipse.microprofile.reactive.messaging.Outgoing;
 import org.eclipse.microprofile.reactive.streams.operators.ProcessorBuilder;
@@ -28,6 +26,7 @@ import org.eclipse.microprofile.reactive.streams.operators.ReactiveStreams;
 import org.reactivestreams.Publisher;
 
 import io.reactivex.Flowable;
+import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class SourceBean {

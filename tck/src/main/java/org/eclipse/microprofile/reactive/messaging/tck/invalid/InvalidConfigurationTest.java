@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2021 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
@@ -18,6 +18,8 @@
  */
 package org.eclipse.microprofile.reactive.messaging.tck.invalid;
 
+import java.util.ServiceLoader;
+
 import org.eclipse.microprofile.reactive.messaging.tck.ArchiveExtender;
 import org.eclipse.microprofile.reactive.messaging.tck.metrics.ConfigAsset;
 import org.eclipse.microprofile.reactive.messaging.tck.metrics.TestConnector;
@@ -34,7 +36,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import jakarta.enterprise.inject.spi.DeploymentException;
-import java.util.ServiceLoader;
 
 @RunWith(Arquillian.class)
 public class InvalidConfigurationTest {
@@ -43,8 +44,8 @@ public class InvalidConfigurationTest {
     @ShouldThrowException(value = DeploymentException.class, testable = true)
     public static Archive<JavaArchive> emptyIncoming() {
         JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
-            .addClasses(BeanWithEmptyIncoming.class, ArchiveExtender.class)
-            .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+                .addClasses(BeanWithEmptyIncoming.class, ArchiveExtender.class)
+                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
 
         ServiceLoader.load(ArchiveExtender.class).iterator().forEachRemaining(ext -> ext.extend(archive));
         return archive;
@@ -54,8 +55,8 @@ public class InvalidConfigurationTest {
     @ShouldThrowException(value = DeploymentException.class, testable = true)
     public static Archive<JavaArchive> emptyOutgoing() {
         JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
-            .addClasses(BeanWithEmptyOutgoing.class, ArchiveExtender.class)
-            .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+                .addClasses(BeanWithEmptyOutgoing.class, ArchiveExtender.class)
+                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
 
         ServiceLoader.load(ArchiveExtender.class).iterator().forEachRemaining(ext -> ext.extend(archive));
         return archive;
@@ -65,8 +66,8 @@ public class InvalidConfigurationTest {
     @ShouldThrowException(value = DeploymentException.class, testable = true)
     public static Archive<JavaArchive> invalidPublisherMethod() {
         JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
-            .addClasses(BeanWithBadOutgoingSignature.class, ArchiveExtender.class)
-            .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+                .addClasses(BeanWithBadOutgoingSignature.class, ArchiveExtender.class)
+                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
 
         ServiceLoader.load(ArchiveExtender.class).iterator().forEachRemaining(ext -> ext.extend(archive));
         return archive;
@@ -76,8 +77,8 @@ public class InvalidConfigurationTest {
     @ShouldThrowException(value = DeploymentException.class, testable = true)
     public static Archive<JavaArchive> incompleteChain() {
         JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
-            .addClasses(BeanWithIncompleteChain.class, ArchiveExtender.class)
-            .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+                .addClasses(BeanWithIncompleteChain.class, ArchiveExtender.class)
+                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
 
         ServiceLoader.load(ArchiveExtender.class).iterator().forEachRemaining(ext -> ext.extend(archive));
         return archive;
@@ -87,8 +88,8 @@ public class InvalidConfigurationTest {
     @ShouldThrowException(value = DeploymentException.class, testable = true)
     public static Archive<JavaArchive> processorMissingUpstream() {
         JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
-            .addClasses(ProcessorMissingUpstream.class, ArchiveExtender.class)
-            .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+                .addClasses(ProcessorMissingUpstream.class, ArchiveExtender.class)
+                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
 
         ServiceLoader.load(ArchiveExtender.class).iterator().forEachRemaining(ext -> ext.extend(archive));
         return archive;
@@ -98,8 +99,8 @@ public class InvalidConfigurationTest {
     @ShouldThrowException(value = DeploymentException.class, testable = true)
     public static Archive<JavaArchive> processorMissingDownstream() {
         JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
-            .addClasses(ProcessorMissingDownstream.class, ArchiveExtender.class)
-            .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+                .addClasses(ProcessorMissingDownstream.class, ArchiveExtender.class)
+                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
 
         ServiceLoader.load(ArchiveExtender.class).iterator().forEachRemaining(ext -> ext.extend(archive));
         return archive;
@@ -109,8 +110,8 @@ public class InvalidConfigurationTest {
     @ShouldThrowException(value = DeploymentException.class, testable = true)
     public static Archive<JavaArchive> processorMultipleUpstreams() {
         JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
-            .addClasses(ProcessorMultipleUpstreams.class, ArchiveExtender.class)
-            .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+                .addClasses(ProcessorMultipleUpstreams.class, ArchiveExtender.class)
+                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
 
         ServiceLoader.load(ArchiveExtender.class).iterator().forEachRemaining(ext -> ext.extend(archive));
         return archive;
@@ -120,8 +121,8 @@ public class InvalidConfigurationTest {
     @ShouldThrowException(value = DeploymentException.class, testable = true)
     public static Archive<JavaArchive> processorMultipleDownstreams() {
         JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
-            .addClasses(ProcessorMultipleDownstreams.class, ArchiveExtender.class)
-            .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+                .addClasses(ProcessorMultipleDownstreams.class, ArchiveExtender.class)
+                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
 
         ServiceLoader.load(ArchiveExtender.class).iterator().forEachRemaining(ext -> ext.extend(archive));
         return archive;
@@ -131,8 +132,8 @@ public class InvalidConfigurationTest {
     @ShouldThrowException(value = DeploymentException.class, testable = true)
     public static Archive<JavaArchive> emitterMissingDownstream() {
         JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
-            .addClasses(EmitterMissingDownstream.class, ArchiveExtender.class)
-            .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+                .addClasses(EmitterMissingDownstream.class, ArchiveExtender.class)
+                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
 
         ServiceLoader.load(ArchiveExtender.class).iterator().forEachRemaining(ext -> ext.extend(archive));
         return archive;
@@ -142,8 +143,8 @@ public class InvalidConfigurationTest {
     @ShouldThrowException(value = DeploymentException.class, testable = true)
     public static Archive<JavaArchive> emitterMultipleDownstreams() {
         JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
-            .addClasses(EmitterMultipleDownstreams.class, ArchiveExtender.class)
-            .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+                .addClasses(EmitterMultipleDownstreams.class, ArchiveExtender.class)
+                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
 
         ServiceLoader.load(ArchiveExtender.class).iterator().forEachRemaining(ext -> ext.extend(archive));
         return archive;
@@ -153,8 +154,8 @@ public class InvalidConfigurationTest {
     @ShouldThrowException(value = DeploymentException.class, testable = true)
     public static Archive<JavaArchive> channelMissingUpstream() {
         JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
-            .addClasses(ChannelMissingUpstream.class, ArchiveExtender.class)
-            .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+                .addClasses(ChannelMissingUpstream.class, ArchiveExtender.class)
+                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
 
         ServiceLoader.load(ArchiveExtender.class).iterator().forEachRemaining(ext -> ext.extend(archive));
         return archive;
@@ -164,8 +165,8 @@ public class InvalidConfigurationTest {
     @ShouldThrowException(value = DeploymentException.class, testable = true)
     public static Archive<JavaArchive> channelMultipleUpstreams() {
         JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
-            .addClasses(ChannelMultipleUpstreams.class, ArchiveExtender.class)
-            .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+                .addClasses(ChannelMultipleUpstreams.class, ArchiveExtender.class)
+                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
 
         ServiceLoader.load(ArchiveExtender.class).iterator().forEachRemaining(ext -> ext.extend(archive));
         return archive;
@@ -175,12 +176,12 @@ public class InvalidConfigurationTest {
     @ShouldThrowException(value = DeploymentException.class, testable = true)
     public static Archive<JavaArchive> connectorMissingUpstream() {
         ConfigAsset config = new ConfigAsset()
-            .put("mp.messaging.outgoing.missing.connector", TestConnector.ID);
+                .put("mp.messaging.outgoing.missing.connector", TestConnector.ID);
 
         JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
-            .addClasses(TestConnector.class, ArchiveExtender.class)
-            .addAsResource(config, "META-INF/microprofile-config.properties")
-            .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+                .addClasses(TestConnector.class, ArchiveExtender.class)
+                .addAsResource(config, "META-INF/microprofile-config.properties")
+                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
 
         ServiceLoader.load(ArchiveExtender.class).iterator().forEachRemaining(ext -> ext.extend(archive));
         return archive;
@@ -190,12 +191,12 @@ public class InvalidConfigurationTest {
     @ShouldThrowException(value = DeploymentException.class, testable = true)
     public static Archive<JavaArchive> connectorMissingDownstream() {
         ConfigAsset config = new ConfigAsset()
-            .put("mp.messaging.incoming.missing.connector", TestConnector.ID);
+                .put("mp.messaging.incoming.missing.connector", TestConnector.ID);
 
         JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
-            .addClasses(TestConnector.class, ArchiveExtender.class)
-            .addAsResource(config, "META-INF/microprofile-config.properties")
-            .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+                .addClasses(TestConnector.class, ArchiveExtender.class)
+                .addAsResource(config, "META-INF/microprofile-config.properties")
+                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
 
         ServiceLoader.load(ArchiveExtender.class).iterator().forEachRemaining(ext -> ext.extend(archive));
         return archive;
@@ -205,12 +206,12 @@ public class InvalidConfigurationTest {
     @ShouldThrowException(value = DeploymentException.class, testable = true)
     public static Archive<JavaArchive> connectorMultipleDownstreams() {
         ConfigAsset config = new ConfigAsset()
-            .put("mp.messaging.incoming.many.connector", TestConnector.ID);
+                .put("mp.messaging.incoming.many.connector", TestConnector.ID);
 
         JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
-            .addClasses(TestConnector.class, BeanConsumingManyTwice.class, ArchiveExtender.class)
-            .addAsResource(config, "META-INF/microprofile-config.properties")
-            .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+                .addClasses(TestConnector.class, BeanConsumingManyTwice.class, ArchiveExtender.class)
+                .addAsResource(config, "META-INF/microprofile-config.properties")
+                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
 
         ServiceLoader.load(ArchiveExtender.class).iterator().forEachRemaining(ext -> ext.extend(archive));
         return archive;
@@ -220,12 +221,12 @@ public class InvalidConfigurationTest {
     @ShouldThrowException(value = DeploymentException.class, testable = true)
     public static Archive<JavaArchive> connectorMultipleUpstreams() {
         ConfigAsset config = new ConfigAsset()
-            .put("mp.messaging.outgoing.many.connector", TestConnector.ID);
+                .put("mp.messaging.outgoing.many.connector", TestConnector.ID);
 
         JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
-            .addClasses(TestConnector.class, BeanProducingManyTwice.class, ArchiveExtender.class)
-            .addAsResource(config, "META-INF/microprofile-config.properties")
-            .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+                .addClasses(TestConnector.class, BeanProducingManyTwice.class, ArchiveExtender.class)
+                .addAsResource(config, "META-INF/microprofile-config.properties")
+                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
 
         ServiceLoader.load(ArchiveExtender.class).iterator().forEachRemaining(ext -> ext.extend(archive));
         return archive;

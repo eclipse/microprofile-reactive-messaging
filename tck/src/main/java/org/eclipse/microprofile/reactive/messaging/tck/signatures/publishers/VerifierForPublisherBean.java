@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2018, 2021 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
@@ -18,12 +18,9 @@
  */
 package org.eclipse.microprofile.reactive.messaging.tck.signatures.publishers;
 
-import org.eclipse.microprofile.reactive.messaging.Incoming;
-import org.eclipse.microprofile.reactive.messaging.Message;
-import org.eclipse.microprofile.reactive.streams.operators.ReactiveStreams;
-import org.reactivestreams.Subscriber;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -31,8 +28,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.awaitility.Awaitility.await;
+import org.eclipse.microprofile.reactive.messaging.Incoming;
+import org.eclipse.microprofile.reactive.messaging.Message;
+import org.eclipse.microprofile.reactive.streams.operators.ReactiveStreams;
+import org.reactivestreams.Subscriber;
+
+import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class VerifierForPublisherBean {
@@ -40,17 +41,16 @@ public class VerifierForPublisherBean {
     private Map<String, List<String>> collector = new ConcurrentHashMap<>();
 
     private static final List<String> EXPECTED = Arrays.asList(
-        "1", "1",
-        "2", "2",
-        "3", "3",
-        "4", "4",
-        "5", "5",
-        "6", "6",
-        "7", "7",
-        "8", "8",
-        "9", "9",
-        "10", "10"
-    );
+            "1", "1",
+            "2", "2",
+            "3", "3",
+            "4", "4",
+            "5", "5",
+            "6", "6",
+            "7", "7",
+            "8", "8",
+            "9", "9",
+            "10", "10");
 
     @Incoming("publisher-flowable-message")
     public void getMessageFromASubclassOfPublisher(String value) {
@@ -85,43 +85,43 @@ public class VerifierForPublisherBean {
     @Incoming("generator-payload")
     public Subscriber<Integer> getFromInfinitePayloadGenerator() {
         return ReactiveStreams.<Integer>builder()
-            .limit(10)
-            .flatMap(i -> ReactiveStreams.of(i, i))
-            .map(i -> Integer.toString(i))
-            .forEach(s -> add("generator-payload", s))
-            .build();
+                .limit(10)
+                .flatMap(i -> ReactiveStreams.of(i, i))
+                .map(i -> Integer.toString(i))
+                .forEach(s -> add("generator-payload", s))
+                .build();
     }
 
     @Incoming("generator-message")
     public Subscriber<Message<Integer>> getFromInfiniteMessageGenerator() {
         return ReactiveStreams.<Message<Integer>>builder()
-            .limit(10)
-            .map(Message::getPayload)
-            .flatMap(i -> ReactiveStreams.of(i, i))
-            .map(i -> Integer.toString(i))
-            .forEach(s -> add("generator-message", s))
-            .build();
+                .limit(10)
+                .map(Message::getPayload)
+                .flatMap(i -> ReactiveStreams.of(i, i))
+                .map(i -> Integer.toString(i))
+                .forEach(s -> add("generator-message", s))
+                .build();
     }
 
     @Incoming("generator-payload-async")
     public Subscriber<Integer> getFromInfiniteAsyncPayloadGenerator() {
         return ReactiveStreams.<Integer>builder()
-            .limit(10)
-            .flatMap(i -> ReactiveStreams.of(i, i))
-            .map(i -> Integer.toString(i))
-            .forEach(s -> add("generator-payload-async", s))
-            .build();
+                .limit(10)
+                .flatMap(i -> ReactiveStreams.of(i, i))
+                .map(i -> Integer.toString(i))
+                .forEach(s -> add("generator-payload-async", s))
+                .build();
     }
 
     @Incoming("generator-message-async")
     public Subscriber<Message<Integer>> getFromInfiniteAsyncMessageGenerator() {
         return ReactiveStreams.<Message<Integer>>builder()
-            .limit(10)
-            .map(Message::getPayload)
-            .flatMap(i -> ReactiveStreams.of(i, i))
-            .map(i -> Integer.toString(i))
-            .forEach(s -> add("generator-message-async", s))
-            .build();
+                .limit(10)
+                .map(Message::getPayload)
+                .flatMap(i -> ReactiveStreams.of(i, i))
+                .map(i -> Integer.toString(i))
+                .forEach(s -> add("generator-message-async", s))
+                .build();
     }
 
     private void add(String key, String value) {

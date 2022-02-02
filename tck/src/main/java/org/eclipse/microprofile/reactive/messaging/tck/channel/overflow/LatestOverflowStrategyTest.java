@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2020, 2021 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
@@ -21,24 +21,23 @@ package org.eclipse.microprofile.reactive.messaging.tck.channel.overflow;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
-import jakarta.inject.Inject;
-
 import org.eclipse.microprofile.reactive.messaging.tck.TckBase;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 
+import jakarta.inject.Inject;
+
 public class LatestOverflowStrategyTest extends TckBase {
 
     @Deployment
     public static Archive<JavaArchive> deployment() {
         return getBaseArchive()
-            .addClasses(BeanUsingLatestOverflowStrategy.class);
+                .addClasses(BeanUsingLatestOverflowStrategy.class);
     }
 
     private @Inject BeanUsingLatestOverflowStrategy bean;
-
 
     @Test
     public void testNormal() {

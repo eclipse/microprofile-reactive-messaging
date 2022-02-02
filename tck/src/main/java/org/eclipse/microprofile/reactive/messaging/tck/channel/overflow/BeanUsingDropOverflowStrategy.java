@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2020, 2021 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
@@ -24,10 +24,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import jakarta.annotation.PreDestroy;
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
-
 import org.eclipse.microprofile.reactive.messaging.Channel;
 import org.eclipse.microprofile.reactive.messaging.Emitter;
 import org.eclipse.microprofile.reactive.messaging.Incoming;
@@ -36,9 +32,12 @@ import org.eclipse.microprofile.reactive.messaging.Outgoing;
 import org.eclipse.microprofile.reactive.streams.operators.PublisherBuilder;
 import org.eclipse.microprofile.reactive.streams.operators.ReactiveStreams;
 
+import jakarta.annotation.PreDestroy;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+
 @ApplicationScoped
 public class BeanUsingDropOverflowStrategy {
-
 
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
@@ -102,17 +101,17 @@ public class BeanUsingDropOverflowStrategy {
     @Outgoing("out")
     public PublisherBuilder<String> consume(final PublisherBuilder<String> values) {
 
-        return values.via(ReactiveStreams.<String>builder().flatMapCompletionStage(s -> CompletableFuture.supplyAsync(()-> {
-            try {
-                Thread.sleep(1);
-            } catch (InterruptedException ignored) {
-                Thread.currentThread().interrupt();
-            }
-            return s;
-        }, executor))).onError(err -> downstreamFailure = err);
+        return values
+                .via(ReactiveStreams.<String>builder().flatMapCompletionStage(s -> CompletableFuture.supplyAsync(() -> {
+                    try {
+                        Thread.sleep(1);
+                    } catch (InterruptedException ignored) {
+                        Thread.currentThread().interrupt();
+                    }
+                    return s;
+                }, executor))).onError(err -> downstreamFailure = err);
 
     }
-
 
     @Incoming("out")
     public void out(String s) {
