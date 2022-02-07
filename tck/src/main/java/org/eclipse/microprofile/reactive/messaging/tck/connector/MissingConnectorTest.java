@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2018, 2019 Contributors to the Eclipse Foundation
+/*
+ * Copyright (c) 2018, 2021 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -18,6 +18,8 @@
  */
 package org.eclipse.microprofile.reactive.messaging.tck.connector;
 
+import java.util.ServiceLoader;
+
 import org.eclipse.microprofile.reactive.messaging.tck.ArchiveExtender;
 import org.jboss.arquillian.container.test.api.Deployer;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -31,10 +33,9 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.enterprise.inject.spi.DeploymentException;
-import java.util.ServiceLoader;
+import jakarta.enterprise.inject.spi.DeploymentException;
 
-/**
+/*
  * This test verifies that the deployment fails if the connector implementation is unknown.
  */
 @RunWith(Arquillian.class)
@@ -47,9 +48,10 @@ public class MissingConnectorTest {
     @ShouldThrowException(value = DeploymentException.class, testable = true)
     public static Archive<JavaArchive> missingConnectorDeployment() {
         JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
-            .addClasses(MyProcessor.class, ArchiveExtender.class)
-            .addAsManifestResource(MissingConnectorTest.class.getResource("connector-config.properties"), "microprofile-config.properties")
-            .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+                .addClasses(MyProcessor.class, ArchiveExtender.class)
+                .addAsManifestResource(MissingConnectorTest.class.getResource("connector-config.properties"),
+                        "microprofile-config.properties")
+                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
 
         ServiceLoader.load(ArchiveExtender.class).iterator().forEachRemaining(ext -> ext.extend(archive));
         return archive;
@@ -64,9 +66,10 @@ public class MissingConnectorTest {
     @ShouldThrowException(value = DeploymentException.class, testable = true)
     public static Archive<JavaArchive> missingStreamDeployment() {
         JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
-            .addClasses(MyProcessorWithBadStreamName.class, DummyConnector.class, ArchiveExtender.class)
-            .addAsManifestResource(MissingConnectorTest.class.getResource("connector-config.properties"), "microprofile-config.properties")
-            .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+                .addClasses(MyProcessorWithBadStreamName.class, DummyConnector.class, ArchiveExtender.class)
+                .addAsManifestResource(MissingConnectorTest.class.getResource("connector-config.properties"),
+                        "microprofile-config.properties")
+                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
 
         ServiceLoader.load(ArchiveExtender.class).iterator().forEachRemaining(ext -> ext.extend(archive));
         return archive;

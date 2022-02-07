@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2018, 2019 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
@@ -37,8 +37,8 @@ public interface ConnectorFactory {
      * The {@code connector} attribute name.
      *
      * This attribute is part of the {@link org.eclipse.microprofile.config.Config} passed to the
-     * {@link IncomingConnectorFactory} and {@link OutgoingConnectorFactory} when a new channel is created. It
-     * indicates the name of the connector.
+     * {@link IncomingConnectorFactory} and {@link OutgoingConnectorFactory} when a new channel is created. It indicates
+     * the name of the connector.
      *
      * Note that each channel configured from the MicroProfile Config support must provide this attribute to indicate
      * which connector is used. It must match the name given to the {@link Connector} qualifier.

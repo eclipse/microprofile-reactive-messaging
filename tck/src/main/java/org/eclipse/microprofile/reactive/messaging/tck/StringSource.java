@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2018, 2019 Contributors to the Eclipse Foundation
+/*
+ * Copyright (c) 2018, 2021 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -18,22 +18,23 @@
  */
 package org.eclipse.microprofile.reactive.messaging.tck;
 
-import io.reactivex.Flowable;
+import java.util.Arrays;
+import java.util.List;
+
 import org.eclipse.microprofile.reactive.messaging.Outgoing;
 import org.reactivestreams.Publisher;
 
-import javax.enterprise.context.Dependent;
-import java.util.Arrays;
-import java.util.List;
+import io.reactivex.Flowable;
+import jakarta.enterprise.context.Dependent;
 
 @Dependent
 public class StringSource {
 
-  public static final List<String> VALUES = Arrays.asList("a", "b", "c", "d", "e", "f", "g", "h", "e", "j");
+    public static final List<String> VALUES = Arrays.asList("a", "b", "c", "d", "e", "f", "g", "h", "e", "j");
 
-  @Outgoing("strings")
-  public Publisher<String> strings() {
-    return Flowable.fromIterable(VALUES);
-  }
+    @Outgoing("strings")
+    public Publisher<String> strings() {
+        return Flowable.fromIterable(VALUES);
+    }
 
 }

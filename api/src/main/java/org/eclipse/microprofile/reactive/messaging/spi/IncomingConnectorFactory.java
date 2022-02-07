@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2018, 2019 Contributors to the Eclipse Foundation
+/*
+ * Copyright (c) 2018, 2021 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -18,11 +18,11 @@
  */
 package org.eclipse.microprofile.reactive.messaging.spi;
 
+import java.util.NoSuchElementException;
+
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.reactive.messaging.Message;
 import org.eclipse.microprofile.reactive.streams.operators.PublisherBuilder;
-
-import java.util.NoSuchElementException;
 
 /**
  * SPI used to implement a connector managing a source of messages for a specific <em>transport</em>. For example, to
@@ -31,8 +31,8 @@ import java.util.NoSuchElementException;
  * <em>transport</em> (so Kafka in this case). These channels are connected to methods annotated with
  * {@link org.eclipse.microprofile.reactive.messaging.Incoming}.
  * <p>
- * The factory is called to create a {@code channel} for each configured <em>transport</em>. The configuration is done using
- * MicroProfile Config. The following snippet gives an example for a hypothetical Kafka connector:
+ * The factory is called to create a {@code channel} for each configured <em>transport</em>. The configuration is done
+ * using MicroProfile Config. The following snippet gives an example for a hypothetical Kafka connector:
  *
  * <pre>
  * mp.messaging.incoming.my-channel.topic=my-topic
@@ -40,13 +40,12 @@ import java.util.NoSuchElementException;
  * ...
  * </pre>
  * <p>
- * The configuration keys are structured as follows: {@code mp.messaging.[incoming|outgoing].channel-name.attribute} or 
- * {@code mp.messaging.[connector].connector-name.attribute}.
- * Channel names are not expected to contain {@code .} so the first occurrence of a {@code .} in the {@code channel-name}
- * portion of a property terminates the channel name and precedes the attribute name.
- * For connector attributes, the longest string, inclusive of {@code .}s, that matches a loadable
- * connector is used as a {@code connector-name}. The remainder, after a {@code .} separator, is the attribute name.
- * Configuration keys that begin {@code mp.messaging.outgoing}} are not used for {@link IncomingConnectorFactory}
+ * The configuration keys are structured as follows: {@code mp.messaging.[incoming|outgoing].channel-name.attribute} or
+ * {@code mp.messaging.[connector].connector-name.attribute}. Channel names are not expected to contain {@code .} so the
+ * first occurrence of a {@code .} in the {@code channel-name} portion of a property terminates the channel name and
+ * precedes the attribute name. For connector attributes, the longest string, inclusive of {@code .}s, that matches a
+ * loadable connector is used as a {@code connector-name}. The remainder, after a {@code .} separator, is the attribute
+ * name. Configuration keys that begin {@code mp.messaging.outgoing}} are not used for {@link IncomingConnectorFactory}
  * configuration.
  * <p>
  * The portion of the key that precedes the {@code attribute} acts as a property prefix that has a common structure
@@ -59,26 +58,27 @@ import java.util.NoSuchElementException;
  * <pre>
  * &#64;Incoming("my-channel")
  * public void consume(String s) {
- *      // ...
+ *     // ...
  * }
  * </pre>
  * <p>
  * The set of attributes depend on the connector and transport layer (for example, bootstrap.servers is Kafka specific).
- * The connector attribute indicates the name of the <em>connector</em>. It will be matched to
- * the value returned by the {@link Connector} qualifier used on the relevant {@link IncomingConnectorFactory} bean implementation.
- * This is how a reactive messaging implementation looks for the specific {@link IncomingConnectorFactory} required for
- * a channel. Any {@code mp.messaging.connector} attributes for the channel's connector are also included in the set
- * of relevant attributes. Where an attribute is present for both a channel and its connector the value of the channel
- * specific attribute will take precedence.
+ * The connector attribute indicates the name of the <em>connector</em>. It will be matched to the value returned by the
+ * {@link Connector} qualifier used on the relevant {@link IncomingConnectorFactory} bean implementation. This is how a
+ * reactive messaging implementation looks for the specific {@link IncomingConnectorFactory} required for a channel. Any
+ * {@code mp.messaging.connector} attributes for the channel's connector are also included in the set of relevant
+ * attributes. Where an attribute is present for both a channel and its connector the value of the channel specific
+ * attribute will take precedence.
  *
  * In the previous configuration, the reactive messaging implementation would need to find the
- * {@link IncomingConnectorFactory} qualified using the {@link Connector} qualifier with the value
- * {@code acme.kafka} class to create the {@code my-channel} channel. Note that if the
- * connector cannot be found, the deployment must be failed with a {@link javax.enterprise.inject.spi.DeploymentException}.
+ * {@link IncomingConnectorFactory} qualified using the {@link Connector} qualifier with the value {@code acme.kafka}
+ * class to create the {@code my-channel} channel. Note that if the connector cannot be found, the deployment must be
+ * failed with a {@link jakarta.enterprise.inject.spi.DeploymentException}.
  * <p>
- * The {@link #getPublisherBuilder(Config)} is called for every channel that needs to be created. The {@link Config} object
- * passed to the method contains a subset of the global configuration, and with the prefixes removed. So for the previous
- * configuration, it would be:
+ * The {@link #getPublisherBuilder(Config)} is called for every channel that needs to be created. The {@link Config}
+ * object passed to the method contains a subset of the global configuration, and with the prefixes removed. So for the
+ * previous configuration, it would be:
+ *
  * <pre>
  * bootstrap.servers = localhost:9092
  * topic = my-topic
@@ -93,7 +93,7 @@ import java.util.NoSuchElementException;
  * <p>
  * If the configuration is invalid, the {@link #getPublisherBuilder(Config)} method must throw an
  * {@link IllegalArgumentException}, caught by the reactive messaging implementation and failing the deployment by
- * throwing a {@link javax.enterprise.inject.spi.DeploymentException} wrapping the exception.
+ * throwing a {@link jakarta.enterprise.inject.spi.DeploymentException} wrapping the exception.
  * <p>
  * Note that a Reactive Messaging implementation must support the configuration format described here. Implementations
  * are free to provide additional support for other approaches.
@@ -101,19 +101,22 @@ import java.util.NoSuchElementException;
 public interface IncomingConnectorFactory extends ConnectorFactory {
 
     /**
-     * Creates a <em>channel</em> for the given configuration. The channel's configuration is associated with a
-     * specific {@code connector}, using the {@link Connector} qualifier's parameter indicating a key to
-     * which {@link IncomingConnectorFactory} to use.
+     * Creates a <em>channel</em> for the given configuration. The channel's configuration is associated with a specific
+     * {@code connector}, using the {@link Connector} qualifier's parameter indicating a key to which
+     * {@link IncomingConnectorFactory} to use.
      *
      * <p>
      * Note that the connection to the <em>transport</em> or <em>broker</em> is generally postponed until the
      * subscription occurs.
      *
-     * @param config the configuration, must not be {@code null}, must contain the {@link #CHANNEL_NAME_ATTRIBUTE}
-     *               attribute.
+     * @param config
+     *            the configuration, must not be {@code null}, must contain the {@link #CHANNEL_NAME_ATTRIBUTE}
+     *            attribute.
      * @return the created {@link PublisherBuilder}, will not be {@code null}.
-     * @throws IllegalArgumentException if the configuration is invalid.
-     * @throws NoSuchElementException   if the configuration does not contain an expected attribute.
+     * @throws IllegalArgumentException
+     *             if the configuration is invalid.
+     * @throws NoSuchElementException
+     *             if the configuration does not contain an expected attribute.
      */
     PublisherBuilder<? extends Message<?>> getPublisherBuilder(Config config);
 

@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2020 Contributors to the Eclipse Foundation
+/*
+ * Copyright (c) 2020, 2021 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -19,7 +19,6 @@
 package org.eclipse.microprofile.reactive.messaging.tck.channel;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import javax.inject.Inject;
 
 import org.eclipse.microprofile.reactive.messaging.tck.TckBase;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -27,25 +26,22 @@ import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 
-
+import jakarta.inject.Inject;
 
 public class ChannelInjectionPublisherPayloadTest extends TckBase {
 
     @Deployment
     public static Archive<JavaArchive> deployment() {
         return getBaseArchive()
-            .addClasses(SourceBean.class, BeanInjectedWithAPublisherOfPayloads.class);
+                .addClasses(SourceBean.class, BeanInjectedWithAPublisherOfPayloads.class);
     }
-
-    
 
     private @Inject BeanInjectedWithAPublisherOfPayloads beanInjectedWithAPublisherOfPayloads;
     @Test
     public void testInjectionOfPublisherOfPayloads() {
-        
-        assertThat(beanInjectedWithAPublisherOfPayloads.consume()).containsExactlyInAnyOrder
-        ("B", "O", "N", "J", "O", "U", "R", "h", "e", "l", "l", "o");
+
+        assertThat(beanInjectedWithAPublisherOfPayloads.consume()).containsExactlyInAnyOrder("B", "O", "N", "J", "O",
+                "U", "R", "h", "e", "l", "l", "o");
     }
 
-    
 }

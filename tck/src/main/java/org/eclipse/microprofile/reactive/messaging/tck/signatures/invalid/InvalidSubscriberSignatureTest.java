@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2018, 2019 Contributors to the Eclipse Foundation
+/*
+ * Copyright (c) 2018, 2021 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -18,6 +18,8 @@
  */
 package org.eclipse.microprofile.reactive.messaging.tck.signatures.invalid;
 
+import java.util.ServiceLoader;
+
 import org.eclipse.microprofile.reactive.messaging.tck.ArchiveExtender;
 import org.jboss.arquillian.container.test.api.Deployer;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -31,8 +33,7 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.enterprise.inject.spi.DefinitionException;
-import java.util.ServiceLoader;
+import jakarta.enterprise.inject.spi.DefinitionException;
 
 @RunWith(Arquillian.class)
 public class InvalidSubscriberSignatureTest {
@@ -44,8 +45,8 @@ public class InvalidSubscriberSignatureTest {
     @ShouldThrowException(value = DefinitionException.class, testable = true)
     public static Archive<JavaArchive> incomingReturningNonVoid() {
         JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
-            .addClasses(IncomingReturningNonVoid.class, ArchiveExtender.class)
-            .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+                .addClasses(IncomingReturningNonVoid.class, ArchiveExtender.class)
+                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
 
         ServiceLoader.load(ArchiveExtender.class).iterator().forEachRemaining(ext -> ext.extend(archive));
         return archive;
@@ -60,8 +61,8 @@ public class InvalidSubscriberSignatureTest {
     @ShouldThrowException(value = DefinitionException.class, testable = true)
     public static Archive<JavaArchive> incomingReturningNonVoidCompletionStage() {
         JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
-            .addClasses(IncomingReturningNonVoidCompletionStage.class, ArchiveExtender.class)
-            .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+                .addClasses(IncomingReturningNonVoidCompletionStage.class, ArchiveExtender.class)
+                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
 
         ServiceLoader.load(ArchiveExtender.class).iterator().forEachRemaining(ext -> ext.extend(archive));
         return archive;

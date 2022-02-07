@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2018, 2019 Contributors to the Eclipse Foundation
+/*
+ * Copyright (c) 2018, 2021 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -18,21 +18,22 @@
  */
 package org.eclipse.microprofile.reactive.messaging.tck.signatures.publishers;
 
-import io.reactivex.Flowable;
-import org.eclipse.microprofile.reactive.messaging.Message;
-import org.eclipse.microprofile.reactive.messaging.Outgoing;
-import org.eclipse.microprofile.reactive.streams.operators.PublisherBuilder;
-import org.eclipse.microprofile.reactive.streams.operators.ReactiveStreams;
-import org.reactivestreams.Publisher;
+import static org.eclipse.microprofile.reactive.messaging.tck.TckBase.EXECUTOR;
 
-import javax.enterprise.context.ApplicationScoped;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.eclipse.microprofile.reactive.messaging.tck.TckBase.EXECUTOR;
+import org.eclipse.microprofile.reactive.messaging.Message;
+import org.eclipse.microprofile.reactive.messaging.Outgoing;
+import org.eclipse.microprofile.reactive.streams.operators.PublisherBuilder;
+import org.eclipse.microprofile.reactive.streams.operators.ReactiveStreams;
+import org.reactivestreams.Publisher;
+
+import io.reactivex.Flowable;
+import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class PublisherBean {
@@ -51,36 +52,36 @@ public class PublisherBean {
     public Publisher<Message<String>> getAPublisherProducingMessage() {
         increment("publisher-message");
         return ReactiveStreams.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
-            .flatMap(i -> ReactiveStreams.of(i, i))
-            .map(i -> Integer.toString(i))
-            .map(Message::of)
-            .buildRs();
+                .flatMap(i -> ReactiveStreams.of(i, i))
+                .map(i -> Integer.toString(i))
+                .map(Message::of)
+                .buildRs();
     }
 
     @Outgoing("publisher-payload")
     public Publisher<String> getAPublisherProducingPayload() {
         increment("publisher-payload");
         return ReactiveStreams.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
-            .flatMap(i -> ReactiveStreams.of(i, i))
-            .map(i -> Integer.toString(i))
-            .buildRs();
+                .flatMap(i -> ReactiveStreams.of(i, i))
+                .map(i -> Integer.toString(i))
+                .buildRs();
     }
 
     @Outgoing("publisher-builder-message")
     public PublisherBuilder<Message<String>> getAPublisherBuilderProducingMessage() {
         increment("publisher-builder-message");
         return ReactiveStreams.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
-            .flatMap(i -> ReactiveStreams.of(i, i))
-            .map(i -> Integer.toString(i))
-            .map(Message::of);
+                .flatMap(i -> ReactiveStreams.of(i, i))
+                .map(i -> Integer.toString(i))
+                .map(Message::of);
     }
 
     @Outgoing("publisher-builder-payload")
     public PublisherBuilder<String> getAPublisherBuilderProducingPayload() {
         increment("publisher-builder-payload");
         return ReactiveStreams.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
-            .flatMap(i -> ReactiveStreams.of(i, i))
-            .map(i -> Integer.toString(i));
+                .flatMap(i -> ReactiveStreams.of(i, i))
+                .map(i -> Integer.toString(i));
     }
 
     @Outgoing("publisher-flowable-message")
@@ -111,7 +112,6 @@ public class PublisherBean {
         increment("generator-message");
         return Message.of(generatorMessage.incrementAndGet());
     }
-
 
     @Outgoing("generator-message-async")
     public CompletionStage<Message<Integer>> getMessageAsync() {

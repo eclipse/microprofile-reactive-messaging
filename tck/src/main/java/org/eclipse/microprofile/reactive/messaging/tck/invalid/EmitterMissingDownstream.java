@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2021 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
@@ -21,15 +21,13 @@ package org.eclipse.microprofile.reactive.messaging.tck.invalid;
 import org.eclipse.microprofile.reactive.messaging.Channel;
 import org.eclipse.microprofile.reactive.messaging.Emitter;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 @ApplicationScoped
 public class EmitterMissingDownstream {
 
     @SuppressWarnings("unused")
-    private @Inject
-    @Channel("missing")
-    Emitter<String> missing;
+    private @Inject @Channel("missing") Emitter<String> missing;
 
 }

@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2018, 2019 Contributors to the Eclipse Foundation
+/*
+ * Copyright (c) 2018, 2021 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -24,14 +24,14 @@ import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 public class SubscriberShapeTest extends TckBase {
 
     @Deployment
     public static Archive<JavaArchive> deployment() {
         return getBaseArchive()
-            .addClasses(SubscriberBean.class);
+                .addClasses(SubscriberBean.class);
     }
 
     @Inject

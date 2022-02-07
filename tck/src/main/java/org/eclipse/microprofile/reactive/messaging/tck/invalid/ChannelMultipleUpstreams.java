@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2021 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
@@ -23,15 +23,14 @@ import org.eclipse.microprofile.reactive.messaging.Emitter;
 import org.eclipse.microprofile.reactive.messaging.Outgoing;
 import org.reactivestreams.Publisher;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 @ApplicationScoped
 public class ChannelMultipleUpstreams {
 
-   @SuppressWarnings("unused")
-   private @Inject @Channel("many")
-   Publisher<String> many;
+    @SuppressWarnings("unused")
+    private @Inject @Channel("many") Publisher<String> many;
 
     @Outgoing("many")
     public String generate() {
@@ -39,7 +38,6 @@ public class ChannelMultipleUpstreams {
     }
 
     @SuppressWarnings("unused")
-    private @Inject @Channel("many")
-    Emitter<String> emitter;
+    private @Inject @Channel("many") Emitter<String> emitter;
 
 }

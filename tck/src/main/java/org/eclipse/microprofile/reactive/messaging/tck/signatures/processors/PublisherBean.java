@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2018, 2019 Contributors to the Eclipse Foundation
+/*
+ * Copyright (c) 2018, 2021 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -18,6 +18,15 @@
  */
 package org.eclipse.microprofile.reactive.messaging.tck.signatures.processors;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 import org.eclipse.microprofile.reactive.messaging.Incoming;
 import org.eclipse.microprofile.reactive.messaging.Message;
 import org.eclipse.microprofile.reactive.messaging.Outgoing;
@@ -25,15 +34,7 @@ import org.eclipse.microprofile.reactive.streams.operators.PublisherBuilder;
 import org.eclipse.microprofile.reactive.streams.operators.ReactiveStreams;
 import org.reactivestreams.Publisher;
 
-import javax.enterprise.context.ApplicationScoped;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.awaitility.Awaitility.await;
+import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class PublisherBean {
@@ -41,17 +42,16 @@ public class PublisherBean {
     private Map<String, List<String>> collector = new ConcurrentHashMap<>();
 
     private static final List<String> EXPECTED = Arrays.asList(
-        "1", "1",
-        "2", "2",
-        "3", "3",
-        "4", "4",
-        "5", "5",
-        "6", "6",
-        "7", "7",
-        "8", "8",
-        "9", "9",
-        "10", "10"
-    );
+            "1", "1",
+            "2", "2",
+            "3", "3",
+            "4", "4",
+            "5", "5",
+            "6", "6",
+            "7", "7",
+            "8", "8",
+            "9", "9",
+            "10", "10");
 
     @Outgoing("publisher-for-processor-publisher-message")
     public PublisherBuilder<Integer> streamForProcessorOfMessages() {
@@ -97,42 +97,42 @@ public class PublisherBean {
     @Outgoing("processor-publisher-message")
     public Publisher<Message<String>> processorOfMessages(Message<Integer> message) {
         return ReactiveStreams.of(message)
-            .map(Message::getPayload)
-            .map(i -> i + 1)
-            .flatMap(i -> ReactiveStreams.of(i, i))
-            .map(i -> Integer.toString(i))
-            .map(Message::of)
-            .buildRs();
+                .map(Message::getPayload)
+                .map(i -> i + 1)
+                .flatMap(i -> ReactiveStreams.of(i, i))
+                .map(i -> Integer.toString(i))
+                .map(Message::of)
+                .buildRs();
     }
 
     @Incoming("publisher-for-processor-publisher-payload")
     @Outgoing("processor-publisher-payload")
     public Publisher<String> processorOfPayloads(int value) {
         return ReactiveStreams.of(value)
-            .map(i -> i + 1)
-            .flatMap(i -> ReactiveStreams.of(i, i))
-            .map(i -> Integer.toString(i))
-            .buildRs();
+                .map(i -> i + 1)
+                .flatMap(i -> ReactiveStreams.of(i, i))
+                .map(i -> Integer.toString(i))
+                .buildRs();
     }
 
     @Incoming("publisher-for-processor-publisher-builder-message")
     @Outgoing("processor-publisher-builder-message")
     public PublisherBuilder<Message<String>> processorBuilderOfMessages(Message<Integer> message) {
         return ReactiveStreams.of(message)
-            .map(Message::getPayload)
-            .map(i -> i + 1)
-            .flatMap(i -> ReactiveStreams.of(i, i))
-            .map(i -> Integer.toString(i))
-            .map(Message::of);
+                .map(Message::getPayload)
+                .map(i -> i + 1)
+                .flatMap(i -> ReactiveStreams.of(i, i))
+                .map(i -> Integer.toString(i))
+                .map(Message::of);
     }
 
     @Incoming("publisher-for-processor-publisher-builder-payload")
     @Outgoing("processor-publisher-builder-payload")
     public PublisherBuilder<String> processorBuilderOfPayloads(int value) {
         return ReactiveStreams.of(value)
-            .map(i -> i + 1)
-            .flatMap(i -> ReactiveStreams.of(i, i))
-            .map(i -> Integer.toString(i));
+                .map(i -> i + 1)
+                .flatMap(i -> ReactiveStreams.of(i, i))
+                .map(i -> Integer.toString(i));
     }
 
     private void add(String key, String value) {

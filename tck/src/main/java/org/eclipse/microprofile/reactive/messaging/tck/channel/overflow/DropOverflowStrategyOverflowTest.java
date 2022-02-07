@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2020 Contributors to the Eclipse Foundation
+/*
+ * Copyright (c) 2020, 2021 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -21,28 +21,27 @@ package org.eclipse.microprofile.reactive.messaging.tck.channel.overflow;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
-import javax.inject.Inject;
-
 import org.eclipse.microprofile.reactive.messaging.tck.TckBase;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 
+import jakarta.inject.Inject;
+
 public class DropOverflowStrategyOverflowTest extends TckBase {
 
     @Deployment
     public static Archive<JavaArchive> deployment() {
         return getBaseArchive()
-            .addClasses(BeanUsingDropOverflowStrategy.class);
+                .addClasses(BeanUsingDropOverflowStrategy.class);
     }
 
     private @Inject BeanUsingDropOverflowStrategy bean;
-    
 
     @Test
     public void testOverflow() {
-        
+
         bean.emitALotOfItems();
         await().until(bean::isDone);
         assertThat(bean.output()).isNotEmpty().doesNotContain("999");

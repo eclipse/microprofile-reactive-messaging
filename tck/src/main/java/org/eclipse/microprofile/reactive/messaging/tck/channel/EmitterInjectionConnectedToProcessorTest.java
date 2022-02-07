@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2020 Contributors to the Eclipse Foundation
+/*
+ * Copyright (c) 2020, 2021 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -20,21 +20,20 @@ package org.eclipse.microprofile.reactive.messaging.tck.channel;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import javax.inject.Inject;
-
 import org.eclipse.microprofile.reactive.messaging.tck.TckBase;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 
+import jakarta.inject.Inject;
 
 public class EmitterInjectionConnectedToProcessorTest extends TckBase {
 
     @Deployment
     public static Archive<JavaArchive> deployment() {
         return getBaseArchive()
-            .addClasses(EmitterConnectedToProcessor.class);
+                .addClasses(EmitterConnectedToProcessor.class);
     }
 
     private @Inject EmitterConnectedToProcessor emitterConnectedToProcessor;
@@ -47,5 +46,4 @@ public class EmitterInjectionConnectedToProcessorTest extends TckBase {
         assertThat(emitterConnectedToProcessor.emitter().hasRequests()).isFalse();
     }
 
-    
 }

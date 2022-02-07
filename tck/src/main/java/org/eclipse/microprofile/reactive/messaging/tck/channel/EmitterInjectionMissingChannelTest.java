@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2021 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
@@ -18,6 +18,8 @@
  */
 package org.eclipse.microprofile.reactive.messaging.tck.channel;
 
+import java.util.ServiceLoader;
+
 import org.eclipse.microprofile.reactive.messaging.tck.ArchiveExtender;
 import org.jboss.arquillian.container.test.api.Deployer;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -31,9 +33,7 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.enterprise.inject.spi.DeploymentException;
-import java.util.ServiceLoader;
-
+import jakarta.enterprise.inject.spi.DeploymentException;
 
 @RunWith(Arquillian.class)
 public class EmitterInjectionMissingChannelTest {
@@ -42,8 +42,8 @@ public class EmitterInjectionMissingChannelTest {
     @ShouldThrowException(value = DeploymentException.class, testable = true)
     public static Archive<JavaArchive> deployment() {
         JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
-            .addClasses(BeanWithMissingChannel.class, ArchiveExtender.class)
-            .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+                .addClasses(BeanWithMissingChannel.class, ArchiveExtender.class)
+                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
 
         ServiceLoader.load(ArchiveExtender.class).iterator().forEachRemaining(ext -> ext.extend(archive));
         return archive;

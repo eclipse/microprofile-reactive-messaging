@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2020 Contributors to the Eclipse Foundation
+/*
+ * Copyright (c) 2020, 2021 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -20,16 +20,14 @@ package org.eclipse.microprofile.reactive.messaging.tck.channel;
 
 import java.util.List;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-
 import org.eclipse.microprofile.reactive.messaging.Channel;
 import org.eclipse.microprofile.reactive.messaging.Message;
 import org.eclipse.microprofile.reactive.streams.operators.PublisherBuilder;
 import org.eclipse.microprofile.reactive.streams.operators.ReactiveStreams;
 
 import io.reactivex.Flowable;
-
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 @ApplicationScoped
 public class BeanInjectedWithAPublisherBuilderOfMessages {
@@ -44,7 +42,8 @@ public class BeanInjectedWithAPublisherBuilderOfMessages {
     }
 
     @Inject
-    public BeanInjectedWithAPublisherBuilderOfMessages(@Channel("bonjour") PublisherBuilder<Message<String>> constructor) {
+    public BeanInjectedWithAPublisherBuilderOfMessages(
+            @Channel("bonjour") PublisherBuilder<Message<String>> constructor) {
         this.constructor = constructor;
     }
 

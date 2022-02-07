@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2021 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
@@ -18,6 +18,14 @@
  */
 package org.eclipse.microprofile.reactive.messaging.tck.acknowledgement;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.awaitility.Awaitility.await;
+
+import java.util.ServiceLoader;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
+
 import org.eclipse.microprofile.reactive.messaging.Emitter;
 import org.eclipse.microprofile.reactive.messaging.Incoming;
 import org.eclipse.microprofile.reactive.messaging.tck.ArchiveExtender;
@@ -29,23 +37,16 @@ import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import java.util.ServiceLoader;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionStage;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.awaitility.Awaitility.await;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 public class EmitterOfPayloadAcknowledgementTest extends TckBase {
 
     @Deployment
     public static Archive<JavaArchive> deployment() {
         JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
-            .addClasses(EmitterBean.class, MessageConsumer.class, ArchiveExtender.class)
-            .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+                .addClasses(EmitterBean.class, MessageConsumer.class, ArchiveExtender.class)
+                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
 
         ServiceLoader.load(ArchiveExtender.class).iterator().forEachRemaining(ext -> ext.extend(archive));
         return archive;
@@ -63,12 +64,11 @@ public class EmitterOfPayloadAcknowledgementTest extends TckBase {
         Emitter<String> emitter = bean.getEmitter();
 
         CompletableFuture<Void> all = CompletableFuture.allOf(
-            emitter.send("a").toCompletableFuture(),
-            emitter.send("b").toCompletableFuture(),
-            emitter.send("c").toCompletableFuture(),
-            emitter.send("d").toCompletableFuture(),
-            emitter.send("e").toCompletableFuture()
-        );
+                emitter.send("a").toCompletableFuture(),
+                emitter.send("b").toCompletableFuture(),
+                emitter.send("c").toCompletableFuture(),
+                emitter.send("d").toCompletableFuture(),
+                emitter.send("e").toCompletableFuture());
 
         await().until(all::isDone);
         assertThat(all.isCompletedExceptionally()).isFalse();
@@ -81,15 +81,12 @@ public class EmitterOfPayloadAcknowledgementTest extends TckBase {
         processor.enableFailureMode();
 
         emitter.send("a").toCompletableFuture().join();
-        assertThatThrownBy(() ->
-            emitter.send("b").toCompletableFuture().join()
-        ).hasRootCauseInstanceOf(IllegalArgumentException.class);
-        assertThatThrownBy(() ->
-            emitter.send("c").toCompletableFuture().join()
-        ).hasRootCauseInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> emitter.send("b").toCompletableFuture().join())
+                .hasRootCauseInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> emitter.send("c").toCompletableFuture().join())
+                .hasRootCauseInstanceOf(IllegalArgumentException.class);
         emitter.send("d").toCompletableFuture().join();
     }
-
 
     @ApplicationScoped
     public static class MessageConsumer {

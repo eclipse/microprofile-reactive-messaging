@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2018, 2019 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
@@ -23,9 +23,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ValueCollector {
 
-  protected List<String> values = new CopyOnWriteArrayList<>();
+    protected List<String> values = new CopyOnWriteArrayList<>();
 
-  public List<String> getValues() {
-    return values;
-  }
+    public List<String> getValues() {
+        return values;
+    }
 }

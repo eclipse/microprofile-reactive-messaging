@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Copyright (c) 2018, 2020 Contributors to the Eclipse Foundation
+    Copyright (c) 2018, 2021 Contributors to the Eclipse Foundation
 
     See the NOTICE file(s) distributed with this work for additional
     information regarding copyright ownership.
@@ -22,51 +22,32 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <parent>
+        <groupId>org.eclipse.microprofile</groupId>
+        <artifactId>microprofile-parent</artifactId>
+        <version>2.5</version>
+    </parent>
+
     <groupId>org.eclipse.microprofile.reactive.messaging</groupId>
     <artifactId>microprofile-reactive-messaging-parent</artifactId>
-    <version>2.1-SNAPSHOT</version>
-    <packaging>pom</packaging>
+    <version>3.0-SNAPSHOT</version>
 
+    <packaging>pom</packaging>
     <name>MicroProfile Reactive Messaging</name>
     <description>Eclipse MicroProfile Reactive Messaging :: Parent POM</description>
 
-    <url>http://microprofile.io</url>
-    <inceptionYear>2018</inceptionYear>
-
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <version.microprofile.config>3.0</version.microprofile.config>
+        <version.microprofile.metrics>4.0</version.microprofile.metrics>
+        <version.microprofile.reactive.streams.operators>3.0-RC1</version.microprofile.reactive.streams.operators>
+        <version.osgi.versioning>1.1.0</version.osgi.versioning>
 
-        <microprofile.reactive.streams.operators.version>2.0</microprofile.reactive.streams.operators.version>
+        <!-- Test -->
+        <version.awaitability>4.1.0</version.awaitability>
+        <version.assertj>3.20.2</version.assertj>
 
-        <checkstyle.version>3.0.0</checkstyle.version>
-        <checkstyle.methodNameFormat>^_?[a-z][a-zA-Z0-9]*$</checkstyle.methodNameFormat>
-        <!-- whether autorelease maven central staging repositories - default true to allow review and manually release repositories -->
-        <autorelease>false</autorelease>
-        <!-- keeping closed repos with failure - default is false because the errors are visible in the maven output, but true will leave the repo open for investigation in Sonatype Nexus -->
-        <keepStagingReposOnFailure>false</keepStagingReposOnFailure>
-        <microprofile-config-api.version>2.0</microprofile-config-api.version>
-        <microprofile-metrics-api.version>3.0</microprofile-metrics-api.version>
-        <cdi-api.version>2.0</cdi-api.version>
-
-        <revremark>Draft</revremark>
         <inceptionYear>2018</inceptionYear>
     </properties>
-
-    <licenses>
-        <license>
-            <name>Apache License, Version 2.0</name>
-            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
-            <distribution>repo</distribution>
-            <comments>A business-friendly OSS license</comments>
-        </license>
-    </licenses>
-
-    <organization>
-        <name>Eclipse Foundation</name>
-        <url>http://www.eclipse.org/</url>
-    </organization>
 
     <issueManagement>
         <system>GitHub</system>
@@ -91,22 +72,8 @@
         <connection>scm:git:https://github.com/eclipse/microprofile-reactive-messaging.git</connection>
         <developerConnection>scm:git:git@github.com:eclipse/microprofile-reactive-messaging.git</developerConnection>
         <url>https://github.com/eclipse/microprofile-reactive-messaging</url>
-        <tag>2.0.1-RC1</tag>
+        <tag>3.0-RC1</tag>
     </scm>
-
-    <distributionManagement>
-        <repository>
-            <id>ossrh</id>
-            <name>Sonatype OSSRH - Release Staging Area</name>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <name>Sonatype OSSRH Snapshots</name>
-            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-            <uniqueVersion>true</uniqueVersion>
-        </snapshotRepository>
-    </distributionManagement>
 
     <modules>
         <module>api</module>
@@ -114,365 +81,40 @@
         <module>spec</module>
     </modules>
 
-    <pluginRepositories>
-        <pluginRepository>
-            <id>repo.eclipse.org</id>
-            <name>Project Repository - Releases</name>
-            <url>https://repo.eclipse.org/content/groups/cbi/</url>
-        </pluginRepository>
-        <pluginRepository>
-            <id>microprofile.repo.eclipse.org</id>
-            <name>Microprofile Project Repository - Releases</name>
-            <url>https://repo.eclipse.org/content/groups/microprofile/</url>
-        </pluginRepository>
-    </pluginRepositories>
-
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>org.eclipse.microprofile.reactive-streams-operators</groupId>
                 <artifactId>microprofile-reactive-streams-operators-api</artifactId>
-                <version>${microprofile.reactive.streams.operators.version}</version>
+                <version>${version.microprofile.reactive.streams.operators}</version>
             </dependency>
             <dependency>
                 <groupId>org.eclipse.microprofile.config</groupId>
                 <artifactId>microprofile-config-api</artifactId>
-                <version>${microprofile-config-api.version}</version>
+                <version>${version.microprofile.config}</version>
             </dependency>
             <dependency>
                 <groupId>org.eclipse.microprofile.metrics</groupId>
                 <artifactId>microprofile-metrics-api</artifactId>
-                <version>${microprofile-metrics-api.version}</version>
+                <version>${version.microprofile.metrics}</version>
             </dependency>
             <dependency>
                 <groupId>org.osgi</groupId>
                 <artifactId>org.osgi.annotation.versioning</artifactId>
-                <version>1.1.0</version>
-            </dependency>
-            <dependency>
-                <groupId>jakarta.enterprise</groupId>
-                <artifactId>jakarta.enterprise.cdi-api</artifactId>
-                <version>2.0.2</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>jakarta.el</groupId>
-                        <artifactId>jakarta.el-api</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>jakarta.ejb</groupId>
-                        <artifactId>jakarta.ejb-api</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>jakarta.annotation</groupId>
-                <artifactId>jakarta.annotation-api</artifactId>
-                <version>1.3.5</version>
-            </dependency>
-            <dependency>
-                <groupId>org.testng</groupId>
-                <artifactId>testng</artifactId>
-                <version>7.4.0</version>
+                <version>${version.osgi.versioning}</version>
+                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>org.awaitility</groupId>
                 <artifactId>awaitility</artifactId>
-                <version>4.1.0</version>
-            </dependency>
-            <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version>4.13.2</version>
+                <version>${version.awaitability}</version>
             </dependency>
             <dependency>
                 <groupId>org.assertj</groupId>
                 <artifactId>assertj-core</artifactId>
-                <version>3.20.2</version>
-            </dependency>
-            <dependency>
-                <groupId>org.hamcrest</groupId>
-                <artifactId>hamcrest-all</artifactId>
-                <version>1.3</version>
-            </dependency>
-            <dependency>
-                <groupId>javax.json.bind</groupId>
-                <artifactId>javax.json.bind-api</artifactId>
-                <version>1.0</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.arquillian</groupId>
-                <artifactId>arquillian-bom</artifactId>
-                <version>1.6.0.Final</version>
-                <scope>import</scope>
-                <type>pom</type>
+                <version>${version.assertj}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
 
-    <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-release-plugin</artifactId>
-                    <version>2.5.3</version>
-                    <configuration>
-                        <autoVersionSubmodules>true</autoVersionSubmodules>
-                        <localCheckout>true</localCheckout>
-                        <useReleaseProfile>false</useReleaseProfile>
-                        <arguments>${arguments} -Prelease -Drevremark=${revremark}</arguments>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.eclipse.cbi.maven.plugins</groupId>
-                    <artifactId>eclipse-jarsigner-plugin</artifactId>
-                    <version>1.1.5</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-checkstyle-plugin</artifactId>
-                    <version>${checkstyle.version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-jar-plugin</artifactId>
-                    <version>3.1.2</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-source-plugin</artifactId>
-                    <version>3.1.0</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>3.1.1</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-gpg-plugin</artifactId>
-                    <version>1.6</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>build-helper-maven-plugin</artifactId>
-                    <version>3.0.0</version>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-        <plugins>
-            <plugin>
-                <groupId>org.eclipse.microprofile.maven</groupId>
-                <artifactId>microprofile-maven-build-extension</artifactId>
-                <version>1.0</version>
-                <extensions>true</extensions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-checkstyle-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>verify-style</id>
-                        <phase>process-classes</phase>
-                        <goals>
-                            <goal>checkstyle-aggregate</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <encoding>UTF-8</encoding>
-                    <consoleOutput>true</consoleOutput>
-                    <failOnViolation>true</failOnViolation>
-                    <includeTestSourceDirectory>true</includeTestSourceDirectory>
-                    <failsOnError>true</failsOnError>
-                    <linkXRef>true</linkXRef>
-                    <logViolationsToConsole>true</logViolationsToConsole>
-                    <configLocation>${project.basedir}/mp_checkstyle_rules.xml</configLocation>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <version>3.2.0</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>timestamp-property</goal>
-                        </goals>
-                        <configuration>
-                            <name>current.year</name>
-                            <pattern>yyyy</pattern>
-                            <locale>en_US</locale>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>timestamp-property</id>
-                        <goals>
-                            <goal>timestamp-property</goal>
-                        </goals>
-                        <phase>validate</phase>
-                        <configuration>
-                            <name>currentYear</name>
-                            <pattern>yyyy</pattern>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>com.mycila</groupId>
-                <artifactId>license-maven-plugin</artifactId>
-                <version>3.0</version>
-                <configuration>
-                    <aggregate>true</aggregate>
-                    <header>src/license/license.txt</header>
-                    <headerSections>
-                        <headerSection>
-                            <key>COPYRIGHT_DATE</key>
-                            <defaultValue>${current.year}</defaultValue>
-                            <ensureMatch>(\d{4}, ?)?\d{4}</ensureMatch>
-                        </headerSection>
-                    </headerSections>
-                    <properties>
-                        <owner>Eclipse MicroProfile</owner>
-                    </properties>
-                    <mapping>
-                        <asciidoc>DOUBLESLASH_STYLE</asciidoc>
-                        <adoc>DOUBLESLASH_STYLE</adoc>
-                    </mapping>
-                    <excludes>
-                        <exclude>LICENSE</exclude>
-                        <exclude>NOTICE</exclude>
-                        <exclude>.gitattributes</exclude>
-                        <exclude>**/bnd.bnd</exclude>
-                        <exclude>**/.checkstyle</exclude>
-                        <exclude>.github/**</exclude>
-                    </excludes>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>format</goal>
-                        </goals>
-                        <phase>verify</phase>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.rat</groupId>
-                <artifactId>apache-rat-plugin</artifactId>
-                <version>0.13</version>
-                <executions>
-                    <execution>
-                        <id>rat-check</id>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <excludes>
-                        <exclude>**/*.svg</exclude>
-                        <exclude>**/target</exclude>
-                        <exclude>.travis.yml.*</exclude>
-                        <exclude>bnd.bnd</exclude>
-                        <exclude>*.log</exclude>
-                        <exclude>.checkstyle</exclude>
-                        <exclude>.factorypath</exclude>
-                        <exclude>.editorconfig</exclude>
-                        <exclude>**/META-INF/services/*</exclude>
-                        <exclude>.github/**</exclude>
-                        <exclude>**/license.html</exclude>
-                        <exclude>**/license-efsl.adoc</exclude>
-                        <exclude>**/LICENSE*</exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-
-    <profiles>
-        <profile>
-            <id>release</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.sonatype.plugins</groupId>
-                        <artifactId>nexus-staging-maven-plugin</artifactId>
-                        <version>1.6.3</version>
-                        <extensions>true</extensions>
-                        <configuration>
-                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                            <serverId>ossrh</serverId>
-                            <autoReleaseAfterClose>${autorelease}</autoReleaseAfterClose>
-                            <keepStagingRepositoryOnCloseRuleFailure>${keepStagingReposOnFailure}
-                            </keepStagingRepositoryOnCloseRuleFailure>
-                        </configuration>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-source-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>attach-sources</id>
-                                <goals>
-                                    <goal>jar-no-fork</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-javadoc-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>attach-javadocs</id>
-                                <goals>
-                                    <goal>jar</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>sign-artifacts</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                                <configuration>
-                                    <gpgArguments>
-                                        <arg>--pinentry-mode</arg>
-                                        <arg>loopback</arg>
-                                    </gpgArguments>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <!-- This allows custom deployments to arbitrary repositories,
-                 these properties are probably best set with profiles in
-                 settings.xml
-            -->
-            <id>custom-deploy</id>
-            <distributionManagement>
-                <repository>
-                    <id>${custom-deploy.id}</id>
-                    <url>${custom-deploy.url}</url>
-                </repository>
-                <snapshotRepository>
-                    <id>${custom-deploy.id}</id>
-                    <url>${custom-deploy.url}</url>
-                </snapshotRepository>
-            </distributionManagement>
-        </profile>
-    </profiles>
 </project>

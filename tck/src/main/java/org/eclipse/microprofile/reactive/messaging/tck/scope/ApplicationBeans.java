@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2018, 2019 Contributors to the Eclipse Foundation
+/*
+ * Copyright (c) 2018, 2021 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -18,52 +18,53 @@
  */
 package org.eclipse.microprofile.reactive.messaging.tck.scope;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.eclipse.microprofile.reactive.messaging.Incoming;
 import org.eclipse.microprofile.reactive.messaging.Outgoing;
 import org.eclipse.microprofile.reactive.streams.operators.ReactiveStreams;
 import org.reactivestreams.Publisher;
 
-import javax.annotation.PostConstruct;
-import javax.enterprise.context.ApplicationScoped;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
+import jakarta.annotation.PostConstruct;
+import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class ApplicationBeans {
 
-  private static final AtomicInteger COUNTER = new AtomicInteger();
-  private int id;
-  private List<Integer> list = new ArrayList<>();
-  private static final List<Integer> STATIC_LIST = new ArrayList<>();
+    private static final AtomicInteger COUNTER = new AtomicInteger();
+    private int id;
+    private List<Integer> list = new ArrayList<>();
+    private static final List<Integer> STATIC_LIST = new ArrayList<>();
 
-  @PostConstruct
-  private void init() {
-    id = COUNTER.getAndIncrement();
-  }
+    @PostConstruct
+    private void init() {
+        id = COUNTER.getAndIncrement();
+    }
 
-  @Outgoing("source")
-  public Publisher<Integer> source() {
-    return ReactiveStreams.of(id).buildRs();
-  }
+    @Outgoing("source")
+    public Publisher<Integer> source() {
+        return ReactiveStreams.of(id).buildRs();
+    }
 
-  @Incoming("source")
-  @Outgoing("output")
-  public int process(int i) {
-    return i + 1;
-  }
+    @Incoming("source")
+    @Outgoing("output")
+    public int process(int i) {
+        return i + 1;
+    }
 
-  @Incoming("output")
-  public void sink(int v) {
-    list.add(v);
-    STATIC_LIST.add(v);
-  }
+    @Incoming("output")
+    public void sink(int v) {
+        list.add(v);
+        STATIC_LIST.add(v);
+    }
 
-  public List<Integer> getList() {
-    return list;
-  }
+    public List<Integer> getList() {
+        return list;
+    }
 
-  public static List<Integer> getStaticList() {
-    return STATIC_LIST;
-  }
+    public static List<Integer> getStaticList() {
+        return STATIC_LIST;
+    }
 }

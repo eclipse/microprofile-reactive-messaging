@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2018, 2019 Contributors to the Eclipse Foundation
+/*
+ * Copyright (c) 2018, 2021 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -18,6 +18,12 @@
  */
 package org.eclipse.microprofile.reactive.messaging.tck.connector;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.reactive.messaging.Message;
 import org.eclipse.microprofile.reactive.messaging.spi.Connector;
@@ -27,19 +33,14 @@ import org.eclipse.microprofile.reactive.streams.operators.PublisherBuilder;
 import org.eclipse.microprofile.reactive.streams.operators.ReactiveStreams;
 import org.eclipse.microprofile.reactive.streams.operators.SubscriberBuilder;
 
-import javax.enterprise.context.ApplicationScoped;
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 @Connector("Dummy")
 public class DummyConnector implements IncomingConnectorFactory, OutgoingConnectorFactory {
     private List<String> elements = new CopyOnWriteArrayList<>();
 
-    /**
+    /*
      * Stores the received configs.
      */
     private List<Config> configs = new CopyOnWriteArrayList<>();

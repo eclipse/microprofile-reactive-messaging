@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2018, 2019 Contributors to the Eclipse Foundation
+/*
+ * Copyright (c) 2018, 2021 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -18,22 +18,22 @@
  */
 package org.eclipse.microprofile.reactive.messaging.spi;
 
-
-import javax.inject.Qualifier;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
-
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+
+import jakarta.inject.Qualifier;
+
 /**
  * Qualifier used on connector implementations to indicate the associated underlying transport.
  * <p>
- * The value indicates the name associated with  the bean implementing either
- * {@link IncomingConnectorFactory} or {@link OutgoingConnectorFactory} or both.
+ * The value indicates the name associated with the bean implementing either {@link IncomingConnectorFactory} or
+ * {@link OutgoingConnectorFactory} or both.
  * <p>
  * Note that the given name is a user-facing interface used in the configuration.
  */
@@ -43,9 +43,9 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 public @interface Connector {
 
     /**
-     * @return The name of the connector associated with the bean implementing {@link IncomingConnectorFactory}
-     * or {@link OutgoingConnectorFactory}. Must not be {@code null}. Returning {@code null} will cause a deployment
-     * failure.
+     * @return The name of the connector associated with the bean implementing {@link IncomingConnectorFactory} or
+     *         {@link OutgoingConnectorFactory}. Must not be {@code null}. Returning {@code null} will cause a
+     *         deployment failure.
      */
     String value();
 

@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2018, 2019 Contributors to the Eclipse Foundation
+/*
+ * Copyright (c) 2018, 2021 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -18,6 +18,11 @@
  */
 package org.eclipse.microprofile.reactive.messaging.tck;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
+
+import java.util.ServiceLoader;
+
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
@@ -27,33 +32,28 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.inject.Inject;
-import java.util.ServiceLoader;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.awaitility.Awaitility.await;
+import jakarta.inject.Inject;
 
 @RunWith(Arquillian.class)
 public class SimpleIncomingTest {
 
-  @Deployment
-  public static Archive<JavaArchive> deployment() {
-    JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
-      .addClasses(SimpleIncomingBean.class, ValueCollector.class, StringSource.class, ArchiveExtender.class)
-      .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+    @Deployment
+    public static Archive<JavaArchive> deployment() {
+        JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
+                .addClasses(SimpleIncomingBean.class, ValueCollector.class, StringSource.class, ArchiveExtender.class)
+                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
 
-    ServiceLoader.load(ArchiveExtender.class).iterator().forEachRemaining(ext -> ext.extend(archive));
-    return archive;
-  }
+        ServiceLoader.load(ArchiveExtender.class).iterator().forEachRemaining(ext -> ext.extend(archive));
+        return archive;
+    }
 
-  @Inject
-  private SimpleIncomingBean simple;
+    @Inject
+    private SimpleIncomingBean simple;
 
-  @Test
-  public void testReceptionWithValues() {
-      await().until(() -> simple.getValues().size() == StringSource.VALUES.size());
-      assertThat(simple.getValues()).containsExactlyElementsOf(StringSource.VALUES);
-  }
-
+    @Test
+    public void testReceptionWithValues() {
+        await().until(() -> simple.getValues().size() == StringSource.VALUES.size());
+        assertThat(simple.getValues()).containsExactlyElementsOf(StringSource.VALUES);
+    }
 
 }

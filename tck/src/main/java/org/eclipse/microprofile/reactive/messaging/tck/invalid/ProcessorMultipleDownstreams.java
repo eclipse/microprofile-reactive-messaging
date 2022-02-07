@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2021 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
@@ -23,8 +23,8 @@ import org.eclipse.microprofile.reactive.messaging.Incoming;
 import org.eclipse.microprofile.reactive.messaging.Outgoing;
 import org.reactivestreams.Publisher;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 @ApplicationScoped
 public class ProcessorMultipleDownstreams {
@@ -36,8 +36,7 @@ public class ProcessorMultipleDownstreams {
     }
 
     @SuppressWarnings("unused")
-    private @Inject @Channel("many")
-    Publisher<String> many1;
+    private @Inject @Channel("many") Publisher<String> many1;
 
     @Incoming("many")
     public void sink(String s) {

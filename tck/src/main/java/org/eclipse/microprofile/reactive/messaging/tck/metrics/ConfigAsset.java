@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2018, 2019 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
@@ -27,9 +27,9 @@ import java.util.Properties;
 import org.jboss.shrinkwrap.api.asset.Asset;
 
 public class ConfigAsset implements Asset {
-    
+
     private Properties properties = new Properties();
-    
+
     public ConfigAsset put(String key, String value) {
         properties.put(key, value);
         return this;
@@ -41,8 +41,7 @@ public class ConfigAsset implements Asset {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             properties.store(out, "Config generated with ConfigAsset");
             return new ByteArrayInputStream(out.toByteArray());
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }

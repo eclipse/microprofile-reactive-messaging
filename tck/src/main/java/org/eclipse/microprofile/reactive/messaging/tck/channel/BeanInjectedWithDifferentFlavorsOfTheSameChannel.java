@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2020 Contributors to the Eclipse Foundation
+/*
+ * Copyright (c) 2020, 2021 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -21,21 +21,18 @@ package org.eclipse.microprofile.reactive.messaging.tck.channel;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-
-import io.reactivex.Flowable;
 import org.eclipse.microprofile.reactive.messaging.Channel;
 import org.eclipse.microprofile.reactive.messaging.Message;
 import org.eclipse.microprofile.reactive.messaging.Outgoing;
 import org.eclipse.microprofile.reactive.streams.operators.PublisherBuilder;
 import org.reactivestreams.Publisher;
 
-
+import io.reactivex.Flowable;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 @ApplicationScoped
 public class BeanInjectedWithDifferentFlavorsOfTheSameChannel {
-
 
     @Outgoing("hello-1")
     public Publisher<String> hello1() {
@@ -75,7 +72,6 @@ public class BeanInjectedWithDifferentFlavorsOfTheSameChannel {
     @Channel("hello-2")
     private Publisher<Message> field2;
 
-
     @Inject
     @Channel("hello-3")
     private PublisherBuilder<Message> field3;
@@ -91,7 +87,6 @@ public class BeanInjectedWithDifferentFlavorsOfTheSameChannel {
     @Inject
     @Channel("hello-6")
     private Publisher<String> field6;
-
 
     public Map<String, String> consume() {
         Map<String, String> map = new LinkedHashMap<>();

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2018, 2019 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
@@ -30,15 +30,18 @@ import java.util.function.Supplier;
  * information to be passed to and from applications.
  * </p>
  *
- * @param <T> The type of the message payload.
+ * @param <T>
+ *            The type of the message payload.
  */
 public interface Message<T> {
 
     /**
      * Create a message with the given payload.
      *
-     * @param payload The payload.
-     * @param <T>     The type of payload
+     * @param payload
+     *            The payload.
+     * @param <T>
+     *            The type of payload
      * @return A message with the given payload, and a no-op ack function.
      */
     static <T> Message<T> of(T payload) {
@@ -48,9 +51,12 @@ public interface Message<T> {
     /**
      * Create a message with the given payload and ack function.
      *
-     * @param payload The payload.
-     * @param ack     The ack function, this will be invoked when the returned messages {@link #ack()} method is invoked.
-     * @param <T>     the type of payload
+     * @param payload
+     *            The payload.
+     * @param ack
+     *            The ack function, this will be invoked when the returned messages {@link #ack()} method is invoked.
+     * @param <T>
+     *            the type of payload
      * @return A message with the given payload and ack function.
      */
     static <T> Message<T> of(T payload, Supplier<CompletionStage<Void>> ack) {
@@ -70,15 +76,19 @@ public interface Message<T> {
     /**
      * Create a message with the given payload, ack and nack functions.
      *
-     * @param payload The payload.
-     * @param ack The ack function, this will be invoked when the returned messages {@link #ack()} method is invoked.
-     * @param nack The negative-ack function, this will be invoked when the returned messages {@link #nack(Throwable)}
-     *        method is invoked.
-     * @param <T> the type of payload
+     * @param payload
+     *            The payload.
+     * @param ack
+     *            The ack function, this will be invoked when the returned messages {@link #ack()} method is invoked.
+     * @param nack
+     *            The negative-ack function, this will be invoked when the returned messages {@link #nack(Throwable)}
+     *            method is invoked.
+     * @param <T>
+     *            the type of payload
      * @return A message with the given payload, ack and nack functions.
      */
     static <T> Message<T> of(T payload,
-                             Supplier<CompletionStage<Void>> ack, Function<Throwable, CompletionStage<Void>> nack) {
+            Supplier<CompletionStage<Void>> ack, Function<Throwable, CompletionStage<Void>> nack) {
         return new Message<T>() {
             @Override
             public T getPayload() {
@@ -98,11 +108,13 @@ public interface Message<T> {
     }
 
     /**
-     * Creates a new instance of {@link Message} with the specified payload.
-     * The ack/nack functions are taken from the current {@link Message}.
+     * Creates a new instance of {@link Message} with the specified payload. The ack/nack functions are taken from the
+     * current {@link Message}.
      *
-     * @param payload the new payload.
-     * @param <P> the type of the new payload
+     * @param payload
+     *            the new payload.
+     * @param <P>
+     *            the type of the new payload
      * @return the new instance of {@link Message}
      */
     default <P> Message<P> withPayload(P payload) {
@@ -110,10 +122,11 @@ public interface Message<T> {
     }
 
     /**
-     * Creates a new instance of {@link Message} with the given acknowledgement supplier.
-     * The payload, and nack function are taken from the current {@link Message}.
+     * Creates a new instance of {@link Message} with the given acknowledgement supplier. The payload, and nack function
+     * are taken from the current {@link Message}.
      *
-     * @param ack the positive-acknowledgement function
+     * @param ack
+     *            the positive-acknowledgement function
      * @return the new instance of {@link Message}
      */
     default Message<T> withAck(Supplier<CompletionStage<Void>> ack) {
@@ -121,10 +134,11 @@ public interface Message<T> {
     }
 
     /**
-     * Creates a new instance of {@link Message} with the given negative-acknowledgement function.
-     * The payload and acknowledgment are taken from the current {@link Message}.
+     * Creates a new instance of {@link Message} with the given negative-acknowledgement function. The payload and
+     * acknowledgment are taken from the current {@link Message}.
      *
-     * @param nack the negative-acknowledgement function
+     * @param nack
+     *            the negative-acknowledgement function
      * @return the new instance of {@link Message}
      */
     default Message<T> withNack(Function<Throwable, CompletionStage<Void>> nack) {
@@ -140,7 +154,7 @@ public interface Message<T> {
      * Acknowledge this message.
      *
      * @return a completion stage completed when the message is acknowledged. If the acknowledgement fails, the
-     * completion stage propagates the failure.
+     *         completion stage propagates the failure.
      */
     default CompletionStage<Void> ack() {
         return CompletableFuture.completedFuture(null);
@@ -161,13 +175,13 @@ public interface Message<T> {
     }
 
     /**
-     * Acknowledge negatively this message.
-     * <code>nack</code> is used to indicate that the processing of a message failed with the reason passed as the
-     * parameter.
+     * Acknowledge negatively this message. <code>nack</code> is used to indicate that the processing of a message
+     * failed with the reason passed as the parameter.
      *
-     * @param reason the reason of the nack, must not be {@code null}
-     * @return a completion stage completed when the message is negative-acknowledgement has completed. If the
-     *         negative acknowledgement fails, the completion stage propagates the failure.
+     * @param reason
+     *            the reason of the nack, must not be {@code null}
+     * @return a completion stage completed when the message is negative-acknowledgement has completed. If the negative
+     *         acknowledgement fails, the completion stage propagates the failure.
      */
     default CompletionStage<Void> nack(Throwable reason) {
         if (reason == null) {
@@ -176,12 +190,10 @@ public interface Message<T> {
         Function<Throwable, CompletionStage<Void>> nack = getNack();
         if (nack == null) {
             return CompletableFuture.completedFuture(null);
-        }
-        else {
+        } else {
             return nack.apply(reason);
         }
     }
-
 
     /**
      * Returns an object of the specified type to allow access to the connector-specific {@link Message} implementation,
@@ -189,14 +201,17 @@ public interface Message<T> {
      * Kafka message implementation, or to {@code ConsumerRecord} and {@code ProducerRecord}. If the {@link Message}
      * implementation does not support the target class, an {@link IllegalArgumentException} should be raised.
      *
-     * The default implementation tries to <em>cast</em> the current {@link Message} instance to the target class.
-     * When a connector provides its own {@link Message} implementation, it should override this method to support
-     * specific types.
+     * The default implementation tries to <em>cast</em> the current {@link Message} instance to the target class. When
+     * a connector provides its own {@link Message} implementation, it should override this method to support specific
+     * types.
      *
-     * @param unwrapType the class of the object to be returned, must not be {@code null}
-     * @param <C> the target type
+     * @param unwrapType
+     *            the class of the object to be returned, must not be {@code null}
+     * @param <C>
+     *            the target type
      * @return an instance of the specified class
-     * @throws IllegalArgumentException if the current {@link Message} instance does not support the call
+     * @throws IllegalArgumentException
+     *             if the current {@link Message} instance does not support the call
      */
     default <C> C unwrap(Class<C> unwrapType) {
         if (unwrapType == null) {
@@ -204,12 +219,10 @@ public interface Message<T> {
         }
         try {
             return unwrapType.cast(this);
-        }
-        catch (ClassCastException e) {
+        } catch (ClassCastException e) {
             throw new IllegalArgumentException("Cannot unwrap an instance of " + this.getClass().getName()
-                + " to " + unwrapType.getName(), e);
+                    + " to " + unwrapType.getName(), e);
         }
-
 
     }
 }

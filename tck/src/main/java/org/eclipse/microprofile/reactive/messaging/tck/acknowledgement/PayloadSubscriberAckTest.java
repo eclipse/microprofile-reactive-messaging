@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2021 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
@@ -18,6 +18,20 @@
  */
 package org.eclipse.microprofile.reactive.messaging.tck.acknowledgement;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
+
+import java.util.List;
+import java.util.ServiceLoader;
+import java.util.Set;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.stream.Stream;
+
 import org.eclipse.microprofile.reactive.messaging.Emitter;
 import org.eclipse.microprofile.reactive.messaging.Incoming;
 import org.eclipse.microprofile.reactive.messaging.Message;
@@ -30,29 +44,16 @@ import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import java.util.List;
-import java.util.ServiceLoader;
-import java.util.Set;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-import java.util.stream.Stream;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.awaitility.Awaitility.await;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 public class PayloadSubscriberAckTest extends TckBase {
 
     @Deployment
     public static Archive<JavaArchive> deployment() {
         JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
-            .addClasses(EmitterBean.class, PayloadConsumer.class, ArchiveExtender.class)
-            .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+                .addClasses(EmitterBean.class, PayloadConsumer.class, ArchiveExtender.class)
+                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
 
         ServiceLoader.load(ArchiveExtender.class).iterator().forEachRemaining(ext -> ext.extend(archive));
         return archive;
@@ -65,7 +66,8 @@ public class PayloadSubscriberAckTest extends TckBase {
     private PayloadConsumer processor;
 
     @Test
-    public void testThatMessagesAreAckedAfterSuccessfulProcessingOfMessage() throws InterruptedException, TimeoutException, ExecutionException {
+    public void testThatMessagesAreAckedAfterSuccessfulProcessingOfMessage()
+            throws InterruptedException, TimeoutException, ExecutionException {
         processor.reset();
         processor.disableFailureMode();
         Emitter<String> emitter = bean.getEmitter();
@@ -81,7 +83,8 @@ public class PayloadSubscriberAckTest extends TckBase {
     }
 
     @Test
-    public void testThatMessagesAreNackedAfterFailingProcessingOfMessage() throws InterruptedException, TimeoutException, ExecutionException {
+    public void testThatMessagesAreNackedAfterFailingProcessingOfMessage()
+            throws InterruptedException, TimeoutException, ExecutionException {
         processor.reset();
         Emitter<String> emitter = bean.getEmitter();
 
@@ -99,21 +102,21 @@ public class PayloadSubscriberAckTest extends TckBase {
     }
 
     private List<Throwable> run(Set<String> acked, Set<String> nacked, Emitter<String> emitter)
-        throws InterruptedException, TimeoutException, ExecutionException {
+            throws InterruptedException, TimeoutException, ExecutionException {
         List<Throwable> reasons = new CopyOnWriteArrayList<>();
         CompletableFuture.allOf(Stream.of("a", "b", "c", "d", "e", "f", "g", "h", "i", "j")
-            .map(i ->
-                CompletableFuture.runAsync(() -> emitter.send(Message.of(i,
-                    () -> {
-                        acked.add(i);
-                        return CompletableFuture.completedFuture(null);
-                    }, t -> {
-                        reasons.add(t);
-                        nacked.add(i);
-                        return CompletableFuture.completedFuture(null);
-                    })))
-                    .thenApply(x -> i)).toArray(CompletableFuture[]::new))
-            .get(10, TimeUnit.SECONDS);
+                .map(i -> CompletableFuture.runAsync(() -> emitter.send(Message.of(i,
+                        () -> {
+                            acked.add(i);
+                            return CompletableFuture.completedFuture(null);
+                        }, t -> {
+                            reasons.add(t);
+                            nacked.add(i);
+                            return CompletableFuture.completedFuture(null);
+                        })))
+                        .thenApply(x -> i))
+                .toArray(CompletableFuture[]::new))
+                .get(10, TimeUnit.SECONDS);
 
         return reasons;
     }

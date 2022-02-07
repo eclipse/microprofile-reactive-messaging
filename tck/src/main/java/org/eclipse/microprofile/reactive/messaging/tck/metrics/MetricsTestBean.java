@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2018, 2019 Contributors to the Eclipse Foundation
+/*
+ * Copyright (c) 2018, 2021 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -22,8 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import javax.enterprise.context.ApplicationScoped;
-
 import org.eclipse.microprofile.reactive.messaging.Acknowledgment;
 import org.eclipse.microprofile.reactive.messaging.Acknowledgment.Strategy;
 import org.eclipse.microprofile.reactive.messaging.Incoming;
@@ -32,16 +30,18 @@ import org.eclipse.microprofile.reactive.messaging.Outgoing;
 import org.eclipse.microprofile.reactive.streams.operators.PublisherBuilder;
 import org.eclipse.microprofile.reactive.streams.operators.ReactiveStreams;
 
+import jakarta.enterprise.context.ApplicationScoped;
+
 @ApplicationScoped
 public class MetricsTestBean {
 
     public static final String CONNECTOR_IN = "channel-connector-in";
     public static final String CONNECTOR_PROCESS = "channel-connector-process";
     public static final String CONNECTOR_OUT = "channel-connector-out";
-    
+
     public static final String CHANNEL_APP_A = "channel-app-a";
     public static final String CHANNEL_APP_B = "channel-app-b";
-    
+
     private AtomicInteger inAppMessagesReceived = new AtomicInteger(0);
 
     @Incoming(CONNECTOR_IN)
@@ -49,33 +49,33 @@ public class MetricsTestBean {
     public String simpleMapping(String a) {
         return a + "-test";
     }
-    
+
     @Incoming(CONNECTOR_PROCESS)
     @Outgoing(CONNECTOR_OUT)
     @Acknowledgment(Strategy.PRE_PROCESSING)
     public PublisherBuilder<Message<String>> split(Message<String> a) {
         List<Message<String>> messages = new ArrayList<>();
-        for (int i = 1; i <=2; i++) {
+        for (int i = 1; i <= 2; i++) {
             messages.add(Message.of(a.getPayload() + "-" + i));
         }
         return ReactiveStreams.fromIterable(messages);
     }
-    
+
     @Outgoing(CHANNEL_APP_A)
     public PublisherBuilder<String> produce() {
         return ReactiveStreams.of("test-a", "test-b", "test-c");
     }
-    
+
     @Incoming(CHANNEL_APP_A)
     @Outgoing(CHANNEL_APP_B)
     public PublisherBuilder<String> split(String input) {
         List<String> messages = new ArrayList<>();
-        for (int i = 1; i <=2; i++) {
+        for (int i = 1; i <= 2; i++) {
             messages.add(input + "-" + i);
         }
         return ReactiveStreams.fromIterable(messages);
     }
-    
+
     @Incoming(CHANNEL_APP_B)
     public void receive(String input) {
         inAppMessagesReceived.incrementAndGet();

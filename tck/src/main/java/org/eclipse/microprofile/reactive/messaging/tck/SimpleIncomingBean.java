@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2018, 2019 Contributors to the Eclipse Foundation
+/*
+ * Copyright (c) 2018, 2021 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -20,15 +20,14 @@ package org.eclipse.microprofile.reactive.messaging.tck;
 
 import org.eclipse.microprofile.reactive.messaging.Incoming;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class SimpleIncomingBean extends ValueCollector {
 
-
-  @Incoming("strings")
-  public void incoming(String s) {
-    values.add(s);
-  }
+    @Incoming("strings")
+    public void incoming(String s) {
+        values.add(s);
+    }
 
 }

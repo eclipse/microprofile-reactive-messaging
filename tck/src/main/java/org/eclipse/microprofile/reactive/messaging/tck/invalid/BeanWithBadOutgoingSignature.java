@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2018, 2019 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
@@ -22,8 +22,8 @@ import org.eclipse.microprofile.reactive.messaging.Outgoing;
 
 public class BeanWithBadOutgoingSignature {
 
-  @Outgoing("foo")
-  public void producer() {
-    // Invalid
-  }
+    @Outgoing("foo")
+    public void producer() {
+        // Invalid
+    }
 }
