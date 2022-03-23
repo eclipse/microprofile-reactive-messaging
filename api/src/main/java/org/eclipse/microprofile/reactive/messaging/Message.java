@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, 2019 Contributors to the Eclipse Foundation
+ * Copyright (c) 2018, 2022 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -67,8 +67,8 @@ public interface Message<T> {
             }
 
             @Override
-            public CompletionStage<Void> ack() {
-                return ack.get();
+            public Supplier<CompletionStage<Void>> getAck() {
+                return ack;
             }
         };
     }
@@ -157,7 +157,12 @@ public interface Message<T> {
      *         completion stage propagates the failure.
      */
     default CompletionStage<Void> ack() {
-        return CompletableFuture.completedFuture(null);
+        Supplier<CompletionStage<Void>> ack = getAck();
+        if (ack == null) {
+            return CompletableFuture.completedFuture(null);
+        } else {
+            return ack.get();
+        }
     }
 
     /**
