@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020, 2021 Contributors to the Eclipse Foundation
+ * Copyright (c) 2020, 2022 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -47,7 +47,7 @@ public class ThrowExceptionOverflowStrategyOverflowTest extends TckBase {
         // Assert all items either accepted or rejected
         assertThat(bean.accepted().size() + bean.rejected().size()).isEqualTo(10);
         // At least the first item should have been accepted
-        assertThat(bean.accepted()).contains("1");
+        assertThat(bean.accepted()).contains("0");
         // But not everything should have been accepted
         assertThat(bean.rejected()).isNotEmpty();
 
