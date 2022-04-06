@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020, 2021 Contributors to the Eclipse Foundation
+ * Copyright (c) 2020, 2022 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -47,6 +47,7 @@ public class DefaultOverflowStrategyOverflowTest extends TckBase {
         await().until(() -> bean.exception() != null);
         assertThat(bean.output()).doesNotContain("999");
         assertThat(bean.output()).hasSizeBetween(0, 256);
-        assertThat(bean.failure()).isNotNull().isInstanceOf(Exception.class);
+        assertThat(bean.exception()).isNotNull().isInstanceOf(Exception.class);
+        assertThat(bean.failure()).isNull();
     }
 }
