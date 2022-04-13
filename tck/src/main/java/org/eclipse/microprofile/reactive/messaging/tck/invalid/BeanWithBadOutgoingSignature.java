@@ -20,6 +20,9 @@ package org.eclipse.microprofile.reactive.messaging.tck.invalid;
 
 import org.eclipse.microprofile.reactive.messaging.Outgoing;
 
+import jakarta.enterprise.context.Dependent;
+
+@Dependent
 public class BeanWithBadOutgoingSignature {
 
     @Outgoing("foo")

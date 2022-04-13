@@ -20,6 +20,9 @@ package org.eclipse.microprofile.reactive.messaging.tck.invalid;
 
 import org.eclipse.microprofile.reactive.messaging.Incoming;
 
+import jakarta.enterprise.context.Dependent;
+
+@Dependent
 public class BeanWithEmptyIncoming {
 
     @Incoming("")
