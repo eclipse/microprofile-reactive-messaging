@@ -21,8 +21,10 @@ package org.eclipse.microprofile.reactive.messaging.tck.channel;
 import org.eclipse.microprofile.reactive.messaging.Channel;
 import org.eclipse.microprofile.reactive.messaging.Emitter;
 
+import jakarta.enterprise.context.Dependent;
 import jakarta.inject.Inject;
 
+@Dependent
 public class BeanWithMissingChannel {
     @Inject
     @Channel("missing")
