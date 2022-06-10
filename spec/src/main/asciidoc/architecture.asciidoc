@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2018, 2020 Contributors to the Eclipse Foundation
+// Copyright (c) 2018, 2022 Contributors to the Eclipse Foundation
 //
 // See the NOTICE file(s) distributed with this work for additional
 // information regarding copyright ownership.
@@ -119,6 +119,8 @@ The MicroProfile Reactive Streams specification used as a foundation for this ve
 `Publisher` is connected to a single `Subscriber` which controls back pressure. This implies that a Reactive Messaging channel
 should appear in a single `@Incoming` annotation. The annotation of more than one `@Incoming` method to be associated with the
 same channel is not supported and will cause an error during deployment.
+
+Uncaught exceptions in the messaging methods are not propagated as errors to downstream, nor they are canceling the upstream.
 
 From the user perspective, whether the incoming messages comes from co-located beans or a remote message broker is transparent.
 However, the user may decide to consume a specific subclass of `Message` (e.g. `KafkaMessage` in the following example) if the user is aware of this characteristic:
