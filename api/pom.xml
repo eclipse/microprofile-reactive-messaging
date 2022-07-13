@@ -26,7 +26,7 @@
         <!-- This is just for now and will not work if the API has a separate release cycle than the rest. -->
         <groupId>org.eclipse.microprofile.reactive.messaging</groupId>
         <artifactId>microprofile-reactive-messaging-parent</artifactId>
-        <version>3.0-SNAPSHOT</version>
+        <version>3.0-RC3</version>
     </parent>
 
     <artifactId>microprofile-reactive-messaging-api</artifactId>
