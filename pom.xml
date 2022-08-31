@@ -39,7 +39,7 @@
     <properties>
         <version.microprofile.config>3.0</version.microprofile.config>
         <version.microprofile.metrics>4.0</version.microprofile.metrics>
-        <version.microprofile.reactive.streams.operators>3.0-RC1</version.microprofile.reactive.streams.operators>
+        <version.microprofile.reactive.streams.operators>3.0</version.microprofile.reactive.streams.operators>
         <version.osgi.versioning>1.1.0</version.osgi.versioning>
 
         <!-- Test -->
