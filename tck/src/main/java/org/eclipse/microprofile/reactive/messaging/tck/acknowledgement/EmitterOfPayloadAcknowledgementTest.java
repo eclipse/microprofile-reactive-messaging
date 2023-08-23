@@ -22,18 +22,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.awaitility.Awaitility.await;
 
-import java.util.ServiceLoader;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
 import org.eclipse.microprofile.reactive.messaging.Emitter;
 import org.eclipse.microprofile.reactive.messaging.Incoming;
-import org.eclipse.microprofile.reactive.messaging.tck.ArchiveExtender;
 import org.eclipse.microprofile.reactive.messaging.tck.TckBase;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.Archive;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 
@@ -44,12 +40,8 @@ public class EmitterOfPayloadAcknowledgementTest extends TckBase {
 
     @Deployment
     public static Archive<JavaArchive> deployment() {
-        JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
-                .addClasses(EmitterBean.class, MessageConsumer.class, ArchiveExtender.class)
-                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
-
-        ServiceLoader.load(ArchiveExtender.class).iterator().forEachRemaining(ext -> ext.extend(archive));
-        return archive;
+        return getBaseArchive()
+                .addClasses(EmitterBean.class, MessageConsumer.class);
     }
 
     @Inject
