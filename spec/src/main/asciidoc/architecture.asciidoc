@@ -80,7 +80,7 @@ _Plain_ messages are created using:
 
 * `org.eclipse.microprofile.reactive.messaging.Message#of(T)` - wraps the given payload, no acknowledgement
 * `org.eclipse.microprofile.reactive.messaging.Message#of(T, java.util.function.Supplier<java.util.concurrent.CompletionStage<java.lang.Void>>)` - wraps the given payload and provides the acknowledgment logic
-* `org.eclipse.microprofile.reactive.messaging.Message#of(Supplier<CompletionStage<Void>> ack, Function<Throwable, CompletionStage<Void>> nack)` - wraps the given payload and provides the acknowledgment and negative acknowledgment logic
+* `org.eclipse.microprofile.reactive.messaging.Message#of(T, Supplier<CompletionStage<Void>> ack, Function<Throwable, CompletionStage<Void>> nack)` - wraps the given payload and provides the acknowledgment and negative acknowledgment logic
 
 
 You can also create new `Message` instances by copying the content from an original message using the `withX` methods:
@@ -186,7 +186,7 @@ This mapping is configured in the application configuration.
 Note that an implementation may provide various ways to configure the mapping, but support for MicroProfile Config as a configuration source is mandatory.
 
 Connector implementations are associated with a name corresponding to a messaging transport, such as Apache Kafka, Amazon Kinesis, RabbitMQ or Apache ActiveMQ.
-For instance, an hypothetical Kafka connector could be associated with the following name: `acme.kafka`.
+For instance, a hypothetical Kafka connector could be associated with the following name: `acme.kafka`.
 This name is indicated using a qualifier on the connector implementation.
 
 The user can associate a channel with this connector using the associated name:
@@ -265,7 +265,7 @@ Also the method must be implemented in a non-blocking fashion.
 For blocking transformations, asynchronous variants can be used.
 
 NOTE: _assembly_ time is when the Reactive Messaging implementation initializes itself and creates the different bean instances and connects them together.
-If the implementation cannot find a incoming of outgoing channel, a `DeploymentException` must be thrown when the application starts.
+If the implementation cannot find an incoming for an outgoing channel, a `DeploymentException` must be thrown when the application starts.
 
 NOTE: In the following lists, `Message` can be an implementation of the `Message` interface.
 
