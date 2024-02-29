@@ -68,12 +68,9 @@ public class BeanWithFailOverflowStrategy {
         return callerException;
     }
 
-    public void emitThree() {
+    public void emitOne() {
         try {
-            emitter.send("1");
-            emitter.send("2");
-            emitter.send("3");
-            emitter.complete();
+            emitter.send("1000");
         } catch (Exception e) {
             callerException = e;
         }

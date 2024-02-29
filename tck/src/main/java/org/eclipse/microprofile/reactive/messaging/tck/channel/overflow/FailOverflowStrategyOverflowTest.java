@@ -43,9 +43,15 @@ public class FailOverflowStrategyOverflowTest extends TckBase {
     public void testOverflow() {
         bean.emitALotOfItems();
 
-        await().until(() -> bean.exception() != null);
-        assertThat(bean.output()).doesNotContain("999");
+        await().until(() -> bean.failure() != null);
+        assertThat(bean.failure()).isInstanceOf(Exception.class);
         assertThat(bean.output()).isNotEmpty().hasSizeLessThan(999);
-        assertThat(bean.failure()).isNotNull().isInstanceOf(Exception.class);
+        //If an exception has not yet been thrown after the failure occurred, try one more message
+        if (bean.exception() == null) {
+            bean.emitOne();
+            await().until(() -> bean.exception() != null);
+        }
+        assertThat(bean.exception()).isInstanceOf(IllegalStateException.class);
+
     }
 }
