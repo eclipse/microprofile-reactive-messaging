@@ -49,7 +49,6 @@ public class FailOverflowStrategyOverflowTest extends TckBase {
         //If an exception has not yet been thrown after the failure occurred, try one more message
         if (bean.exception() == null) {
             bean.emitOne();
-            await().until(() -> bean.exception() != null);
         }
         assertThat(bean.exception()).isInstanceOf(IllegalStateException.class);
 
