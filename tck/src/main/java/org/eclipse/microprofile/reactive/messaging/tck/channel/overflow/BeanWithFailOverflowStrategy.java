@@ -68,12 +68,9 @@ public class BeanWithFailOverflowStrategy {
         return callerException;
     }
 
-    public void emitThree() {
+    public void emitOne() {
         try {
-            emitter.send("1");
-            emitter.send("2");
-            emitter.send("3");
-            emitter.complete();
+            emitter.send("1000");
         } catch (Exception e) {
             callerException = e;
         }
@@ -95,10 +92,14 @@ public class BeanWithFailOverflowStrategy {
     @Outgoing("out")
     public PublisherBuilder<String> consume(final PublisherBuilder<String> values) {
         return values
-                .via(ReactiveStreams.<String>builder()
-                        .flatMapCompletionStage(s -> CompletableFuture.supplyAsync(() -> s, executor)))
-                .onError(err -> downstreamFailure = err);
-
+                .via(ReactiveStreams.<String>builder().flatMapCompletionStage(s -> CompletableFuture.supplyAsync(() -> {
+                    try {
+                        Thread.sleep(1);
+                    } catch (InterruptedException ignored) {
+                        Thread.currentThread().interrupt();
+                    }
+                    return s;
+                }, executor))).onError(err -> downstreamFailure = err);
     }
 
     @Incoming("out")
