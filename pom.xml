@@ -30,7 +30,7 @@
 
     <groupId>org.eclipse.microprofile.reactive.messaging</groupId>
     <artifactId>microprofile-reactive-messaging-parent</artifactId>
-    <version>3.0.1</version>
+    <version>3.1-SNAPSHOT</version>
 
     <packaging>pom</packaging>
     <name>MicroProfile Reactive Messaging</name>
@@ -73,7 +73,7 @@
         <connection>scm:git:https://github.com/eclipse/microprofile-reactive-messaging.git</connection>
         <developerConnection>scm:git:git@github.com:eclipse/microprofile-reactive-messaging.git</developerConnection>
         <url>https://github.com/eclipse/microprofile-reactive-messaging</url>
-        <tag>3.0.1</tag>
+        <tag>3.0-RC1</tag>
     </scm>
 
     <modules>
